@@ -1,0 +1,15 @@
+{
+    "[python]": {
+        "editor.formatOnType": true,
+        "editor.defaultFormatter": "ms-python.black-formatter",
+    },
+    "flake8.args": [
+        "--config=./.code_quality/flake8.ini"
+    ],
+    "isort.args": [
+        "--settings-path=./.code_quality/isort.cfg"
+    ],
+    "black-formatter.args": [
+        "--config=./.code_quality/black.toml"
+    ]
+}
