@@ -6,7 +6,7 @@ frameworkVersion: '3'
 
 provider:
   name: aws
-  runtime: python3.12
+  runtime: python3.11
   # you can overwrite defaults here
   stage: dev
   region: us-east-1
