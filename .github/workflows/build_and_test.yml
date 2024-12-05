@@ -56,11 +56,17 @@ jobs:
                 poetry install --no-root
 
             - name : Install serverless
-              run: npm install -g serverless
+              run: npm install -g serverless@3.39.0
+
+            - name: Configure AWS credentials
+              uses: aws-actions/configure-aws-credentials@v3
+              with:
+                role-to-assume: arn:aws:iam::961341535118:role/deployment_role
+                aws-region: us-east-1
             
             - name: Run build
               run: poetry run sls package
 
             - name: Deploy
-              run: poetry run sls deploy
+              run: poetry run sls deploy --stage dev
             
