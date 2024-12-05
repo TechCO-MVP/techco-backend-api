@@ -45,9 +45,14 @@ functions:
   create_organization:
     handler: src/adapters/primary/create_organization/index.handler
     events:
-      - httpApi:
+      - http:
           path: /organizations/create
           method: post
+          cors: true
+          private: true
+          response:
+            headers:
+              Content-Type: "'application/json'"
     environment:
       ENV: ${self:provider.stage}
 
