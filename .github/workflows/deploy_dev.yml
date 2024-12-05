@@ -1,0 +1,46 @@
+name: Deployment to dev environment
+
+on:
+  push:
+    branches: [develop]
+
+jobs:
+  continuous_deployment_dev:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v3
+
+      - name: Set up python environment
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Install dependencies
+        run: |
+          poetry config virtualenvs.create true
+          poetry install --no-root
+
+      - name: Install serverless
+        run: npm install -g serverless@3.39.0 serverless-offline
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          audience: sts.amazonaws.com
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: us-east-1
+
+      - name: Run build
+        run: poetry run sls package
+
+      - name: Deploy
+        run: poetry run sls deploy --stage dev
