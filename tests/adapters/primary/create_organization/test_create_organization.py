@@ -9,5 +9,5 @@ def test_create_organization_handler():
 
     assert response["statusCode"] == 200
     body = json.loads(response["body"])
-    assert body["message"] == "Go Serverless v1.0! Your function executed successfully!!!"
+    assert body["message"] == "Go Serverless v1.0! Your function executed successfully!!"
     assert body["input"] == event
