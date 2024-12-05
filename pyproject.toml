@@ -16,8 +16,11 @@ isort = "^5.13.2"
 pytest = "^8.3.3"
 pre-commit = "^4.0.1"
 mypy = "^1.13.0"
+pytest-cov = "^6.0.0"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
+[tool.pytest.ini_options]
+addopts = "-v -s --cov=src --cov-report=html --cov-fail-under=80"

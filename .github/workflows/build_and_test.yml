@@ -5,7 +5,7 @@ on:
         branches: [main, develop]
 
 jobs:
-    ci:
+    ci_test_and_quality_checks:
         runs-on: ubuntu-latest
         steps:
             - name: Checkout the code
@@ -14,7 +14,7 @@ jobs:
             - name: Set up python environment
               uses: actions/setup-python@v5
               with:
-                python-version: '3.12'
+                python-version: '3.11'
             
             - name: Install poetry
               run: |
@@ -33,4 +33,4 @@ jobs:
 
             - name: Run tests
               run: poetry run pytest --cov=src tests/
-            
+      
