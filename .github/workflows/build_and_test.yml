@@ -36,6 +36,9 @@ jobs:
 
     cd:
         runs-on: ubuntu-latest
+        permissions:
+            id-token: write
+            contents: read
         steps:
             - name: Checkout the code
               uses: actions/checkout@v3
@@ -59,8 +62,9 @@ jobs:
               run: npm install -g serverless@3.39.0
 
             - name: Configure AWS credentials
-              uses: aws-actions/configure-aws-credentials@v3
+              uses: aws-actions/configure-aws-credentials@v4
               with:
+                audience: sts.amazonaws.com
                 role-to-assume: arn:aws:iam::961341535118:role/deployment_role
                 aws-region: us-east-1
             
