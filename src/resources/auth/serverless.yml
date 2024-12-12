@@ -1,0 +1,34 @@
+CognitoUserPool:
+  Type: AWS::Cognito::UserPool
+  Properties:
+    UserPoolName: ${self:provider.stage}-passwordless-user-pool
+    Policies:
+      PasswordPolicy:
+        MinimumLength: 8
+        RequireLowercase: false
+        RequireUppercase: false
+        RequireNumbers: false
+        RequireSymbols: false
+    AutoVerifiedAttributes:
+      - email
+    UsernameAttributes:
+      - email
+    Schema:
+      - Name: email
+        Required: true
+        Mutable: false
+      - Name: name
+        Required: true
+        Mutable: true
+
+CognitoPasswordlessUserPoolClient:
+  Type: AWS::Cognito::UserPoolClient
+  Properties:
+    ClientName: ${self:provider.stage}-passwordless-user-pool-client
+    UserPoolId:
+      Ref: CognitoUserPool
+    GenerateSecret: false
+    ExplicitAuthFlows:
+      - CUSTOM_AUTH_FLOW_ONLY
+    SupportedIdentityProviders:
+      - COGNITO
