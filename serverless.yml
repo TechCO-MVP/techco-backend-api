@@ -69,6 +69,24 @@ functions:
       ENV: ${self:provider.stage}
       COGNITO_CLIENT_ID: ${env:COGNITO_CLIENT_ID}
 
+  verify_auth_otp_code:
+    handler: src/adapters/primary/auth/verify_auth_otp_code.lambda_handler
+    events:
+      - http:
+          path: verify_auth_otp_code
+          method: post
+          cors: true
+          private: true
+          request:
+            schemas:
+              application/json: ${file(src/adapters/primary/auth/schemas/verify_auth_otp_code.json)}
+          response:
+            headers:
+              Content-Type: "'application/json'"
+    environment:
+      ENV: ${self:provider.stage}
+      COGNITO_CLIENT_ID: ${env:COGNITO_CLIENT_ID}
+
 plugins:
   - serverless-offline
 
