@@ -1,10 +1,11 @@
 import json
+
 from src.adapters.primary.create_organization.index import handler
 
 
 def test_create_organization_handler():
-    event = {}
-    context = {}
+    event: dict = {}
+    context: dict = {}
     response = handler(event, context)
 
     assert response["statusCode"] == 200
