@@ -1,0 +1,74 @@
+openapi: 3.1.0
+
+info:
+  title: TechCo Backend API
+  description: API documentation for the TechCo backend services.
+  version: 1.0.0
+
+servers:
+  - url: https://api.techco.com/v1
+    description: Production server
+  - url: https://staging-api.techco.com/v1
+    description: Staging server
+
+resources:
+  
+
+paths:
+  /sign_up:
+    post:
+      summary: Register a new user/company
+      description: Register a new user and their company.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '201':
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        company:
+          type: object
+          properties:
+            name:
+              type: string
+            address:
+              type: string
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+        code:
+          type: integer
+        fields:
+          type: array
+          items:
+            type: string
+        stack:
+          type: string
