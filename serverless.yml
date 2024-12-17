@@ -7,10 +7,12 @@ provider:
   runtime: python3.11
   stage: dev
   region: us-east-1
+  layers:
+    - arn:aws:lambda:${aws:region}:017000801446:layer:AWSLambdaPowertoolsPythonV3-python311-x86_64:3
   environment:
+    REGION_NAME: ${self:provider.region}
     COGNITO_USER_POOL_ID: !Ref CognitoUserPool
     COGNITO_USER_POOL_CLIENT_ID: !Ref CognitoPasswordlessUserPoolClient
-
   iam:
     role:
       statements:
@@ -29,13 +31,51 @@ resources:
 
 functions:
 
-  defineAuthChallenge:
+  define_auth_challenge:
     handler: src/adapters/primary/auth/define_auth_challenge.handler
     events:
       - cognitoUserPool:
           pool: ${self:resources.Resources.CognitoUserPool.Properties.UserPoolName}
           trigger: DefineAuthChallenge
           existing: true
+
+  create_auth_challenge:
+    handler: src/adapters/primary/auth/create_auth_challenge.handler
+    events:
+      - cognitoUserPool:
+          pool: ${self:resources.Resources.CognitoUserPool.Properties.UserPoolName}
+          trigger: CreateAuthChallenge
+          existing: true
+
+  verify_auth_challenge:
+    handler: src/adapters/primary/auth/verify_auth_challenge.hanler
+    events:
+      - cognitoUserPool:
+          pool: ${self:resources.Resources.CognitoUserPool.Properties.UserPoolName}
+          trigger: VerifyAuthChallengeResponse
+          existing: true
+
+  pre_signup:
+    handler: src/adapters/primary/auth/pre_signup.handler
+    events:
+      - cognitoUserPool:
+          pool: ${self:resources.Resources.CognitoUserPool.Properties.UserPoolName}
+          trigger: PreSignUp
+          existing: true
+
+  sign_up:
+    handler: src/adapters/primary/auth/sign_up.handler
+    events:
+      - http:
+          path: /auth/signup
+          method: post
+          cors: true
+          private: true
+          response:
+            headers:
+              Content-Type: "'application/json'"
+    environment:
+      ENV: ${self:provider.stage}
 
   create_organization:
     handler: src/adapters/primary/create_organization/index.handler

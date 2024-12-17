@@ -8,6 +8,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.11"
 boto3 = "^1.35.71"
+aws-lambda-powertools = "^3.3.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^24.10.0"
