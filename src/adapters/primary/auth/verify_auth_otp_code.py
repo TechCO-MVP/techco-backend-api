@@ -31,7 +31,7 @@ def lambda_handler(event, context):
 
         if "AuthenticationResult" in response:
             body = {
-                "message": "Successfully authentication.",
+                "message": "Successfully authenticated.",
                 "idToken": response["AuthenticationResult"]["IdToken"],
                 "accessToken": response["AuthenticationResult"]["AccessToken"],
                 "refreshToken": response["AuthenticationResult"]["RefreshToken"],

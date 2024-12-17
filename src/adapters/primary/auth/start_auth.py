@@ -36,7 +36,6 @@ def lambda_handler(event, context):
     except Exception as e:
         status_code = 500
         body = {"error": f"Unexpected error: {str(e)}"}
-        success = False
 
     finally:
         return {"statusCode": status_code, "body": json.dumps(body), "success": success}
