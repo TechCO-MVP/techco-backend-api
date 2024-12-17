@@ -1,4 +1,5 @@
 import secrets
+
 import boto3
 
 from src.constants.index import EMAIL_OTP, REGION_NAME

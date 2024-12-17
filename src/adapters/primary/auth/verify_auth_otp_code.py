@@ -1,9 +1,11 @@
 """ this module is responsible for veryfy otp code for the authentication passwordless process """
 
 import json
+
 import boto3
 from botocore.exceptions import ClientError
-from src.constants.index import REGION_NAME, CLIENT_ID
+
+from src.constants.index import CLIENT_ID, REGION_NAME
 
 cognito_client = boto3.client("cognito-idp", region_name=REGION_NAME)
 
