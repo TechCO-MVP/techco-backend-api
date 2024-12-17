@@ -1,3 +1,9 @@
+service: passwordless-auth
+frameworkVersion: '3'
+
+provider:
+  name: aws
+
 CognitoUserPool:
   Type: AWS::Cognito::UserPool
   Properties:
