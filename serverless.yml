@@ -107,7 +107,6 @@ functions:
               Content-Type: "'application/json'"
     environment:
       ENV: ${self:provider.stage}
-      
   verify_auth_otp_code:
     handler: src/adapters/primary/auth/verify_auth_otp_code.lambda_handler
     events:
@@ -124,7 +123,6 @@ functions:
               Content-Type: "'application/json'"
     environment:
       ENV: ${self:provider.stage}
-      
 plugins:
   - serverless-offline
 
