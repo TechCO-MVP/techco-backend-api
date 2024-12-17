@@ -24,12 +24,11 @@ class TestStartAuth(unittest.TestCase):
             ),
         }
 
-    @patch(f"{PATH}os.environ")
+    @patch(f"{PATH}REGION_NAME", "fake-region")
+    @patch(f"{PATH}CLIENT_ID", "fake-client-id")
     @patch(f"{PATH}cognito_client")
-    def test_verify_auth_otp_code_success(self, mock_cognito_client, mock_env):
+    def test_verify_auth_otp_code_success(self, mock_cognito_client):
         """Test verify_auth_otp_code success."""
-        mock_env.__getitem__.return_value = "fake-client-id"
-
         mock_cognito_client.respond_to_auth_challenge.return_value = {
             "AuthenticationResult": {
                 "IdToken": "fake-id-token",
@@ -59,12 +58,11 @@ class TestStartAuth(unittest.TestCase):
             ),
         )
 
-    @patch(f"{PATH}os.environ")
+    @patch(f"{PATH}REGION_NAME", "fake-region")
+    @patch(f"{PATH}CLIENT_ID", "fake-client-id")
     @patch(f"{PATH}cognito_client")
-    def test_verify_auth_otp_code_sfailed(self, mock_cognito_client, mock_env):
+    def test_verify_auth_otp_code_sfailed(self, mock_cognito_client):
         """Test verify_auth_otp_code success."""
-        mock_env.__getitem__.return_value = "fake-client-id"
-
         mock_cognito_client.respond_to_auth_challenge.return_value = {"Error": "error response"}
 
         response = lambda_handler(self.event, {})
@@ -78,12 +76,11 @@ class TestStartAuth(unittest.TestCase):
         self.assertEqual(response["statusCode"], 400)
         self.assertEqual(response["body"], json.dumps({"message": "Invalid OTP code."}))
 
-    @patch(f"{PATH}os.environ")
+    @patch(f"{PATH}REGION_NAME", "fake-region")
+    @patch(f"{PATH}CLIENT_ID", "fake-client-id")
     @patch(f"{PATH}cognito_client")
-    def test_lambda_handler_client_error(self, mock_cognito_client, mock_env):
+    def test_lambda_handler_client_error(self, mock_cognito_client):
         """Test verify_auth_otp_code client error."""
-        mock_env.__getitem__.return_value = "fake-client-id"
-
         error_response = {"Error": {"Message": "User does not exist"}}
         mock_cognito_client.respond_to_auth_challenge.side_effect = ClientError(
             error_response, "InitiateAuth"
@@ -95,11 +92,11 @@ class TestStartAuth(unittest.TestCase):
         body = json.loads(response["body"])
         self.assertIn("Error validating OTP code:", body["error"])
 
+    @patch(f"{PATH}REGION_NAME", "fake-region")
+    @patch(f"{PATH}CLIENT_ID", "fake-client-id")
     @patch(f"{PATH}cognito_client")
-    @patch(f"{PATH}os.environ")
-    def test_lambda_handler_unexpected_error(self, mock_environ, mock_cognito_client):
+    def test_lambda_handler_unexpected_error(self, mock_cognito_client):
         """Test verify_auth_otp_code unexpected error."""
-        mock_environ.__getitem__.return_value = "fake-client-id"
         mock_cognito_client.respond_to_auth_challenge.side_effect = Exception("Unexpected error")
 
         response = lambda_handler(self.event, {})

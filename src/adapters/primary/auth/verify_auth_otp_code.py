@@ -1,12 +1,11 @@
 """ this module is responsible for veryfy otp code for the authentication passwordless process """
 
 import json
-import os
-
 import boto3
 from botocore.exceptions import ClientError
+from src.constants.index import REGION_NAME, CLIENT_ID
 
-cognito_client = boto3.client("cognito-idp", region_name="us-east-1")
+cognito_client = boto3.client("cognito-idp", region_name=REGION_NAME)
 
 
 def lambda_handler(event, context):
@@ -23,7 +22,7 @@ def lambda_handler(event, context):
 
     try:
         response = cognito_client.respond_to_auth_challenge(
-            ClientId=os.environ["COGNITO_CLIENT_ID"],
+            ClientId=CLIENT_ID,
             ChallengeName="CUSTOM_CHALLENGE",
             ChallengeResponses={"USERNAME": user_email, "ANSWER": otp_code},
             Session=session,
