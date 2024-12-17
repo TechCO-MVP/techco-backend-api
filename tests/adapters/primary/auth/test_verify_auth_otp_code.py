@@ -51,7 +51,7 @@ class TestStartAuth(unittest.TestCase):
             response["body"],
             json.dumps(
                 {
-                    "message": "Successfully authentication.",
+                    "message": "Successfully authenticated.",
                     "idToken": "fake-id-token",
                     "accessToken": "fake_access_token",
                     "refreshToken": "fake_refresh_token",
