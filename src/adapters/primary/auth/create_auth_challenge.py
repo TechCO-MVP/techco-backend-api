@@ -1,4 +1,4 @@
-import secrets
+import random
 import boto3
 
 from src.constants.index import EMAIL_OTP, REGION_NAME
@@ -33,7 +33,7 @@ def generate_secret_code() -> str:
     Generate a secret code
     return: The secret code
     """
-    return "".join([str(secrets.randint(0, 9)) for _ in range(6)])
+    return "".join([str(random.randint(0, 9)) for _ in range(6)])
 
 
 def send_otp_email(email, secret_code):
