@@ -52,7 +52,7 @@ functions:
           existing: true
 
   verify_auth_challenge:
-    handler: src/adapters/primary/auth/verify_auth_challenge.hanler
+    handler: src/adapters/primary/auth/verify_auth_challenge.handler
     events:
       - cognitoUserPool:
           pool: ${self:resources.Resources.CognitoUserPool.Properties.UserPoolName}
