@@ -20,6 +20,10 @@ provider:
           Action:
             - cognito-idp:*
           Resource: "*"
+        - Effect: Allow
+          Action:
+            - ses:sendEmail
+          Resource: "*"
 
 custom:
   userPoolName: ${self:provider.stage}-passwordless-user-pool
