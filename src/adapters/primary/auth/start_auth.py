@@ -18,7 +18,6 @@ def lambda_handler(event, context):
     user_email = body["email"]
     client_id = CLIENT_ID
     status_code = 400
-    success = False
     body = {}
 
     try:
@@ -28,7 +27,6 @@ def lambda_handler(event, context):
         session = response["Session"]
         status_code = 200
         body = {"message": "OTP sent successfully.", "session": session}
-        success = True
 
     except ClientError as e:
         error_message = e.response["Error"]["Message"]
@@ -39,4 +37,4 @@ def lambda_handler(event, context):
         body = {"error": f"Unexpected error: {str(e)}"}
 
     finally:
-        return {"statusCode": status_code, "body": json.dumps(body), "success": success}
+        return {"statusCode": status_code, "body": json.dumps(body)}

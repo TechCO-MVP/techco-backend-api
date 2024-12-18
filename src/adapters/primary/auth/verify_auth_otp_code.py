@@ -19,7 +19,6 @@ def lambda_handler(event, context):
     otp_code = body["otp"]
     session = body["session"]
     status_code = 400
-    success = False
     body = {}
 
     try:
@@ -38,7 +37,6 @@ def lambda_handler(event, context):
                 "refreshToken": response["AuthenticationResult"]["RefreshToken"],
             }
             status_code = 200
-            success = True
         else:
             body = {"message": "Invalid OTP code."}
 
@@ -51,4 +49,4 @@ def lambda_handler(event, context):
         body = {"error": f"Unexpected error: {str(e)}"}
 
     finally:
-        return {"statusCode": status_code, "body": json.dumps(body), "success": success}
+        return {"statusCode": status_code, "body": json.dumps(body)}
