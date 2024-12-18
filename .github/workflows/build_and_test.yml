@@ -32,5 +32,5 @@ jobs:
                 ./.code_quality/scripts/run_quality_checks.sh
 
             - name: Run tests
-              run: poetry run pytest --cov=src tests/
+              run: poetry run pytest
       

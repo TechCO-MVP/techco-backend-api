@@ -115,5 +115,5 @@ def is_correct_answer(event):
     last_attempt = session[-1]
 
     return (
-        last_attempt.get("challengeResult") and last_attempt.get("ChallengeName") == CHALLENGE_NAME
+        last_attempt.get("challengeResult") and last_attempt.get("challengeName") == CHALLENGE_NAME
     )

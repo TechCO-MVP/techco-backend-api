@@ -19,10 +19,11 @@ pre-commit = "^4.0.1"
 mypy = "^1.13.0"
 pytest-cov = "^6.0.0"
 pytest-mock = "^3.14.0"
+moto = "^5.0.23"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.pytest.ini_options]
-addopts = "-v -s --cov=src --cov-report=html --cov-fail-under=80"
+addopts = "-v -s --cov=src --cov-report=html --cov-fail-under=80 --cov-report=term-missing"
