@@ -1,4 +1,4 @@
-def handler(event):
+def handler(event, _):
     """
     Verify the custom challenge
     event: The event object, described like:
@@ -13,5 +13,6 @@ def handler(event):
     """
     expected_otp = event["request"]["privateChallengeParameters"]["secretLoginCode"]
     answer = event["request"]["challengeAnswer"]
+    event["response"]["answerCorrect"] = expected_otp == answer
 
-    return expected_otp == answer
+    return event
