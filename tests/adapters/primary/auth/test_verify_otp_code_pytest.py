@@ -3,7 +3,7 @@
 import json
 import pytest
 from botocore.exceptions import ClientError
-from src.adapters.primary.auth.verify_auth_otp_code import lambda_handler
+
 
 @pytest.fixture
 def event():
@@ -22,6 +22,8 @@ def set_env(monkeypatch):
 
 def test_verify_auth_otp_code_success(mocker, event):
     """Test verify_auth_otp_code success."""
+    from src.adapters.primary.auth.verify_auth_otp_code import lambda_handler
+
     mocker.patch("src.adapters.primary.auth.verify_auth_otp_code.REGION_NAME", "fake-region")
     mocker.patch("src.adapters.primary.auth.verify_auth_otp_code.CLIENT_ID", "fake-client-id")
 
@@ -55,9 +57,11 @@ def test_verify_auth_otp_code_success(mocker, event):
 
 def test_verify_auth_otp_code_failed(mocker, event):
     """Test verify_auth_otp_code failed."""
+    from src.adapters.primary.auth.verify_auth_otp_code import lambda_handler
+
     mocker.patch("src.adapters.primary.auth.verify_auth_otp_code.REGION_NAME", "fake-region")
     mocker.patch("src.adapters.primary.auth.verify_auth_otp_code.CLIENT_ID", "fake-client-id")
-    
+
     mock_cognito_client = mocker.patch("src.adapters.primary.auth.verify_auth_otp_code.cognito_client")
     mock_cognito_client.respond_to_auth_challenge.return_value = {"Error": "error response"}
 
@@ -74,6 +78,8 @@ def test_verify_auth_otp_code_failed(mocker, event):
 
 def test_lambda_handler_client_error(mocker, event):
     """Test verify_auth_otp_code client error."""
+    from src.adapters.primary.auth.verify_auth_otp_code import lambda_handler
+
     mock_cognito_client = mocker.patch("src.adapters.primary.auth.verify_auth_otp_code.cognito_client")
     error_response = {"Error": {"Message": "User does not exist"}}
     mock_cognito_client.respond_to_auth_challenge.side_effect = ClientError(
@@ -88,6 +94,8 @@ def test_lambda_handler_client_error(mocker, event):
 
 def test_lambda_handler_unexpected_error(mocker, event):
     """Test verify_auth_otp_code unexpected error."""
+    from src.adapters.primary.auth.verify_auth_otp_code import lambda_handler
+    
     mock_cognito_client = mocker.patch("src.adapters.primary.auth.verify_auth_otp_code.cognito_client")
     mock_cognito_client.respond_to_auth_challenge.side_effect = Exception("Unexpected error")
 

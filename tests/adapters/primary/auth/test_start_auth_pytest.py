@@ -3,7 +3,6 @@
 import json
 import pytest
 from botocore.exceptions import ClientError
-from src.adapters.primary.auth.start_auth import lambda_handler
 
 
 @pytest.fixture
@@ -18,11 +17,11 @@ def event():
 
 def test_start_auth_success(mocker, event):
     """Test start_auth success."""
-    # Mock environment variables
+    from src.adapters.primary.auth.start_auth import lambda_handler
+
     mocker.patch("src.adapters.primary.auth.start_auth.REGION_NAME", "fake-region")
     mocker.patch("src.adapters.primary.auth.start_auth.CLIENT_ID", "fake-client-id")
 
-    # Mock the Cognito client
     mock_cognito_client = mocker.patch("src.adapters.primary.auth.start_auth.cognito_client")
     mock_cognito_client.initiate_auth.return_value = {"Session": "fake-session-token"}
 
@@ -38,11 +37,11 @@ def test_start_auth_success(mocker, event):
 
 def test_lambda_handler_client_error(mocker, event):
     """Test start_auth client error."""
-    # Mock environment variables
+    from src.adapters.primary.auth.start_auth import lambda_handler
+
     mocker.patch("src.adapters.primary.auth.start_auth.REGION_NAME", "fake-region")
     mocker.patch("src.adapters.primary.auth.start_auth.CLIENT_ID", "fake-client-id")
 
-    # Mock the Cognito client
     mock_cognito_client = mocker.patch("src.adapters.primary.auth.start_auth.cognito_client")
     error_response = {
         "Error": {"Code": "UserNotFoundException", "Message": "User does not exist"},
@@ -65,11 +64,11 @@ def test_lambda_handler_client_error(mocker, event):
 
 def test_lambda_handler_unexpected_error(mocker, event):
     """Test start_auth unexpected error."""
-    # Mock environment variables
+    from src.adapters.primary.auth.start_auth import lambda_handler
+
     mocker.patch("src.adapters.primary.auth.start_auth.REGION_NAME", "fake-region")
     mocker.patch("src.adapters.primary.auth.start_auth.CLIENT_ID", "fake-client-id")
 
-    # Mock the Cognito client
     mock_cognito_client = mocker.patch("src.adapters.primary.auth.start_auth.cognito_client")
     mock_cognito_client.initiate_auth.side_effect = Exception("Unexpected error")
 
