@@ -1,12 +1,13 @@
 """ this module is responsible for starting the authentication passwordless process """
 
 import json
-import os
 
 import boto3
 from botocore.exceptions import ClientError
 
-cognito_client = boto3.client("cognito-idp", region_name="us-east-1")
+from src.constants.index import CLIENT_ID, REGION_NAME
+
+cognito_client = boto3.client("cognito-idp", region_name=REGION_NAME)
 
 
 def lambda_handler(event, context):
@@ -15,7 +16,7 @@ def lambda_handler(event, context):
     """
     body = json.loads(event["body"])
     user_email = body["email"]
-    client_id = os.environ["COGNITO_CLIENT_ID"]
+    client_id = CLIENT_ID
     status_code = 400
     success = False
     body = {}
