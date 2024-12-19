@@ -8,8 +8,8 @@ def test_handler():
     response = handler(event, {})
 
     assert response["response"]["autoConfirmUser"]
-    assert not response["response"]["autoVerifyEmail"]
+    assert response["response"]["autoVerifyEmail"]
     assert response == {
         "request": {"userAttributes": {"username": "username", "email": "email"}},
-        "response": {"autoConfirmUser": True, "autoVerifyEmail": False},
+        "response": {"autoConfirmUser": True, "autoVerifyEmail": True},
     }
