@@ -35,13 +35,14 @@ resources:
     ApiGatewayAuthorizer:
       Type: AWS::ApiGateway::Authorizer
       Properties:
-        Name: cognitoAuth
+        AuthorizerResultTtlInSeconds: 300
+        IdentitySource: method.request.header.Authorization
+        Name: Cognito
         RestApiId:
-          Ref: ApiGatewayRestApi
+          Ref: dev-backend-proposal-v2
         Type: COGNITO_USER_POOLS
         ProviderARNs:
           - arn:aws:cognito-idp:us-east-1:961341535118:userpool/us-east-1_FTq2CGtIF
-        identitySource: method.request.header.Authorization
 
 functions:
 
@@ -146,9 +147,9 @@ functions:
           path: sign_out
           method: post
           authorizer:
-            name: cognitoAuth
             type: COGNITO_USER_POOLS
-            arn: arn:aws:cognito-idp:us-east-1:961341535118:userpool/us-east-1_FTq2CGtIF
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
           cors: true
           private: true
           response:
