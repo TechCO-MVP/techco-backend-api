@@ -32,6 +32,15 @@ resources:
   Resources:
     CognitoUserPool: ${file(./src/resources/auth/serverless.yml):CognitoUserPool}
     CognitoPasswordlessUserPoolClient: ${file(./src/resources/auth/serverless.yml):CognitoPasswordlessUserPoolClient}
+    ApiGatewayAuthorizer:
+      Type: AWS::ApiGateway::Authorizer
+      Properties:
+        Name: cognitoAuth
+        RestApiId:
+          Ref: ApiGatewayRestApi
+        Type: COGNITO_USER_POOLS
+        ProviderARNs:
+          - arn:aws:cognito-idp:us-east-1:961341535118:userpool/us-east-1_FTq2CGtIF
 
 functions:
 
@@ -111,6 +120,7 @@ functions:
               Content-Type: "'application/json'"
     environment:
       ENV: ${self:provider.stage}
+
   verify_auth_otp_code:
     handler: src/adapters/primary/auth/verify_auth_otp_code.lambda_handler
     events:
@@ -127,6 +137,27 @@ functions:
               Content-Type: "'application/json'"
     environment:
       ENV: ${self:provider.stage}
+
+  sign_out:
+    handler: src/adapters/primary/auth/sign_out.lambda_handler
+    events:
+      - http:
+          path: sign_out
+          method: post
+          authorizer:
+            name: cognitoAuth
+            type: COGNITO_USER_POOLS
+            arn: arn:aws:cognito-idp:us-east-1:961341535118:userpool/us-east-1_FTq2CGtIF
+          cors: true
+          private: true
+          request:
+            schemas:
+              application/json: ${file(src/adapters/primary/auth/schemas/sign_out.json)}
+          response:
+            headers:
+              Content-Type: "'application/json'"
+    environment:
+      ENV: ${self:provider.stage}
+
 plugins:
   - serverless-offline
-

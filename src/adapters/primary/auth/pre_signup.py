@@ -12,5 +12,5 @@ def handler(event, _):
     }
     """
     event["response"]["autoConfirmUser"] = True
-    event["response"]["autoVerifyEmail"] = False
+    event["response"]["autoVerifyEmail"] = True
     return event
