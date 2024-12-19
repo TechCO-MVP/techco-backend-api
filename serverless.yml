@@ -150,9 +150,6 @@ functions:
             arn: arn:aws:cognito-idp:us-east-1:961341535118:userpool/us-east-1_FTq2CGtIF
           cors: true
           private: true
-          request:
-            schemas:
-              application/json: ${file(src/adapters/primary/auth/schemas/sign_out.json)}
           response:
             headers:
               Content-Type: "'application/json'"
