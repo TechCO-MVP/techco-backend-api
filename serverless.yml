@@ -41,6 +41,7 @@ resources:
         Type: COGNITO_USER_POOLS
         ProviderARNs:
           - arn:aws:cognito-idp:us-east-1:961341535118:userpool/us-east-1_FTq2CGtIF
+        identitySource: method.request.header.Authorization
 
 functions:
 
