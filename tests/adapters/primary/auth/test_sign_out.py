@@ -2,7 +2,6 @@
 
 import json
 import pytest
-from src.adapters.primary.auth.sign_out import lambda_handler
 
 
 @pytest.fixture
@@ -16,6 +15,8 @@ def event():
 
 def test_finish_session_success(mocker, event):
     """Test successful user signout."""
+    from src.adapters.primary.auth.sign_out import lambda_handler
+    mocker.patch("src.adapters.primary.auth.sign_out.REGION_NAME", "fake-region")
     mock_cognito_client = mocker.patch("src.adapters.primary.auth.sign_out.cognito_client")
     mock_cognito_client.global_sign_out.return_value = {}
 
@@ -30,6 +31,8 @@ def test_finish_session_success(mocker, event):
 
 def test_finish_session_unauthorized_missing_header(mocker):
     """Test missing Authorization header."""
+    from src.adapters.primary.auth.sign_out import lambda_handler
+    mocker.patch("src.adapters.primary.auth.sign_out.REGION_NAME", "fake-region")
     event = {"httpMethod": "POST", "headers": {}}
     response = lambda_handler(event, {})
 
@@ -39,6 +42,8 @@ def test_finish_session_unauthorized_missing_header(mocker):
 
 def test_finish_session_unauthorized_invalid_header(mocker):
     """Test invalid Authorization header."""
+    from src.adapters.primary.auth.sign_out import lambda_handler
+    mocker.patch("src.adapters.primary.auth.sign_out.REGION_NAME", "fake-region")
     event = {"httpMethod": "POST", "headers": {"Authorization": "InvalidHeader"}}
     response = lambda_handler(event, {})
 
@@ -48,6 +53,8 @@ def test_finish_session_unauthorized_invalid_header(mocker):
 
 def test_finish_session_not_authorized_exception(mocker, event):
     """Test Cognito NotAuthorizedException."""
+    from src.adapters.primary.auth.sign_out import lambda_handler
+    mocker.patch("src.adapters.primary.auth.sign_out.REGION_NAME", "fake-region")
     mock_cognito_client = mocker.patch("src.adapters.primary.auth.sign_out.cognito_client")
 
     class NotAuthorizedException(Exception):
