@@ -38,8 +38,7 @@ resources:
         AuthorizerResultTtlInSeconds: 300
         IdentitySource: method.request.header.Authorization
         Name: Cognito
-        RestApiId:
-          Ref: dev-backend-proposal-v2
+        RestApiId: 7lky1a5e92
         Type: COGNITO_USER_POOLS
         ProviderARNs:
           - arn:aws:cognito-idp:us-east-1:961341535118:userpool/us-east-1_FTq2CGtIF
