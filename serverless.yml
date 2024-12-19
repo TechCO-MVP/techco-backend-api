@@ -24,6 +24,10 @@ provider:
           Action:
             - ses:sendEmail
           Resource: "*"
+        - Effect: Allow
+          Action:
+            - cognito-idp:GlobalSignOut
+          Resource: "*"
 
 custom:
   userPoolName: ${self:provider.stage}-passwordless-user-pool
