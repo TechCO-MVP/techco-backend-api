@@ -5,11 +5,12 @@ def test_handler_is_incorrect_answer():
         "request": {
             "privateChallengeParameters": {"secretLoginCode": "123456"},
             "challengeAnswer": "123457",
-        }
+        },
+        "response": {}
     }
-    response = handler(event)
+    response = handler(event, None)
 
-    assert not response
+    assert not response["response"]["answerCorrect"]
 
 
 def test_handler_is_correct_answer():
@@ -19,8 +20,9 @@ def test_handler_is_correct_answer():
         "request": {
             "privateChallengeParameters": {"secretLoginCode": "123456"},
             "challengeAnswer": "123456",
-        }
+        },
+        "response": {},
     }
-    response = handler(event)
+    response = handler(event, None)
 
-    assert response
+    assert response["response"]["answerCorrect"]
