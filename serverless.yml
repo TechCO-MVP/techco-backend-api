@@ -155,6 +155,9 @@ functions:
               Ref: ApiGatewayAuthorizer
           cors: true
           private: true
+          request:
+            schemas:
+              application/json: ${file(src/adapters/primary/auth/schemas/sign_out.json)}
           response:
             headers:
               Content-Type: "'application/json'"
