@@ -4,7 +4,7 @@ import json
 import boto3
 
 from aws_lambda_powertools import Logger
-from aws_lambda_powertools.event_handler import APIGatewayRestResolver
+from aws_lambda_powertools.event_handler import APIGatewayRestResolver, Response
 from aws_lambda_powertools.utilities.typing import LambdaContext
 
 from src.constants.index import REGION_NAME
@@ -26,7 +26,6 @@ def sign_out():
     auth_header = headers.get("Authorization", "")
     status_code = 401
     body = {}
-    success = False
 
     # if not auth_header.startswith("Bearer "):
     #     status_code = 401
@@ -39,14 +38,19 @@ def sign_out():
         cognito_client.global_sign_out(AccessToken=auth_header)
         status_code = 200
         body["message"] = "User successfully signed out."
-        success = True
 
     except cognito_client.exceptions.NotAuthorizedException:
         status_code = 401
         body["message"] = "Unauthorized: Invalid or expired token."
 
+    except Exception:
+        logger.exception("An error occurred")
+        status_code = 500
+        body["message"] = "An error occurred"
+
     finally:
-        return {"statusCode": status_code, "body": json.dumps(body), "success": success}
+        print("-----------> body", body)
+        return Response(status_code, content_type="application/json", body=body)
 
 
 @logger.inject_lambda_context
