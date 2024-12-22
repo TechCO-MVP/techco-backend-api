@@ -38,3 +38,16 @@ CognitoPasswordlessUserPoolClient:
       - CUSTOM_AUTH_FLOW_ONLY
     SupportedIdentityProviders:
       - COGNITO
+
+
+ApiGatewayAuthorizer:
+  Type: AWS::ApiGateway::Authorizer
+  Properties:
+    AuthorizerResultTtlInSeconds: 300
+    IdentitySource: method.request.header.Authorization
+    Name: CustomCognitoAuthorizer
+    RestApiId:
+      Ref: ApiGatewayRestApi
+    Type: COGNITO_USER_POOLS
+    ProviderARNs:
+      - !GetAtt CognitoUserPool.Arn

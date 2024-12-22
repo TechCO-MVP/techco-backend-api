@@ -1,5 +1,5 @@
 service: backend-proposal-v2
-frameworkVersion: '3'
+frameworkVersion: "3"
 configValidationMode: error
 
 provider:
@@ -13,6 +13,10 @@ provider:
     REGION_NAME: ${self:provider.region}
     COGNITO_USER_POOL_ID: !Ref CognitoUserPool
     COGNITO_USER_POOL_CLIENT_ID: !Ref CognitoPasswordlessUserPoolClient
+
+  logs:
+    restApi: true
+
   iam:
     role:
       statements:
@@ -32,19 +36,33 @@ resources:
   Resources:
     CognitoUserPool: ${file(./src/resources/auth/serverless.yml):CognitoUserPool}
     CognitoPasswordlessUserPoolClient: ${file(./src/resources/auth/serverless.yml):CognitoPasswordlessUserPoolClient}
-    ApiGatewayAuthorizer:
-      Type: AWS::ApiGateway::Authorizer
+    ApiGatewayAuthorizer: ${file(./src/resources/auth/serverless.yml):ApiGatewayAuthorizer}
+    serverlessApiGatewayCloudWatchRole:
+      Type: AWS::IAM::Role
       Properties:
-        AuthorizerResultTtlInSeconds: 300
-        IdentitySource: method.request.header.Authorization
-        Name: Cognito
-        RestApiId: 7lky1a5e92
-        Type: COGNITO_USER_POOLS
-        ProviderARNs:
-          - arn:aws:cognito-idp:us-east-1:961341535118:userpool/us-east-1_FTq2CGtIF
+        RoleName: serverlessApiGatewayCloudWatchRole
+        AssumeRolePolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service: apigateway.amazonaws.com
+              Action: sts:AssumeRole
+        Policies:
+          - PolicyName: ApiGatewayCloudWatchLogsPolicy
+            PolicyDocument:
+              Version: "2012-10-17"
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - logs:CreateLogGroup
+                    - logs:CreateLogStream
+                    - logs:DescribeLogGroups
+                    - logs:DescribeLogStreams
+                    - logs:PutLogEvents
+                  Resource: "*"
 
 functions:
-
   define_auth_challenge:
     handler: src/adapters/primary/auth/define_auth_challenge.handler
     events:
@@ -109,7 +127,7 @@ functions:
     handler: src/adapters/primary/auth/start_auth.lambda_handler
     events:
       - http:
-          path: start_auth
+          path: /auth/start_auth
           method: post
           cors: true
           private: true
@@ -126,7 +144,7 @@ functions:
     handler: src/adapters/primary/auth/verify_auth_otp_code.lambda_handler
     events:
       - http:
-          path: verify_auth_otp_code
+          path: /auth/verify_auth_otp_code
           method: post
           cors: true
           private: true
@@ -143,7 +161,7 @@ functions:
     handler: src/adapters/primary/auth/sign_out.lambda_handler
     events:
       - http:
-          path: sign_out
+          path: /auth/sign_out
           method: post
           authorizer:
             type: COGNITO_USER_POOLS
