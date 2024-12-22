@@ -1,6 +1,5 @@
 """ this module is responsible for finish session for user """
 
-import json
 import boto3
 
 from aws_lambda_powertools import Logger
