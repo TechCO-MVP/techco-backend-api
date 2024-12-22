@@ -9,7 +9,7 @@ from unittest.mock import MagicMock
 def event():
     """Fixture for the input event."""
     return {
-        "path": "/auth/signout",
+        "path": "/auth/sign_out",
         "httpMethod": "POST",
         "headers": {"Authorization": "fake-access-token"},
         "body": json.dumps({"access_token": "fake-access-token"}),
@@ -47,7 +47,7 @@ def test_finish_session_unauthorized_missing_access_token(mocker, lambda_context
     from src.adapters.primary.auth.sign_out import lambda_handler
 
     mocker.patch("src.adapters.primary.auth.sign_out.REGION_NAME", "fake-region")
-    event = {"path": "/auth/signout", "httpMethod": "POST", "headers": {}, "body": "{}"}
+    event = {"path": "/auth/sign_out", "httpMethod": "POST", "headers": {}, "body": "{}"}
     response = lambda_handler(event, lambda_context)
 
     assert response["statusCode"] == 500

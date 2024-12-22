@@ -1,6 +1,5 @@
 """ this module is responsible for finish session for user """
 
-import json
 import boto3
 
 from aws_lambda_powertools import Logger
@@ -15,7 +14,7 @@ logger = Logger()
 app = APIGatewayRestResolver()
 
 
-@app.post("/auth/signout")
+@app.post("/auth/sign_out")
 def sign_out():
     """send request to cognito to signout the user"""
     logger.info("Signing out user")
