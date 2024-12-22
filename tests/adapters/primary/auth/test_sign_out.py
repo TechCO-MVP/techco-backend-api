@@ -48,7 +48,6 @@ def test_finish_session_unauthorized_missing_header(mocker, lambda_context):
     mocker.patch("src.adapters.primary.auth.sign_out.REGION_NAME", "fake-region")
     event = {"path": "/auth/signout", "httpMethod": "POST", "headers": {}}
     response = lambda_handler(event, lambda_context)
-    print("----------------------", response)
 
     assert response["statusCode"] == 500
     assert json.loads(response["body"])["message"] == "An error occurred"
