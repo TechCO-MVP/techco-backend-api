@@ -19,27 +19,19 @@ app = APIGatewayRestResolver()
 def sign_out():
     """send request to cognito to signout the user"""
     logger.info("Signing out user")
-    logger.info(app.current_event)
-    logger.info(app.current_event.headers)
-
-    headers = app.current_event.headers or {}
-    auth_header = headers.get("Authorization", "")
     status_code = 401
     body = {}
 
-    # if not auth_header.startswith("Bearer "):
-    #     status_code = 401
-    #     body["message"] = "Unauthorized: Missing or invalid Authorization header"
-    #     return {"statusCode": status_code, "body": json.dumps(body), "success": success}
-
-    # access_token = auth_header.split(" ")[1]
+    json_body = app.current_event.json_body
+    access_token = json_body.get("access_token")
 
     try:
-        cognito_client.global_sign_out(AccessToken=auth_header)
+        cognito_client.global_sign_out(AccessToken=access_token)
         status_code = 200
         body["message"] = "User successfully signed out."
 
-    except cognito_client.exceptions.NotAuthorizedException:
+    except cognito_client.exceptions.NotAuthorizedException as e:
+        logger.info(e)
         status_code = 401
         body["message"] = "Unauthorized: Invalid or expired token."
 
@@ -49,7 +41,6 @@ def sign_out():
         body["message"] = "An error occurred"
 
     finally:
-        print("-----------> body", body)
         return Response(status_code, content_type="application/json", body=body)
 
 
