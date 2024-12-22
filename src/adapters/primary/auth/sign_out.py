@@ -22,8 +22,8 @@ def sign_out():
     status_code = 401
     body = {}
 
-    body = app.current_event.json_body
-    access_token = body.get("access_token")
+    json_body = app.current_event.json_body
+    access_token = json_body.get("access_token")
 
     try:
         cognito_client.global_sign_out(AccessToken=access_token)

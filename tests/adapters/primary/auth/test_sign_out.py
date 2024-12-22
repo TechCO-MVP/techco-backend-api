@@ -12,6 +12,7 @@ def event():
         "path": "/auth/signout",
         "httpMethod": "POST",
         "headers": {"Authorization": "fake-access-token"},
+        "body": json.dumps({"access_token": "fake-access-token"}),
     }
 
 
@@ -41,28 +42,23 @@ def test_finish_session_success(mocker, event, lambda_context):
     assert json.loads(response["body"])["message"] == "User successfully signed out."
 
 
-def test_finish_session_unauthorized_missing_header(mocker, lambda_context):
+def test_finish_session_unauthorized_missing_access_token(mocker, lambda_context):
     """Test missing Authorization header."""
     from src.adapters.primary.auth.sign_out import lambda_handler
 
     mocker.patch("src.adapters.primary.auth.sign_out.REGION_NAME", "fake-region")
-    event = {"path": "/auth/signout", "httpMethod": "POST", "headers": {}}
+    event = {"path": "/auth/signout", "httpMethod": "POST", "headers": {}, "body": "{}"}
     response = lambda_handler(event, lambda_context)
 
     assert response["statusCode"] == 500
     assert json.loads(response["body"])["message"] == "An error occurred"
 
 
-def test_finish_session_unauthorized_invalid_header(mocker, lambda_context):
+def test_finish_session_unauthorized_invalid_access_token(mocker, event, lambda_context):
     """Test invalid Authorization header."""
     from src.adapters.primary.auth.sign_out import lambda_handler
 
     mocker.patch("src.adapters.primary.auth.sign_out.REGION_NAME", "fake-region")
-    event = {
-        "path": "/auth/signout",
-        "httpMethod": "POST",
-        "headers": {"Authorization": "InvalidHeader"},
-    }
     response = lambda_handler(event, lambda_context)
 
     assert response["statusCode"] == 401
