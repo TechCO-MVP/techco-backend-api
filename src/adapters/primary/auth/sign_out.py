@@ -15,7 +15,7 @@ logger = Logger()
 app = APIGatewayRestResolver()
 
 
-@app.post("/auth/signout")
+@app.post("/auth/sign_out")
 def sign_out():
     """send request to cognito to signout the user"""
     logger.info("Signing out user")
