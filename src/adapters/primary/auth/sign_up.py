@@ -38,7 +38,7 @@ def sign_up():
             status_code=200,
             body={
                 "message": "User signed up successfully",
-                "data": result,
+                "body": result,
             },
             content_type=content_types.APPLICATION_JSON,
         )
