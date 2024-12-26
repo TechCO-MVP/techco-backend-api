@@ -3,7 +3,7 @@
 import boto3
 
 from aws_lambda_powertools import Logger
-from aws_lambda_powertools.event_handler import APIGatewayRestResolver, Response
+from aws_lambda_powertools.event_handler import APIGatewayRestResolver, Response, content_types
 from aws_lambda_powertools.utilities.typing import LambdaContext
 
 from src.constants.index import REGION_NAME
@@ -40,7 +40,7 @@ def sign_out():
         body["message"] = "An error occurred"
 
     finally:
-        return Response(status_code, content_type="application/json", body=body)
+        return Response(status_code, body=body, content_type=content_types.APPLICATION_JSON)
 
 
 @logger.inject_lambda_context

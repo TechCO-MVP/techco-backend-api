@@ -1,20 +1,26 @@
 """ this module is responsible for veryfy otp code for the authentication passwordless process """
 
-import json
-
 import boto3
 from botocore.exceptions import ClientError
+
+from aws_lambda_powertools import Logger
+from aws_lambda_powertools.event_handler import APIGatewayRestResolver, Response, content_types
+from aws_lambda_powertools.utilities.typing import LambdaContext
 
 from src.constants.index import CLIENT_ID, REGION_NAME
 
 cognito_client = boto3.client("cognito-idp", region_name=REGION_NAME)
 
+logger = Logger()
+app = APIGatewayRestResolver()
 
-def lambda_handler(event, context):
+
+@app.post("/auth/verify_auth_otp_code")
+def verify_auth_otp_code():
     """
     send request to cognito to verify the otp code authentication process
     """
-    body = json.loads(event["body"])
+    body = app.current_event.json_body
     user_email = body["email"]
     otp_code = body["otp"]
     session = body["session"]
@@ -49,4 +55,18 @@ def lambda_handler(event, context):
         body = {"error": f"Unexpected error: {str(e)}"}
 
     finally:
-        return {"statusCode": status_code, "body": json.dumps(body)}
+        return Response(status_code, body=body, content_type=content_types.APPLICATION_JSON)
+
+
+@logger.inject_lambda_context
+def lambda_handler(event, context: LambdaContext) -> dict:
+    """
+    Handler function
+    event: The event object, described like:
+    {
+        "httpMethod": "POST",
+        "headers": {"Content-Type": "application/json"},
+        "body": {"email": "test", "otp": "123456", "session": "session"}
+    }
+    """
+    return app.resolve(event, context)

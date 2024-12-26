@@ -1,7 +1,7 @@
 import boto3
 
 from aws_lambda_powertools import Logger
-from aws_lambda_powertools.event_handler import APIGatewayRestResolver
+from aws_lambda_powertools.event_handler import APIGatewayRestResolver, Response, content_types
 from aws_lambda_powertools.utilities.typing import LambdaContext
 
 from src.constants.index import CLIENT_ID
@@ -28,29 +28,34 @@ def sign_up():
         )
 
         if result.get("ResponseMetadata").get("HTTPStatusCode") != 200:
-            return {
-                "statusCode": 400,
-                "body": {"message": "User sign up failed"},
-            }
+            return Response(
+                status_code=400,
+                body={"message": "User sign up failed"},
+                content_type=content_types.APPLICATION_JSON,
+            )
 
-        return {
-            "statusCode": 200,
-            "body": {
+        return Response(
+            status_code=200,
+            body={
                 "message": "User signed up successfully",
                 "data": result,
             },
-        }
+            content_type=content_types.APPLICATION_JSON,
+        )
+
     except cognito_client.exceptions.UsernameExistsException:
-        return {
-            "statusCode": 400,
-            "body": {"message": "User already exists"},
-        }
+        return Response(
+            status_code=400,
+            body={"message": "User already exists"},
+            content_type=content_types.APPLICATION_JSON,
+        )
     except Exception:
         logger.exception("An error occurred")
-        return {
-            "statusCode": 500,
-            "body": {"message": "An error occurred"},
-        }
+        return Response(
+            status_code=500,
+            body={"message": "An error occurred"},
+            content_type=content_types.APPLICATION_JSON,
+        )
 
 
 @logger.inject_lambda_context

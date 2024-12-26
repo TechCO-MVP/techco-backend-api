@@ -26,7 +26,7 @@ def lambda_handler(event, context):
         )
         session = response["Session"]
         status_code = 200
-        body = {"message": "OTP sent successfully.", "session": session}
+        body = {"message": "OTP sent successfully.", "body": {"session": session}}
 
     except ClientError as e:
         error_message = e.response["Error"]["Message"]
