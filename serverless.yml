@@ -109,17 +109,19 @@ functions:
     environment:
       ENV: ${self:provider.stage}
 
-  create_organization:
-    handler: src/adapters/primary/create_organization/index.handler
+  create_business:
+    handler: src/adapters/primary/create_business/index.handler
     events:
       - http:
-          path: /organizations/create
+          path: /business/create
           method: post
           cors: true
           private: true
-          response:
-            headers:
-              Content-Type: "'application/json'"
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+
     environment:
       ENV: ${self:provider.stage}
 

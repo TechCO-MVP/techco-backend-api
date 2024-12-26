@@ -1,6 +1,6 @@
 import json
 
-from src.adapters.primary.create_organization.index import handler
+from src.adapters.primary.create_business.index import handler
 
 
 def test_create_organization_handler():
