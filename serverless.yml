@@ -7,6 +7,13 @@ provider:
   runtime: python3.11
   stage: dev
   region: us-east-1
+  timeout: 30
+  vpc:
+    securityGroupIds:
+      - !Ref LambdaSecurityGroup
+    subnetIds:
+      - !Ref PrivateSubnet1
+      - !Ref PrivateSubnet2
   layers:
     - arn:aws:lambda:${aws:region}:017000801446:layer:AWSLambdaPowertoolsPythonV3-python311-x86_64:3
   environment:
@@ -37,6 +44,34 @@ resources:
     CognitoUserPool: ${file(./src/resources/auth/serverless.yml):CognitoUserPool}
     CognitoPasswordlessUserPoolClient: ${file(./src/resources/auth/serverless.yml):CognitoPasswordlessUserPoolClient}
     ApiGatewayAuthorizer: ${file(./src/resources/auth/serverless.yml):ApiGatewayAuthorizer}
+    VPC: ${file(./src/resources/db/serverless.yml):VPC}
+    InternetGateway: ${file(./src/resources/db/serverless.yml):InternetGateway}
+    VPCGatewayAttachment: ${file(./src/resources/db/serverless.yml):VPCGatewayAttachment}
+    PublicSubnet1: ${file(./src/resources/db/serverless.yml):PublicSubnet1}
+    PublicSubnet2: ${file(./src/resources/db/serverless.yml):PublicSubnet2}
+    PublicRouteTable: ${file(./src/resources/db/serverless.yml):PublicRouteTable}
+    PublicRoute: ${file(./src/resources/db/serverless.yml):PublicRoute}
+    PublicSubnetRouteTableAssociation1: ${file(./src/resources/db/serverless.yml):PublicSubnetRouteTableAssociation1}
+    PublicSubnetRouteTableAssociation2: ${file(./src/resources/db/serverless.yml):PublicSubnetRouteTableAssociation2}
+    PrivateSubnet1: ${file(./src/resources/db/serverless.yml):PrivateSubnet1}
+    PrivateSubnet2: ${file(./src/resources/db/serverless.yml):PrivateSubnet2}
+    NATGateway1: ${file(./src/resources/db/serverless.yml):NATGateway1}
+    EIP1: ${file(./src/resources/db/serverless.yml):EIP1}
+    NATGateway2: ${file(./src/resources/db/serverless.yml):NATGateway2}
+    EIP2: ${file(./src/resources/db/serverless.yml):EIP2}
+    PrivateRouteTable1: ${file(./src/resources/db/serverless.yml):PrivateRouteTable1}
+    PrivateRoute1: ${file(./src/resources/db/serverless.yml):PrivateRoute1}
+    PrivateRouteTableAssociation1: ${file(./src/resources/db/serverless.yml):PrivateRouteTableAssociation1}
+    PrivateRouteTable2: ${file(./src/resources/db/serverless.yml):PrivateRouteTable2}
+    PrivateRoute2: ${file(./src/resources/db/serverless.yml):PrivateRoute2}
+    PrivateRouteTableAssociation2: ${file(./src/resources/db/serverless.yml):PrivateRouteTableAssociation2}
+    LambdaSecurityGroup: ${file(./src/resources/db/serverless.yml):LambdaSecurityGroup}
+    DocumentDBSecurityGroup: ${file(./src/resources/db/serverless.yml):DocumentDBSecurityGroup}
+    DocumentDBSubnetGroup: ${file(./src/resources/db/serverless.yml):DocumentDBSubnetGroup}
+    DocumentDBSecretPassword: ${file(./src/resources/db/serverless.yml):DocumentDBSecretPassword}
+    DocumentDBCluster: ${file(./src/resources/db/serverless.yml):DocumentDBCluster}
+    DocumentDBInstance: ${file(./src/resources/db/serverless.yml):DocumentDBInstance}
+
     serverlessApiGatewayCloudWatchRole:
       Type: AWS::IAM::Role
       Properties:
