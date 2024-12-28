@@ -1,9 +1,10 @@
 """Tests for the verify_auth_otp_code module."""
 
 import json
+from unittest.mock import MagicMock
+
 import pytest
 from botocore.exceptions import ClientError
-from unittest.mock import MagicMock
 
 
 @pytest.fixture
@@ -97,7 +98,16 @@ def test_lambda_handler_client_error(mocker, event, context):
     mock_cognito_client = mocker.patch(
         "src.adapters.primary.auth.verify_auth_otp_code.cognito_client"
     )
-    error_response = {"Error": {"Message": "User does not exist"}}
+    error_response = {
+        "Error": {"Code": "UserNotFoundException", "Message": "User does not exist"},
+        "ResponseMetadata": {
+            "RequestId": "string",
+            "HostId": "string",
+            "HTTPStatusCode": 400,
+            "HTTPHeaders": {"header-name": "header-value"},
+            "RetryAttempts": 0,
+        },
+    }
     mock_cognito_client.respond_to_auth_challenge.side_effect = ClientError(
         error_response, "InitiateAuth"
     )
