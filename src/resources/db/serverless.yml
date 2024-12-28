@@ -1,0 +1,247 @@
+service: passwordless-auth
+frameworkVersion: "3"
+
+provider:
+  name: aws
+
+VPC:
+  Type: "AWS::EC2::VPC"
+  Properties:
+    CidrBlock: "10.0.0.0/16"
+    EnableDnsSupport: "true"
+    EnableDnsHostnames: "true"
+    Tags:
+      - Key: Name
+        Value: vpc-serverless-${self:provider.stage}
+
+InternetGateway:
+  Type: "AWS::EC2::InternetGateway"
+  Properties:
+    Tags:
+      - Key: Name
+        Value: igw-serverless-${self:provider.stage}
+
+VPCGatewayAttachment:
+  Type: "AWS::EC2::VPCGatewayAttachment"
+  Properties:
+    VpcId:
+      Ref: VPC
+    InternetGatewayId:
+      Ref: InternetGateway
+
+PublicSubnet1:
+  Type: "AWS::EC2::Subnet"
+  Properties:
+    VpcId:
+      Ref: VPC
+    CidrBlock: "10.0.1.0/24"
+    MapPublicIpOnLaunch: true
+    AvailabilityZone: ${self:provider.region}a
+    Tags:
+      - Key: Name
+        Value: pb-subnet-serverless-${self:provider.stage}-1
+
+PublicSubnet2:
+  Type: "AWS::EC2::Subnet"
+  Properties:
+    VpcId:
+      Ref: VPC
+    CidrBlock: "10.0.2.0/24"
+    MapPublicIpOnLaunch: true
+    AvailabilityZone: ${self:provider.region}b
+    Tags:
+      - Key: Name
+        Value: pb-subnet-serverless-${self:provider.stage}-2
+
+PublicRouteTable:
+  Type: "AWS::EC2::RouteTable"
+  Properties:
+    VpcId:
+      Ref: VPC
+    Tags:
+      - Key: Name
+        Value: public-route-table-serverless-${self:provider.stage}
+
+PublicRoute:
+  Type: "AWS::EC2::Route"
+  Properties:
+    RouteTableId:
+      Ref: PublicRouteTable
+    DestinationCidrBlock: "0.0.0.0/0"
+    GatewayId:
+      Ref: InternetGateway
+
+PublicSubnetRouteTableAssociation1:
+  Type: "AWS::EC2::SubnetRouteTableAssociation"
+  Properties:
+    SubnetId:
+      Ref: PublicSubnet1
+    RouteTableId:
+      Ref: PublicRouteTable
+
+PublicSubnetRouteTableAssociation2:
+  Type: "AWS::EC2::SubnetRouteTableAssociation"
+  Properties:
+    SubnetId:
+      Ref: PublicSubnet2
+    RouteTableId:
+      Ref: PublicRouteTable
+
+PrivateSubnet1:
+  Type: "AWS::EC2::Subnet"
+  Properties:
+    VpcId:
+      Ref: VPC
+    CidrBlock: "10.0.3.0/24"
+    AvailabilityZone: ${self:provider.region}a
+    Tags:
+      - Key: Name
+        Value: pv-subnet-serverless-${self:provider.stage}-1
+
+PrivateSubnet2:
+  Type: "AWS::EC2::Subnet"
+  Properties:
+    VpcId:
+      Ref: VPC
+    CidrBlock: "10.0.4.0/24"
+    AvailabilityZone: ${self:provider.region}b
+    Tags:
+      - Key: Name
+        Value: pv-subnet-serverless-${self:provider.stage}-2
+
+NATGateway1:
+  Type: "AWS::EC2::NatGateway"
+  Properties:
+    AllocationId: !GetAtt EIP1.AllocationId
+    SubnetId:
+      Ref: PublicSubnet1
+
+EIP1:
+  Type: "AWS::EC2::EIP"
+  Properties:
+    Domain: "vpc"
+
+NATGateway2:
+  Type: "AWS::EC2::NatGateway"
+  Properties:
+    AllocationId: !GetAtt EIP2.AllocationId
+    SubnetId:
+      Ref: PublicSubnet2
+
+EIP2:
+  Type: "AWS::EC2::EIP"
+  Properties:
+    Domain: "vpc"
+
+PrivateRouteTable1:
+  Type: "AWS::EC2::RouteTable"
+  Properties:
+    VpcId:
+      Ref: VPC
+    Tags:
+      - Key: Name
+        Value: route-table-serverless-${self:provider.stage}-1
+
+PrivateRoute1:
+  Type: "AWS::EC2::Route"
+  Properties:
+    RouteTableId:
+      Ref: PrivateRouteTable1
+    DestinationCidrBlock: "0.0.0.0/0"
+    NatGatewayId:
+      Ref: NATGateway1
+
+PrivateRouteTableAssociation1:
+  Type: "AWS::EC2::SubnetRouteTableAssociation"
+  Properties:
+    RouteTableId:
+      Ref: PrivateRouteTable1
+    SubnetId:
+      Ref: PrivateSubnet1
+
+PrivateRouteTable2:
+  Type: "AWS::EC2::RouteTable"
+  Properties:
+    VpcId:
+      Ref: VPC
+    Tags:
+      - Key: Name
+        Value: route-table-serverless-${self:provider.stage}-2
+
+PrivateRoute2:
+  Type: "AWS::EC2::Route"
+  Properties:
+    RouteTableId:
+      Ref: PrivateRouteTable2
+    DestinationCidrBlock: "0.0.0.0/0"
+    NatGatewayId:
+      Ref: NATGateway2
+
+PrivateRouteTableAssociation2:
+  Type: "AWS::EC2::SubnetRouteTableAssociation"
+  Properties:
+    RouteTableId:
+      Ref: PrivateRouteTable2
+    SubnetId:
+      Ref: PrivateSubnet2
+
+LambdaSecurityGroup:
+  Type: "AWS::EC2::SecurityGroup"
+  Properties:
+    GroupDescription: "Security group for Lambda functions"
+    VpcId:
+      Ref: VPC
+    SecurityGroupEgress:
+      - IpProtocol: "-1"
+        FromPort: "-1"
+        ToPort: "-1"
+        CidrIp: "0.0.0.0/0"
+
+DocumentDBSecurityGroup:
+  Type: "AWS::EC2::SecurityGroup"
+  Properties:
+    GroupDescription: "Security group for DocumentDB"
+    VpcId:
+      Ref: VPC
+    SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 27017
+        ToPort: 27017
+        SourceSecurityGroupId:
+          Ref: LambdaSecurityGroup
+
+DocumentDBSubnetGroup:
+  Type: "AWS::DocDB::DBSubnetGroup"
+  Properties:
+    DBSubnetGroupDescription: "Subnet group for DocumentDB"
+    SubnetIds:
+      - Ref: PrivateSubnet1
+      - Ref: PrivateSubnet2
+
+DocumentDBSecretPassword:
+  Type: "AWS::SecretsManager::Secret"
+  Properties:
+    Name: ${self:provider.stage}-documentdb-password
+    Description: "Password for DocumentDB"
+    GenerateSecretString:
+      ExcludeCharacters: '"@/\\'
+
+DocumentDBCluster:
+  Type: "AWS::DocDB::DBCluster"
+  Properties:
+    DBClusterIdentifier: ${self:provider.stage}-documentdb
+    StorageEncrypted: true
+    EngineVersion: "5.0.0"
+    MasterUsername: ${self:provider.stage}dbuser
+    MasterUserPassword: !Ref DocumentDBSecretPassword
+    DBSubnetGroupName:
+      Ref: DocumentDBSubnetGroup
+    VpcSecurityGroupIds:
+      - Ref: DocumentDBSecurityGroup
+
+DocumentDBInstance:
+  Type: "AWS::DocDB::DBInstance"
+  Properties:
+    DBClusterIdentifier:
+      Ref: DocumentDBCluster
+    DBInstanceClass: "db.t3.medium"
