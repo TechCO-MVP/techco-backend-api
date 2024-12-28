@@ -1,7 +1,6 @@
 """ this module is responsible for finish session for user """
 
 import boto3
-
 from aws_lambda_powertools import Logger
 from aws_lambda_powertools.event_handler import APIGatewayRestResolver, Response, content_types
 from aws_lambda_powertools.utilities.typing import LambdaContext

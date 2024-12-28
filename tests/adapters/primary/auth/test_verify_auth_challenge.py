@@ -6,7 +6,7 @@ def test_handler_is_incorrect_answer():
             "privateChallengeParameters": {"secretLoginCode": "123456"},
             "challengeAnswer": "123457",
         },
-        "response": {}
+        "response": {},
     }
     response = handler(event, None)
 

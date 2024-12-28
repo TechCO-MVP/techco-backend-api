@@ -1,11 +1,10 @@
 """ this module is responsible for veryfy otp code for the authentication passwordless process """
 
 import boto3
-from botocore.exceptions import ClientError
-
 from aws_lambda_powertools import Logger
 from aws_lambda_powertools.event_handler import APIGatewayRestResolver, Response, content_types
 from aws_lambda_powertools.utilities.typing import LambdaContext
+from botocore.exceptions import ClientError
 
 from src.constants.index import CLIENT_ID, REGION_NAME
 
