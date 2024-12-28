@@ -212,5 +212,18 @@ functions:
     environment:
       ENV: ${self:provider.stage}
 
+  create_user:
+    handler: src/adapters/primary/create_user/index.handler
+    events:
+      - http:
+          path: /user/create
+          method: post
+          cors: true
+          private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+
 plugins:
   - serverless-offline
