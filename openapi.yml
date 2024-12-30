@@ -12,7 +12,6 @@ servers:
     description: Staging server
 
 resources:
-  
 
 paths:
   /sign_up:
@@ -24,20 +23,130 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: "#/components/schemas/User"
       responses:
-        '201':
+        "201":
           description: User created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
-        '400':
+                $ref: "#/components/schemas/User"
+        "400":
           description: Bad request
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
+  /auth/signup:
+    post:
+      summary: Sign up a new user
+      description: Sign up a new user using Cognito.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        "200":
+          description: User signed up
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /business/create:
+    post:
+      summary: Create a new business
+      description: Create a new business entity.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Business"
+      responses:
+        "200":
+          description: Business created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  body:
+                    $ref: "#/components/schemas/Business"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /auth/start_auth:
+    post:
+      summary: Start authentication
+      description: Start the authentication process.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AuthStart"
+      responses:
+        "200":
+          description: Authentication started
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthStartResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /auth/verify_auth_otp_code:
+    post:
+      summary: Verify OTP code
+      description: Verify the OTP code for authentication.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VerifyOTP"
+      responses:
+        "200":
+          description: OTP verified
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VerifyOTPResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /auth/sign_out:
+    post:
+      summary: Sign out
+      description: Sign out the authenticated user.
+      responses:
+        "200":
+          description: User signed out
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
 
 components:
   schemas:
@@ -59,16 +168,53 @@ components:
               type: string
             address:
               type: string
+    Business:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        country_code:
+          type: string
+        company_size:
+          type: string
+        logo:
+          type: string
+        description:
+          type: string
+        url:
+          type: string
+          format: uri
+        linkedin_url:
+          type: string
+          format: uri
+    AuthStart:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+    AuthStartResponse:
+      type: object
+      properties:
+        session:
+          type: string
+    VerifyOTP:
+      type: object
+      properties:
+        session:
+          type: string
+        otp:
+          type: string
+    VerifyOTPResponse:
+      type: object
+      properties:
+        token:
+          type: string
     Error:
       type: object
       properties:
         message:
-          type: string
-        code:
-          type: integer
-        fields:
-          type: array
-          items:
-            type: string
-        stack:
           type: string
