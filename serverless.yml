@@ -25,7 +25,7 @@ provider:
     DOCUMENTDB_SECRET_NAME: ${self:resources.Resources.DocumentDBSecretPassword.Properties.Name}
     DOCUMENTDB_ENDPOINT: !GetAtt DocumentDBCluster.Endpoint
     DOCUMENTDB_PORT: 27017
-    DOCUMENTDB_DB_NAME: techco
+    DOCUMENTDB_DATABASE: techco
 
   logs:
     restApi: true
