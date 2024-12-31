@@ -16,10 +16,16 @@ provider:
       - !Ref PrivateSubnet2
   layers:
     - arn:aws:lambda:${aws:region}:017000801446:layer:AWSLambdaPowertoolsPythonV3-python311-x86_64:3
+    - arn:aws:lambda:us-east-1:770693421928:layer:Klayers-p311-pymongo:11
   environment:
     REGION_NAME: ${self:provider.region}
     COGNITO_USER_POOL_ID: !Ref CognitoUserPool
     COGNITO_USER_POOL_CLIENT_ID: !Ref CognitoPasswordlessUserPoolClient
+    DOCUMENTDB_USERNAME: ${self:resources.Resources.DocumentDBCluster.Properties.MasterUsername}
+    DOCUMENTDB_SECRET_NAME: ${self:resources.Resources.DocumentDBSecretPassword.Properties.Name}
+    DOCUMENTDB_ENDPOINT: !GetAtt DocumentDBCluster.Endpoint
+    DOCUMENTDB_PORT: 27017
+    DOCUMENTDB_DB_NAME: techco
 
   logs:
     restApi: true
@@ -35,6 +41,10 @@ provider:
           Action:
             - ses:sendEmail
           Resource: "*"
+        - Effect: Allow
+          Action:
+            - secretsmanager:GetSecretValue
+          Resource: !GetAtt DocumentDBSecretPassword.Arn
 
 custom:
   userPoolName: ${self:provider.stage}-passwordless-user-pool

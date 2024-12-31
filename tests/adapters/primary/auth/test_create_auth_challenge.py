@@ -2,7 +2,7 @@ import pytest
 from unittest.mock import patch
 
 
-@pytest.fixture()
+@pytest.fixture(autouse=True)
 def pre_config(monkeypatch):
     monkeypatch.setenv("REGION_NAME", "us-east-1")
     monkeypatch.setenv("COGNITO_USER_POOL_CLIENT_ID", "fake-client-id")
@@ -10,7 +10,7 @@ def pre_config(monkeypatch):
 
 @patch("src.adapters.primary.auth.create_auth_challenge.generate_secret_code")
 @patch("boto3.client")
-def test_handler(mock_boto_cient, generate_secret_code_mock, pre_config):
+def test_handler(mock_boto_cient, generate_secret_code_mock):
     from src.adapters.primary.auth.create_auth_challenge import handler
 
     generate_secret_code_mock.return_value = "123456"

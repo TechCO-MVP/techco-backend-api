@@ -9,7 +9,7 @@ T = TypeVar("T", bound=BaseModel)
 
 
 class BaseEntity(BaseModel, Generic[T]):
-    id: str = ""
+    id: str = Field(default="", alias="_id")
     created_at: datetime = Field(default_factory=datetime.now)
     updated_at: datetime = Field(default_factory=datetime.now)
     deleted_at: Union[datetime, None] = None
@@ -26,7 +26,7 @@ class BaseEntity(BaseModel, Generic[T]):
             return json.loads(self.model_dump_json())
 
         return {
-            "id": self.id,
+            "_id": self._id,
             "created_at": self.created_at,
             "updated_at": self.updated_at,
             "deleted_at": self.deleted_at,
