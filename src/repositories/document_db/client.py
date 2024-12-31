@@ -7,9 +7,6 @@ from pymongo.database import Database
 
 from src.constants.index import REGION_NAME
 
-BASE_PATH = os.path.dirname(os.path.abspath(__file__))
-CERT_PATH = os.path.join(BASE_PATH, "../certs/global-bundle.pem")
-
 logger = Logger()
 
 
@@ -19,7 +16,6 @@ def create_documentdb_client() -> Database:
     return: The documentdb client for the database
     """
     logger.info("Creating documentdb client")
-    logger.info("Getting certificate path from: %s", CERT_PATH)
 
     config = get_documentdb_config()
     username = config["username"]
@@ -29,10 +25,14 @@ def create_documentdb_client() -> Database:
     database_name = config["database_name"]
 
     uri = (
-        f"mongodb://{username}:{password}@{cluster_endpoint}:{cluster_port}/{database_name}"
-        "?ssl=true&retryWrites=false"
+        f"mongodb://{username}:{password}@{cluster_endpoint}:{cluster_port}/"
+        "?tls=true"
+        "&replicaSet=rs0"
+        "&readPreference=secondaryPreferred"
+        "&retryWrites=false"
+        "&authSource=admin"
     )
-    client = MongoClient(uri, tls=True, tlsCAFile=CERT_PATH)
+    client = MongoClient(uri, tls=True, tlsCAFile="./certs/global-bundle.pem")
 
     return client.get_database(database_name)
 
