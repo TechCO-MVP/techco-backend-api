@@ -26,7 +26,7 @@ class BaseEntity(BaseModel, Generic[T]):
             return json.loads(self.model_dump_json())
 
         return {
-            "_id": self._id,
+            "_id": self.id,
             "created_at": self.created_at,
             "updated_at": self.updated_at,
             "deleted_at": self.deleted_at,
