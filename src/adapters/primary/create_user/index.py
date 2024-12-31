@@ -11,26 +11,26 @@ logger = Logger()
 app = APIGatewayRestResolver()
 
 
-@app.post("/business/create")
-def create_business():
+@app.post("/user/create")
+def create_user():
     try:
 
-        # validate body is not empty
         body = app.current_event.json_body
         if not body:
             raise ValueError("Request body is empty")
 
         # create DTO (once create pydantic validates the data)
-        business_dto = UserDTO(**body)
+        user_dto = UserDTO(**body)
+        print(user_dto)
 
         # call use case to create business
-        business_entity = create_business_use_case(business_dto)
+        # business_entity = create_business_use_case(business_dto)
 
         return Response(
             status_code=200,
             body={
                 "message": "Business created successfully",
-                "body": business_entity.to_dto(),
+                # "body": business_entity.to_dto(),
             },
             content_type=content_types.APPLICATION_JSON,
         )
@@ -59,14 +59,16 @@ def create_business():
 @logger.inject_lambda_context
 def handler(event: dict, context: LambdaContext) -> dict:
     """
-    Handler function for creating a business
+    Handler function for creating a user
     request: The request object, described like:
     {
         "body": {
-            "name": "string",
-            "segment": "string",
-            "country_code": "string",
-            "size": "string"
+            "business": "string",
+            "business_id": "string",
+            "full_name": "string",
+            "email": "string"
+            "company_position": "string"
+            "rol": "string"
         }
     }
     """
