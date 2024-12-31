@@ -111,6 +111,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+        "500":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exception"
   /auth/verify_auth_otp_code:
     post:
       summary: Verify OTP code
@@ -134,19 +140,41 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-  /auth/sign_out:
-    post:
-      summary: Sign out
-      description: Sign out the authenticated user.
-      responses:
-        "200":
-          description: User signed out
-        "400":
+        "500":
           description: Bad request
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: "#/components/schemas/Exception"
+  /auth/sign_out:
+    post:
+      summary: Sign out
+      description: Sign out the authenticated user.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignOut"
+      responses:
+        "200":
+          description: User signed out
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SignOutResponse"
+        "401":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SignOutError"
+        "500":
+          description: Exception response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exception"
 
 components:
   schemas:
@@ -190,6 +218,14 @@ components:
         linkedin_url:
           type: string
           format: uri
+        segment:
+          type: string
+        industry:
+          type: string
+      required:
+        - name
+        - country_code
+        - company_size
     AuthStart:
       type: object
       properties:
@@ -199,22 +235,67 @@ components:
     AuthStartResponse:
       type: object
       properties:
-        session:
+        message:
           type: string
+          example: OTP sent successfully.
+        body:
+          type: object
+          properties:
+            session:
+              example: example_session_string
     VerifyOTP:
       type: object
       properties:
+        email:
+          type: string
+          example: mail@mail.co.
         session:
           type: string
+          example: example_session_string
         otp:
           type: string
+          example: 123456
     VerifyOTPResponse:
       type: object
       properties:
-        token:
+        message:
           type: string
+          example: Successfully authenticated.
+        idToken:
+          type: string
+          example: fake_id_token.
+        accessToken:
+          type: string
+          example: fake access token.
+        refreshToken:
+          type: string
+          example: fale refresh token.
+    SignOut:
+      type: object
+      properties:
+        access_token:
+          type: string
+          example: fake access token.
+    SignOutResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: User successfully signed out.
+    SignOutError:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Unauthorized Invalid or expired token.
     Error:
       type: object
       properties:
         message:
           type: string
+    Exception:
+      type: object
+      properties:
+        error:
+          type: string
+          example: Unexpected error
