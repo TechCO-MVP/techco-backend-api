@@ -2,8 +2,6 @@ import json
 import pytest
 from unittest.mock import MagicMock
 
-from src.adapters.primary.create_business.index import handler
-
 
 @pytest.fixture
 def event():
@@ -27,7 +25,25 @@ def lambda_context():
     return context
 
 
+@pytest.fixture(autouse=True)
+def set_env(monkeypatch):
+    monkeypatch.setenv("REGION_NAME", "fake-region")
+    monkeypatch.setenv("CLIENT_ID", "fake-client-id")
+
+
+def test_create_business_value_error(event, lambda_context):
+    from src.adapters.primary.create_business.index import handler
+
+    response = handler(event, lambda_context)
+
+    assert response["statusCode"] == 400
+
+
 def test_create_business_validation_error(event, lambda_context):
+    from src.adapters.primary.create_business.index import handler
+
+    event["body"] = json.dumps({"name": "test"})
+
     response = handler(event, lambda_context)
 
     assert response["statusCode"] == 400

@@ -218,6 +218,14 @@ components:
         linkedin_url:
           type: string
           format: uri
+        segment:
+          type: string
+        industry:
+          type: string
+      required:
+        - name
+        - country_code
+        - company_size
     AuthStart:
       type: object
       properties:
