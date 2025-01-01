@@ -46,6 +46,12 @@ provider:
             - secretsmanager:GetSecretValue
           Resource:
             - !Ref DocumentDBSecretPassword
+        - Effect: Allow
+          Action:
+            - rds-db:connect
+            - rds:DescribeDBInstances
+          Resource:
+            - arn:aws:rds:us-east-1:961341535118:db:documentdbinstance-xsleqy2jx1aq
 
 custom:
   userPoolName: ${self:provider.stage}-passwordless-user-pool
