@@ -46,6 +46,12 @@ provider:
             - secretsmanager:GetSecretValue
           Resource:
             - !Ref DocumentDBSecretPassword
+        - Effect: Allow
+          Action:
+            - rds-db:connect
+            - rds:DescribeDBInstances
+          Resource:
+            - arn:aws:rds:us-east-1:961341535118:db:documentdbinstance-xsleqy2jx1aq
 
 custom:
   userPoolName: ${self:provider.stage}-passwordless-user-pool
@@ -222,6 +228,19 @@ functions:
               Content-Type: "'application/json'"
     environment:
       ENV: ${self:provider.stage}
+
+  create_user:
+    handler: src/adapters/primary/create_user/index.handler
+    events:
+      - http:
+          path: /user/create
+          method: post
+          cors: true
+          private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
 
 plugins:
   - serverless-offline

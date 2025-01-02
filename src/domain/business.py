@@ -1,7 +1,7 @@
 from enum import Enum
+from typing import Optional
 
 from pydantic import BaseModel
-from typing import Optional
 
 from src.domain.base_entity import BaseEntity
 
