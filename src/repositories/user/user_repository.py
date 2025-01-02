@@ -1,9 +1,11 @@
 import uuid
-from src.adapters.secondary.documentdb.user_db_adapter import DocumentDBAdapter
+
 from aws_lambda_powertools import Logger
 
+from src.adapters.secondary.documentdb.user_db_adapter import DocumentDBAdapter
 
 logger = Logger()
+
 
 class UserRepository:
     def __init__(self):
@@ -27,13 +29,8 @@ class UserRepository:
             logger.info("User successfully inserted with _id: %s", result.inserted_id)
 
             return {
-                "message": "User created successfully", 
-                "body": {
-                    "user": {
-                        "_id": str(result.inserted_id),
-                        "uuid": user_data["uuid"]
-                    }
-                }
+                "message": "User created successfully",
+                "body": {"user": {"_id": str(result.inserted_id), "uuid": user_data["uuid"]}},
             }
         except ValueError as ve:
             logger.error("Validation error while saving user: %s", ve)

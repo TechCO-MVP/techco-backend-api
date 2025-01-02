@@ -1,7 +1,6 @@
 from aws_lambda_powertools import Logger
 from aws_lambda_powertools.event_handler import APIGatewayRestResolver, Response, content_types
 from aws_lambda_powertools.utilities.typing import LambdaContext
-
 from pydantic import ValidationError
 
 from src.domain.user import UserDTO
@@ -33,7 +32,7 @@ def create_user():
         return Response(
             status_code=422, body={"message": str(e)}, content_type=content_types.APPLICATION_JSON
         )
-    
+
     except ValueError as e:
         logger.error(str(e))
         return Response(

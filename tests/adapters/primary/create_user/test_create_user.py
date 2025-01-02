@@ -1,8 +1,8 @@
 import json
-import pytest
 from unittest.mock import MagicMock
-from src.adapters.primary.create_user.index import handler
-from unittest.mock import patch
+
+import pytest
+
 
 @pytest.fixture
 def event():
@@ -11,14 +11,16 @@ def event():
         "path": "/user/create",
         "httpMethod": "POST",
         "headers": {"Authorization": "fake-access-token"},
-        "body": json.dumps({
-            "business": "company name",
-            "business_id": "12354",
-            "full_name": "completed name",
-            "email": "fakemail@mail.com",
-            "company_position": "admin",
-            "rol": "general"
-        }),
+        "body": json.dumps(
+            {
+                "business": "company name",
+                "business_id": "12354",
+                "full_name": "completed name",
+                "email": "fakemail@mail.com",
+                "company_position": "admin",
+                "rol": "general",
+            }
+        ),
     }
 
 
@@ -43,7 +45,7 @@ def set_env(monkeypatch):
 def test_create_user_value_error(event, lambda_context):
     """Test create user value error."""
     from src.adapters.primary.create_user.index import handler
-    
+
     event["body"] = json.dumps({})
     response = handler(event, lambda_context)
 
@@ -63,11 +65,14 @@ def test_create_user_validation_error(event, lambda_context):
 
     assert response["statusCode"] == 422
 
+
 def test_handler_general_exception(mocker, event, lambda_context):
     """Test handler for general exception."""
     from src.adapters.primary.create_user.index import handler
-    
-    mock_create_user_use_case = mocker.patch("src.adapters.primary.create_user.index.create_user_use_case")
+
+    mock_create_user_use_case = mocker.patch(
+        "src.adapters.primary.create_user.index.create_user_use_case"
+    )
     mock_create_user_use_case.side_effect = Exception("Unexpected error")
     response = handler(event, lambda_context)
 
@@ -75,13 +80,15 @@ def test_handler_general_exception(mocker, event, lambda_context):
     body = json.loads(response["body"])
     assert body["message"] == "An error occurred"
 
+
 def test_create_user(mocker, event, lambda_context):
-    """ Test create user."""
+    """Test create user."""
     from src.adapters.primary.create_user.index import handler
-    
-    mock_create_user_use_case = mocker.patch("src.adapters.primary.create_user.index.create_user_use_case")
-    mock_create_user_use_case.return_value = {
-        "message": "User created successfully"}
+
+    mock_create_user_use_case = mocker.patch(
+        "src.adapters.primary.create_user.index.create_user_use_case"
+    )
+    mock_create_user_use_case.return_value = {"message": "User created successfully"}
     response = handler(event, lambda_context)
 
     assert response["statusCode"] == 200

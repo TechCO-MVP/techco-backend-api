@@ -1,6 +1,6 @@
-from src.repositories.repository import IRepository
 from src.adapters.secondary.documentdb.business_db_adapter import BusinessDocumentDBAdapter
 from src.domain.business import BusinessEntity
+from src.repositories.repository import IRepository
 
 
 class BusinessRepository(IRepository[BusinessEntity]):

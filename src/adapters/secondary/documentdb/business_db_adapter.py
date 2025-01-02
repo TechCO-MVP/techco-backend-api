@@ -1,9 +1,9 @@
 from pymongo.database import Database
 
 from src.db.constants import BUSINESS_COLLECTION_NAME
+from src.domain.business import BusinessEntity
 from src.repositories.document_db.client import create_documentdb_client
 from src.repositories.repository import IRepository
-from src.domain.business import BusinessEntity
 
 
 class BusinessDocumentDBAdapter(IRepository[BusinessEntity]):

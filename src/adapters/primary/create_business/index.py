@@ -1,7 +1,6 @@
 from aws_lambda_powertools import Logger
 from aws_lambda_powertools.event_handler import APIGatewayRestResolver, Response, content_types
 from aws_lambda_powertools.utilities.typing import LambdaContext
-
 from pydantic import ValidationError
 
 from src.domain.business import BusinessDTO
