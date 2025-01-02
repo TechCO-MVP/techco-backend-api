@@ -4,7 +4,7 @@ from aws_lambda_powertools.utilities.typing import LambdaContext
 
 from pydantic import ValidationError
 
-from src.domain.user import UserDTO
+from src.domain.business import BusinessDTO
 from src.use_cases.business.create_business import create_business_use_case
 
 logger = Logger()
@@ -21,7 +21,7 @@ def create_business():
             raise ValueError("Request body is empty")
 
         # create DTO (once create pydantic validates the data)
-        business_dto = UserDTO(**body)
+        business_dto = BusinessDTO(**body)
 
         # call use case to create business
         business_entity = create_business_use_case(business_dto)

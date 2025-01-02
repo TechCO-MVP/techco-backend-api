@@ -5,7 +5,7 @@ from aws_lambda_powertools.utilities.typing import LambdaContext
 from pydantic import ValidationError
 
 from src.domain.user import UserDTO
-from src.use_cases.business.create_business import create_business_use_case
+from src.use_cases.user.create_user import create_user_use_case
 
 logger = Logger()
 app = APIGatewayRestResolver()
@@ -19,29 +19,22 @@ def create_user():
         if not body:
             raise ValueError("Request body is empty")
 
-        # create DTO (once create pydantic validates the data)
         user_dto = UserDTO(**body)
-        print(user_dto)
-
-        # call use case to create business
-        # business_entity = create_business_use_case(business_dto)
+        response = create_user_use_case(user_dto)
 
         return Response(
             status_code=200,
-            body={
-                "message": "Business created successfully",
-                # "body": business_entity.to_dto(),
-            },
+            body=response,
             content_type=content_types.APPLICATION_JSON,
         )
 
-    except ValueError as e:
+    except ValidationError as e:
         logger.error(str(e))
         return Response(
-            status_code=400, body={"message": str(e)}, content_type=content_types.APPLICATION_JSON
+            status_code=422, body={"message": str(e)}, content_type=content_types.APPLICATION_JSON
         )
-
-    except ValidationError as e:
+    
+    except ValueError as e:
         logger.error(str(e))
         return Response(
             status_code=400, body={"message": str(e)}, content_type=content_types.APPLICATION_JSON

@@ -1,15 +1,15 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
 
 from src.domain.base_entity import BaseEntity
 
 
 class UserDTO(BaseModel):
-    business: str
-    business_id: str
-    full_name: str
+    full_name: str = Field(..., pattern=r"^[a-zA-Z0-9 \s]+$")
     email: EmailStr
-    company_position: str
-    rol: str
+    company_position: str = Field(..., pattern=r"^[a-zA-Z0-9 \s]+$")
+    rol: str = Field(..., pattern=r"^[a-zA-Z0-9 \s]+$")
+    business: str = Field(..., pattern=r"^[a-zA-Z0-9 \s]+$")
+    business_id: str = Field(..., pattern=r"^[a-zA-Z0-9 ]+$")
 
 
 class UserEntity(BaseEntity[UserDTO]):
