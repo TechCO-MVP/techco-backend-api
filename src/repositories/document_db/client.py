@@ -5,7 +5,6 @@ from aws_lambda_powertools import Logger
 from pymongo import MongoClient
 from pymongo.database import Database
 
-# from src.constants.index import REGION_NAME
 
 logger = Logger()
 
