@@ -5,7 +5,7 @@ from aws_lambda_powertools import Logger
 from pymongo import MongoClient
 from pymongo.database import Database
 
-from src.constants.index import REGION_NAME
+# from src.constants.index import REGION_NAME
 
 logger = Logger()
 
@@ -59,7 +59,7 @@ def get_password_secret(secret_name: str) -> str:
     secret_name: The secret name
     """
     try:
-        client = boto3.client("secretsmanager", region_name=REGION_NAME)
+        client = boto3.client("secretsmanager", region_name=os.getenv("REGION_NAME"))
         response = client.get_secret_value(SecretId=secret_name)
 
         return response["SecretString"]

@@ -71,9 +71,8 @@ def test_save_user_existing_email(user_repository):
 def test_save_user_general_exception(user_repository):
     """Test para manejar excepciones generales durante la operación."""
     mock_collection = user_repository.collection
-
-    # Simular que ocurre una excepción durante la inserción
     mock_collection.find_one.return_value = None
+    # Simular que ocurre una excepción durante la inserción
     mock_collection.insert_one.side_effect = Exception("Mocked database error")
 
     user_data = {
