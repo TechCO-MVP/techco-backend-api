@@ -1,11 +1,12 @@
 from aws_lambda_powertools import Logger
+
 from src.adapters.secondary.documentdb.user_db_adapter import DocumentDBAdapter
 from src.db.constants import USER_COLLECTION_NAME
 
 logger = Logger()
 
 
-class UserRepository():
+class UserRepository:
     def __init__(self):
         self.adapter = DocumentDBAdapter()
         self.collection = self.adapter.get_collection(USER_COLLECTION_NAME)
@@ -13,7 +14,7 @@ class UserRepository():
 
     def save_user(self, user_data: dict) -> dict:
         """Save a user to the database."""
-  
+
         try:
             logger.info("Attempting to save user with email: %s", user_data["email"])
 

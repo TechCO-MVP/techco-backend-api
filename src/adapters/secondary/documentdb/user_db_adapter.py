@@ -1,6 +1,5 @@
-import os
-
 from aws_lambda_powertools import Logger
+
 from src.db.constants import USER_COLLECTION_NAME
 from src.repositories.document_db.client import create_documentdb_client as connect_to_db
 
