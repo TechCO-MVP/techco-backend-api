@@ -224,7 +224,8 @@ DocumentDBSecretPassword:
     Name: ${self:provider.stage}-documentdb-password
     Description: "Password for DocumentDB"
     GenerateSecretString:
-      ExcludeCharacters: '"@/\\'
+      ExcludeCharacters: "'@/\\!#$%&()*+,-.:;<=>?[]^_`{|}~"
+      ExcludePunctuation: true
 
 DocumentDBCluster:
   Type: "AWS::DocDB::DBCluster"
