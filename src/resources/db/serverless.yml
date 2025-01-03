@@ -197,6 +197,28 @@ LambdaSecurityGroup:
         ToPort: "-1"
         CidrIp: "0.0.0.0/0"
 
+EC2SecurityGroup:
+  Type: "AWS::EC2::SecurityGroup"
+  Properties:
+    GroupDescription: "Security group for EC2 instance to access DocumentDB"
+    VpcId:
+      Ref: VPC
+    SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 22
+        ToPort: 22
+        CidrIp: "0.0.0.0/0"
+      - IpProtocol: tcp
+        FromPort: 27017
+        ToPort: 27017
+        SourceSecurityGroupId:
+          Ref: LambdaSecurityGroup
+    SecurityGroupEgress:
+      - IpProtocol: "-1"
+        FromPort: "-1"
+        ToPort: "-1"
+        CidrIp: "0.0.0.0/0"
+
 DocumentDBSecurityGroup:
   Type: "AWS::EC2::SecurityGroup"
   Properties:
@@ -251,3 +273,20 @@ DocumentDBInstance:
     DBClusterIdentifier:
       Ref: DocumentDBCluster
     DBInstanceClass: "db.t3.medium"
+
+EC2KeyPair:
+  Type: "AWS::EC2::KeyPair"
+  Properties:
+    KeyName: serverless-key-pair-ec2-${self:provider.stage}
+    PublicKeyMaterial: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDhxpXNlutcZFZRDpPr6TmmhPiVjFB3slplX6TG4hodwK4X32T0TYQDdF7CmfDYAGk1t/I67N5/8ekvhB8FeDEkoH/1bKGFKVtNbPJXqzqFuvpdN+Txp7qcS6bv906bSJclccHiv6MBkQ6q6ZXVdzXQWs+p2f9MVd2A2U4bBJe3J3uMLwFllJi1AkxxWQfUm1vQ3kZPakTR287uML+L5/cJxoFwXK/qOLDHXEhhCkCFxNheSZHGTm+dghlGh8y9RMSqtEGf18TYggRJe0LMWH5Dyq9LuqGbi9mpYrlGxpPilY1a5SIhylWtOTEncczhAuNIeiP5KdHXfKUDgp78wKlX"
+
+EC2Instance:
+  Type: "AWS::EC2::Instance"
+  Properties:
+    InstanceType: "t2.micro"
+    KeyName: !Ref EC2KeyPair
+    ImageId: "ami-01816d07b1128cd2d"
+    SecurityGroupIds:
+      - Ref: EC2SecurityGroup
+    SubnetId:
+      Ref: PublicSubnet1
