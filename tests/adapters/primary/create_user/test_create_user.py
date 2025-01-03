@@ -58,7 +58,7 @@ def test_create_user_validation_error(event, lambda_context):
     from src.adapters.primary.create_user.index import handler
 
     body = json.loads(event["body"])
-    body["business"] = "name_with special_characters"
+    body["full_name"] = "name_with special_characters"
     event["body"] = json.dumps(body)
 
     response = handler(event, lambda_context)

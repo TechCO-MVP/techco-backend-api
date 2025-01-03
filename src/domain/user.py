@@ -8,7 +8,6 @@ class UserDTO(BaseModel):
     email: EmailStr
     company_position: str = Field(..., pattern=r"^[a-zA-Z0-9 \s]+$")
     rol: str = Field(..., pattern=r"^[a-zA-Z0-9 \s]+$")
-    business: str = Field(..., pattern=r"^[a-zA-Z0-9 \s]+$")
     business_id: str = Field(..., pattern=r"^[a-zA-Z0-9 ]+$")
 
 
