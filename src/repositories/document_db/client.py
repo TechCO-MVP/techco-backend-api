@@ -1,4 +1,5 @@
 import os
+import json
 
 import boto3
 from aws_lambda_powertools import Logger
@@ -41,17 +42,18 @@ def get_documentdb_config() -> dict:
     return: The configuration object
     """
     documentdb_secret_name = os.getenv("DOCUMENTDB_SECRET_NAME")
+    secret_value = get_user_password_secret(documentdb_secret_name)
 
     return {
-        "username": os.getenv("DOCUMENTDB_USERNAME"),
-        "password": get_password_secret(documentdb_secret_name),
+        "username": secret_value["username"],
+        "password": secret_value["password"],
         "cluster_endpoint": os.getenv("DOCUMENTDB_ENDPOINT"),
         "cluster_port": os.getenv("DOCUMENTDB_PORT"),
         "database_name": os.getenv("DOCUMENTDB_DATABASE"),
     }
 
 
-def get_password_secret(secret_name: str) -> str:
+def get_user_password_secret(secret_name: str) -> dict:
     """
     Get the password from the secret manager
     secret_name: The secret name
@@ -59,8 +61,9 @@ def get_password_secret(secret_name: str) -> str:
     try:
         client = boto3.client("secretsmanager", region_name=os.getenv("REGION_NAME"))
         response = client.get_secret_value(SecretId=secret_name)
+        secret_string = response["SecretString"]
 
-        return response["SecretString"]
+        return json.loads(secret_string)
     except Exception as e:
         logger.exception(f"An error occurred while trying to get the secret {secret_name}")
         raise e

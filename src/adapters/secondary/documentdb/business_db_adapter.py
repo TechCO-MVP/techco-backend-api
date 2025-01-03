@@ -1,9 +1,12 @@
+from aws_lambda_powertools import Logger
 from pymongo.database import Database
 
 from src.db.constants import BUSINESS_COLLECTION_NAME
 from src.domain.business import BusinessEntity
 from src.repositories.document_db.client import create_documentdb_client
 from src.repositories.repository import IRepository
+
+logger = Logger("BusinessDocumentDBAdapter")
 
 
 class BusinessDocumentDBAdapter(IRepository[BusinessEntity]):
@@ -28,8 +31,12 @@ class BusinessDocumentDBAdapter(IRepository[BusinessEntity]):
         return collection.find_one({"_id": id})
 
     def create(self, entity: BusinessEntity):
+        logger.info("Creating business entity")
+        logger.info(entity.to_dto(flat=True))
+
         collection = self._client[self._collection_name]
-        collection.insert_one(entity.to_dto())
+        result = collection.insert_one(entity.to_dto(flat=True))
+        entity.id = str(result.inserted_id)
         return entity
 
     def update(self, id: str, entity):
