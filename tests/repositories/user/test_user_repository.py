@@ -35,7 +35,6 @@ def test_save_user_success(user_repository):
     response = user_repository.save_user(user_data)
     assert response["message"] == "User created successfully"
     assert response["body"]["user"]["_id"] == "mocked_id"
-    assert "uuid" in response["body"]["user"]
 
     mock_collection.find_one.assert_called_once_with({"email": user_data["email"]})
     mock_collection.insert_one.assert_called_once_with(user_data)

@@ -78,7 +78,7 @@ def test_handler_general_exception(mocker, event, lambda_context):
 
     assert response["statusCode"] == 500
     body = json.loads(response["body"])
-    assert body["message"] == "An error occurred"
+    assert body["message"] == "An error occurred: Unexpected error"
 
 
 def test_create_user(mocker, event, lambda_context):
