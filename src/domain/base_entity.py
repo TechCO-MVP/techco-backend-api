@@ -22,12 +22,16 @@ class BaseEntity(BaseModel, Generic[T]):
 
     def to_dto(self, flat=False) -> dict:
         if not flat:
-            return json.loads(self.model_dump_json())
+            data = json.loads(self.model_dump_json())
+            return {
+                "_id": self.id,
+                **data,
+            }
 
         return {
             "_id": self.id,
-            "created_at": self.created_at,
-            "updated_at": self.updated_at,
-            "deleted_at": self.deleted_at,
+            "created_at": self.created_at.isoformat(),
+            "updated_at": self.updated_at.isoformat(),
+            "deleted_at": self.deleted_at.isoformat() if self.deleted_at else None,
             **json.loads(self.props.model_dump_json()),
         }

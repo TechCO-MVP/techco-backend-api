@@ -21,7 +21,6 @@ provider:
     REGION_NAME: ${self:provider.region}
     COGNITO_USER_POOL_ID: !Ref CognitoUserPool
     COGNITO_USER_POOL_CLIENT_ID: !Ref CognitoPasswordlessUserPoolClient
-    DOCUMENTDB_USERNAME: ${self:resources.Resources.DocumentDBCluster.Properties.MasterUsername}
     DOCUMENTDB_SECRET_NAME: ${self:resources.Resources.DocumentDBSecretPassword.Properties.Name}
     DOCUMENTDB_ENDPOINT: !GetAtt DocumentDBCluster.Endpoint
     DOCUMENTDB_PORT: 27017
@@ -83,11 +82,14 @@ resources:
     PrivateRoute2: ${file(./src/resources/db/serverless.yml):PrivateRoute2}
     PrivateRouteTableAssociation2: ${file(./src/resources/db/serverless.yml):PrivateRouteTableAssociation2}
     LambdaSecurityGroup: ${file(./src/resources/db/serverless.yml):LambdaSecurityGroup}
+    EC2SecurityGroup: ${file(./src/resources/db/serverless.yml):EC2SecurityGroup}
     DocumentDBSecurityGroup: ${file(./src/resources/db/serverless.yml):DocumentDBSecurityGroup}
     DocumentDBSubnetGroup: ${file(./src/resources/db/serverless.yml):DocumentDBSubnetGroup}
     DocumentDBSecretPassword: ${file(./src/resources/db/serverless.yml):DocumentDBSecretPassword}
     DocumentDBCluster: ${file(./src/resources/db/serverless.yml):DocumentDBCluster}
     DocumentDBInstance: ${file(./src/resources/db/serverless.yml):DocumentDBInstance}
+    EC2KeyPair: ${file(./src/resources/db/serverless.yml):EC2KeyPair}
+    EC2Instance: ${file(./src/resources/db/serverless.yml):EC2Instance}
 
     serverlessApiGatewayCloudWatchRole:
       Type: AWS::IAM::Role
