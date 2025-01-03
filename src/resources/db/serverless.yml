@@ -224,17 +224,22 @@ DocumentDBSecretPassword:
     Name: ${self:provider.stage}-documentdb-password
     Description: "Password for DocumentDB"
     GenerateSecretString:
+      SecretStringTemplate: '{"username": "${self:provider.stage}dbuser"}'
+      GenerateStringKey: "password"
+      PasswordLength: 16
       ExcludeCharacters: "'@/\\!#$%&()*+,-.:;<=>?[]^_`{|}~"
       ExcludePunctuation: true
 
 DocumentDBCluster:
   Type: "AWS::DocDB::DBCluster"
   Properties:
-    DBClusterIdentifier: ${self:provider.stage}-documentdb
+    DBClusterIdentifier: ${self:provider.stage}-documentdb-v2
     StorageEncrypted: true
     EngineVersion: "5.0.0"
-    MasterUsername: ${self:provider.stage}dbuser
-    MasterUserPassword: !Ref DocumentDBSecretPassword
+    MasterUsername:
+      Fn::Sub: "{{resolve:secretsmanager:${DocumentDBSecretPassword}:SecretString:username}}"
+    MasterUserPassword:
+      Fn::Sub: "{{resolve:secretsmanager:${DocumentDBSecretPassword}:SecretString:password}}"
     DBSubnetGroupName:
       Ref: DocumentDBSubnetGroup
     VpcSecurityGroupIds:
