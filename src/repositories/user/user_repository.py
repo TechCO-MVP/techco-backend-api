@@ -16,6 +16,7 @@ class UserRepository:
         """Save a user to the database."""
 
         try:
+            user_data.pop("_id", None)
             logger.info("Attempting to save user with email: %s", user_data["email"])
 
             existing_user = self.collection.find_one({"email": user_data["email"]})
