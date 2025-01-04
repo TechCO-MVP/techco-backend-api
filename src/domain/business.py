@@ -28,4 +28,8 @@ class BusinessDTO(BaseModel):
 
 
 class BusinessEntity(BaseEntity[BusinessDTO]):
-    pass
+    def get_parent_business_id(self) -> str:
+        if self.props.is_admin:
+            return self.id
+
+        return self.props.parent_business_id
