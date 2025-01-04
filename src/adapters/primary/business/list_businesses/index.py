@@ -4,31 +4,27 @@ from aws_lambda_powertools.utilities.typing import LambdaContext
 from pydantic import ValidationError
 
 from src.errors.entity_not_found import EntityNotFound
-from src.use_cases.business.get_business_by_id import get_business_by_id_use_case
-
+from src.use_cases.business.list_businesses import list_businesses_use_case
 
 logger = Logger()
 app = APIGatewayRestResolver()
 
 
-@app.get("/business/{id}")
-def get_business_by_id():
+@app.get("/business/list")
+def list_businesses():
     try:
         # get user id from authorizer
         user = app.current_event.request_context.authorizer["claims"]
         user_id = user["sub"]
 
-        # get business id from path parameters
-        business_id = app.current_event.path_parameters["id"]
-
         # call use case to get business by id
-        business_entity = get_business_by_id_use_case(business_id, user_id)
+        businesses = list_businesses_use_case(user_id)
 
         return Response(
             status_code=200,
             body={
                 "message": "Business retrieved successfully",
-                "body": business_entity.to_dto(),
+                "body": [business.to_dto() for business in businesses],
             },
             content_type=content_types.APPLICATION_JSON,
         )
@@ -63,6 +59,6 @@ def get_business_by_id():
 @logger.inject_lambda_context
 def handler(event: dict, context: LambdaContext) -> dict:
     """
-    Lambda handler to get business by id, if the user that is calling bellongs to the same business
+    Lambda handler to list businesses by user
     """
     return app.resolve(event, context)
