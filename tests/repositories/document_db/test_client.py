@@ -18,7 +18,7 @@ def test_documentdb_config(mock_boto_client):
 
     mock_secrets_client = mock_boto_client.return_value
     mock_secrets_client.get_secret_value.return_value = {
-        "SecretString": "test",
+        "SecretString": '{"username": "fake-username", "password": "test"}',
     }
 
     config = get_documentdb_config()
@@ -33,13 +33,14 @@ def test_documentdb_config(mock_boto_client):
 
 @patch("boto3.client")
 def test_get_password_secret(mock_boto_client):
-    from src.repositories.document_db.client import get_password_secret
+    from src.repositories.document_db.client import get_user_password_secret
 
     mock_secrets_client = mock_boto_client.return_value
     mock_secrets_client.get_secret_value.return_value = {
-        "SecretString": "test",
+        "SecretString": '{"username": "fake-username", "password": "test"}',
     }
 
-    password_secret = get_password_secret("test-secret-key")
-    assert password_secret == "test"
+    secret_value = get_user_password_secret("test-secret-key")
+    assert secret_value["username"] == "fake-username"
+    assert secret_value["password"] == "test"
     mock_secrets_client.get_secret_value.assert_called_once()
