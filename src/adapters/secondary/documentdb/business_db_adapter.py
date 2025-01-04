@@ -23,9 +23,10 @@ class BusinessDocumentDBAdapter(IRepository[BusinessEntity]):
         if self._collection_name not in self._client.list_collection_names():
             self._client.create_collection(self._collection_name)
 
-    def getAll(self):
+    def getAll(self, filter_params: dict = None):
         collection = self._client[self._collection_name]
-        return list(collection.find())
+        filter_params = filter_params or {}
+        return list(collection.find(filter_params))
 
     def getById(self, id: str) -> BusinessEntity | None:
         logger.info(f"Getting business entity with id: {id}")

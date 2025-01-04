@@ -7,7 +7,7 @@ T = TypeVar("T")
 class IRepository(ABC, Generic[T]):
 
     @abstractmethod
-    def getAll(self) -> List[T]:
+    def getAll(self, filter_params: dict = None) -> List[T]:
         pass
 
     @abstractmethod

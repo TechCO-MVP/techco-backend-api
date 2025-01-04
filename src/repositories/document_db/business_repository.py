@@ -11,8 +11,8 @@ class BusinessRepository(IRepository[BusinessEntity]):
         super().__init__()
         self._adapter = BusinessDocumentDBAdapter()
 
-    def getAll(self):
-        return self._adapter.getAll()
+    def getAll(self, filter_params: dict = None):
+        return self._adapter.getAll(filter_params)
 
     def getById(self, id: int):
         return self._adapter.getById(id)
