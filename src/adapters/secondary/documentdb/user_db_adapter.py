@@ -63,4 +63,3 @@ class UserDocumentDBAdapter(IRepository[UserEntity]):
     def delete(self, id: str):
         collection = self._client[self._collection_name]
         collection.delete_one({"_id": id})
-
