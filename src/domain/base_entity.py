@@ -35,3 +35,17 @@ class BaseEntity(BaseModel, Generic[T]):
             "deleted_at": self.deleted_at.isoformat() if self.deleted_at else None,
             **json.loads(self.props.model_dump_json()),
         }
+
+
+def from_dto_to_entity(entity: BaseEntity, dto: dict) -> BaseEntity:
+    """
+    Convert a DTO to an entity.
+    """
+    entity_data = {
+        "_id": dto.pop("_id", None),
+        "created_at": dto.pop("created_at", None),
+        "updated_at": dto.pop("updated_at", None),
+        "deleted_at": dto.pop("deleted_at", None),
+        "props": dto,
+    }
+    return entity(**entity_data)

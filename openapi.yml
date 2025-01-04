@@ -88,6 +88,34 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+  /business/update/{id}:
+    put:
+      summary: Update a business
+      description: Update an existing business entity.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Business"
+      responses:
+        "200":
+          description: Business updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  body:
+                    $ref: "#/components/schemas/Business"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
   /auth/start_auth:
     post:
       summary: Start authentication
@@ -337,19 +365,19 @@ components:
     CreateUser:
       type: object
       properties:
-        business_id: 
+        business_id:
           type: string
           example: id_123456kjhsad_3124987_sdak
-        full_name: 
+        full_name:
           type: string
           example: name completed user
-        email: 
+        email:
           type: string
           example: fake@mail.co
-        company_position: 
+        company_position:
           type: string
           example: auxiliar rrhh
-        rol: 
+        rol:
           type: string
           example: recruiter
     CreateUserResponse:
