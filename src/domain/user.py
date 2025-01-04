@@ -7,8 +7,8 @@ from src.domain.base_entity import BaseEntity
 
 
 class UserStatus(str, Enum):
-    ENABLED = "enableD"
-    DISABLED = "disableD"
+    ENABLED = "enabled"
+    DISABLED = "disabled"
     PENDING = "pending"
 
 
