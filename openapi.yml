@@ -285,6 +285,8 @@ components:
           type: string
         industry:
           type: string
+        parent_business_id:
+          type: string
       required:
         - name
         - country_code

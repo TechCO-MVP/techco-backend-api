@@ -24,6 +24,7 @@ class BusinessDTO(BaseModel):
     linkedin_url: Optional[str] = None
     segment: Optional[str] = None
     industry: Optional[str] = None
+    parent_business_id: Optional[str] = None
 
 
 class BusinessEntity(BaseEntity[BusinessDTO]):

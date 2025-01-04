@@ -10,11 +10,10 @@ def update_business_use_case(id: str, business_dto: BusinessDTO) -> BusinessEnti
     if business_entity is None:
         raise EntityNotFound("Business", id)
 
-    business_entity.props = {
-        **business_entity.props,
-        **business_dto
-    }
+    # Update properties except for is_admin and parent_business_id
+    updated_props = {**business_entity.props, **business_dto}
+    updated_props['is_admin'] = business_entity.props['is_admin']
+    updated_props['parent_business_id'] = business_entity.props['parent_business_id']
+    business_entity.props = updated_props
 
-    # Ensure that the is_admin property is not updated
-    business_entity.props.is_admin = business_entity.props.is_admin
     return business_repository.update(business_entity.id, business_entity)
