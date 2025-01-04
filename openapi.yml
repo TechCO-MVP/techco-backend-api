@@ -166,6 +166,33 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+
+  /business/list:
+    get:
+      summary: Get all businesses
+      description: Get all businesses related to the user.
+      parameters:
+        - name: Authorizer
+          in: header
+          required: true
+          description: The ID token of the user.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Businesses retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Business"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
   /auth/start_auth:
     post:
       summary: Start authentication

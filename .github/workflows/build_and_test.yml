@@ -26,7 +26,13 @@ jobs:
                 poetry config virtualenvs.create true
                 poetry lock --no-update
                 poetry install --no-root
-            
+
+            - name: Install serverless
+              run: npm install -g serverless@3.39.0 serverless-offline
+
+            - name: Run build
+              run: poetry run sls package
+
             - name: Run quality checks
               run: |
                 chmod +x .code_quality/scripts/run_quality_checks.sh
