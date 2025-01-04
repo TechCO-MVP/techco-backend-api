@@ -58,7 +58,7 @@ def test_create_user_validation_error(event, lambda_context):
     from src.adapters.primary.create_user.index import handler
 
     body = json.loads(event["body"])
-    body["business"] = "name_with special_characters"
+    body["full_name"] = "name_with special_characters"
     event["body"] = json.dumps(body)
 
     response = handler(event, lambda_context)
@@ -78,7 +78,7 @@ def test_handler_general_exception(mocker, event, lambda_context):
 
     assert response["statusCode"] == 500
     body = json.loads(response["body"])
-    assert body["message"] == "An error occurred"
+    assert body["message"] == "An error occurred: Unexpected error"
 
 
 def test_create_user(mocker, event, lambda_context):

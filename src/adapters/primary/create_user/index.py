@@ -12,6 +12,7 @@ app = APIGatewayRestResolver()
 
 @app.post("/user/create")
 def create_user():
+    """Create a user."""
     try:
 
         body = app.current_event.json_body
@@ -39,11 +40,11 @@ def create_user():
             status_code=400, body={"message": str(e)}, content_type=content_types.APPLICATION_JSON
         )
 
-    except Exception:
-        logger.exception("An error occurred")
+    except Exception as e:
+        logger.exception("An error occurred: %s", e)
         return Response(
             status_code=500,
-            body={"message": "An error occurred"},
+            body={"message": "An error occurred: %s" % e},
             content_type=content_types.APPLICATION_JSON,
         )
 
