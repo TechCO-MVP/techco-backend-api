@@ -245,6 +245,21 @@ functions:
     environment:
       ENV: ${self:provider.stage}
 
+  get_business:
+    handler: src/adapters/primary/business/get_business_by_id/index.handler
+    events:
+      - http:
+          path: /business/{id}
+          method: get
+          cors: true
+          private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+    environment:
+      ENV: ${self:provider.stage}
+
   create_user:
     handler: src/adapters/primary/create_user/index.handler
     events:

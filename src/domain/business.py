@@ -24,7 +24,12 @@ class BusinessDTO(BaseModel):
     linkedin_url: Optional[str] = None
     segment: Optional[str] = None
     industry: Optional[str] = None
+    parent_business_id: Optional[str] = None
 
 
 class BusinessEntity(BaseEntity[BusinessDTO]):
-    pass
+    def get_parent_business_id(self) -> str:
+        if self.props.is_admin:
+            return self.id
+
+        return self.props.parent_business_id
