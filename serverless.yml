@@ -163,22 +163,6 @@ functions:
     environment:
       ENV: ${self:provider.stage}
 
-  create_business:
-    handler: src/adapters/primary/create_business/index.handler
-    events:
-      - http:
-          path: /business/create
-          method: post
-          cors: true
-          private: true
-          authorizer:
-            type: COGNITO_USER_POOLS
-            authorizerId:
-              Ref: ApiGatewayAuthorizer
-
-    environment:
-      ENV: ${self:provider.stage}
-
   start_auth:
     handler: src/adapters/primary/auth/start_auth.lambda_handler
     events:
@@ -228,6 +212,36 @@ functions:
           response:
             headers:
               Content-Type: "'application/json'"
+    environment:
+      ENV: ${self:provider.stage}
+
+  create_business:
+    handler: src/adapters/primary/business/create_business/index.handler
+    events:
+      - http:
+          path: /business/create
+          method: post
+          cors: true
+          private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+    environment:
+      ENV: ${self:provider.stage}
+
+  update_business:
+    handler: src/adapters/primary/business/update_business/index.handler
+    events:
+      - http:
+          path: /business/update/{id}
+          method: put
+          cors: true
+          private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
     environment:
       ENV: ${self:provider.stage}
 
