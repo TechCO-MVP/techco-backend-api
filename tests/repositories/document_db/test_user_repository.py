@@ -11,7 +11,6 @@ def user_dto():
         email="john.doe@example.com",
         company_position="Developer",
         rol="Admin",
-        business="TechCo",
         business_id="12345",
     )
 
