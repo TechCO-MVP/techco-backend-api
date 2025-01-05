@@ -6,6 +6,8 @@ from aws_lambda_powertools import Logger
 from pymongo import MongoClient
 from pymongo.database import Database
 
+from src.constants.index import ENV
+
 logger = Logger()
 
 
@@ -14,6 +16,9 @@ def create_documentdb_client() -> Database:
     Create a documentdb client
     return: The documentdb client for the database
     """
+    if ENV == "local":
+        return create_documentdb_client_local()
+
     logger.info("Creating documentdb client")
 
     config = get_documentdb_config()
@@ -67,3 +72,22 @@ def get_user_password_secret(secret_name: str) -> dict:
     except Exception as e:
         logger.exception(f"An error occurred while trying to get the secret {secret_name}")
         raise e
+
+
+def create_documentdb_client_local() -> Database:
+    """
+    Create a documentdb client for local development
+    return: The documentdb client for the database
+    """
+    logger.info("Creating documentdb client for local development")
+
+    username = os.getenv("DOCUMENTDB_USERNAME")
+    password = os.getenv("DOCUMENTDB_PASSWORD")
+    cluster_endpoint = os.getenv("DOCUMENTDB_ENDPOINT")
+    cluster_port = os.getenv("DOCUMENTDB_PORT")
+    database_name = os.getenv("DOCUMENTDB_DATABASE")
+
+    uri = f"mongodb://{username}:{password}@{cluster_endpoint}:{cluster_port}/"
+    client = MongoClient(uri)
+
+    return client.get_database(database_name)
