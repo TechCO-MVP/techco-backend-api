@@ -6,7 +6,6 @@ from pydantic import ValidationError
 from src.errors.entity_not_found import EntityNotFound
 from src.use_cases.business.get_business_by_id import get_business_by_id_use_case
 
-
 logger = Logger()
 app = APIGatewayRestResolver()
 

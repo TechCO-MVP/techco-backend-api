@@ -7,8 +7,8 @@ from src.domain.base_entity import BaseEntity
 
 
 class UserStatus(str, Enum):
-    ENABLE = "enable"
-    DISABLE = "disable"
+    ENABLED = "enabled"
+    DISABLED = "disabled"
     PENDING = "pending"
 
 
@@ -18,7 +18,7 @@ class UserDTO(BaseModel):
     company_position: str = Field(..., pattern=r"^[a-zA-Z0-9 \s]+$")
     rol: str = Field(..., pattern=r"^[a-zA-Z0-9 \s]+$")
     business_id: str = Field(..., pattern=r"^[a-zA-Z0-9 ]+$")
-    status: Optional[str] = UserStatus
+    status: Optional[UserStatus] = UserStatus.PENDING
 
 
 class UserEntity(BaseEntity[UserDTO]):

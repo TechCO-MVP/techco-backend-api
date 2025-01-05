@@ -1,7 +1,7 @@
 from src.domain.business import BusinessEntity
+from src.errors.entity_not_found import EntityNotFound
 from src.repositories.document_db.business_repository import BusinessRepository
 from src.repositories.user.user_repository import UserRepository
-from src.errors.entity_not_found import EntityNotFound
 
 
 def get_business_by_id_use_case(business_id: str, user_id: str) -> BusinessEntity:
