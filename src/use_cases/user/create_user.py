@@ -1,10 +1,10 @@
 from src.domain.user import UserDTO, UserEntity
-from src.repositories.user.user_repository import UserRepository
+from src.repositories.document_db.user_repository import UserRepository
 
 
 def create_user_use_case(user_dto: UserDTO) -> dict:
     """Create user use case."""
     user_repository = UserRepository()
-    user_data = UserEntity(props=user_dto).to_dto(flat=True)
+    user_entity = UserEntity(props=user_dto)
 
-    return user_repository.save_user(user_data)
+    return user_repository.create(user_entity)

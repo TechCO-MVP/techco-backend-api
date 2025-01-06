@@ -33,7 +33,7 @@ def set_env(monkeypatch):
 
 
 def test_create_business_value_error(event, lambda_context):
-    from src.adapters.primary.create_business.index import handler
+    from src.adapters.primary.business.create_business.index import handler
 
     response = handler(event, lambda_context)
 
@@ -41,7 +41,7 @@ def test_create_business_value_error(event, lambda_context):
 
 
 def test_create_business_validation_error(event, lambda_context):
-    from src.adapters.primary.create_business.index import handler
+    from src.adapters.primary.business.create_business.index import handler
 
     event["body"] = json.dumps({"name": "test"})
 

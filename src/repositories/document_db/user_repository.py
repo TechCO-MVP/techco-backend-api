@@ -1,18 +1,18 @@
-from src.adapters.secondary.documentdb.business_db_adapter import BusinessDocumentDBAdapter
-from src.domain.business import BusinessEntity
+from src.adapters.secondary.documentdb.user_db_adapter import UserDocumentDBAdapter
+from src.domain.user import UserEntity
 from src.repositories.repository import IRepository
 
 
-class BusinessRepository(IRepository[BusinessEntity]):
+class UserRepository(IRepository[UserEntity]):
 
-    _adapter: IRepository[BusinessEntity]
+    _adapter: IRepository[UserEntity]
 
     def __init__(self):
         super().__init__()
-        self._adapter = BusinessDocumentDBAdapter()
+        self._adapter = UserDocumentDBAdapter()
 
-    def getAll(self, filter_params: dict = None):
-        return self._adapter.getAll(filter_params)
+    def getAll(self):
+        return self._adapter.getAll()
 
     def getById(self, id: int):
         return self._adapter.getById(id)

@@ -64,6 +64,13 @@ paths:
     post:
       summary: Create a new business
       description: Create a new business entity.
+      parameters:
+        - name: Authorizer
+          in: header
+          required: true
+          description: The ID token of the user.
+          schema:
+            type: string
       requestBody:
         required: true
         content:
@@ -82,6 +89,104 @@ paths:
                     type: string
                   body:
                     $ref: "#/components/schemas/Business"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /business/update/{id}:
+    put:
+      summary: Update a business
+      description: Update an existing business entity.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the business to update.
+          schema:
+            type: string
+        - name: Authorizer
+          in: header
+          required: true
+          description: The ID token of the user.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Business"
+      responses:
+        "200":
+          description: Business updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  body:
+                    $ref: "#/components/schemas/Business"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /business/{id}:
+    get:
+      summary: Get a business
+      description: Get an existing business entity if it exists and is related to the user.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the business to retrieve.
+          schema:
+            type: string
+        - name: Authorizer
+          in: header
+          required: true
+          description: The ID token of the user.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Business retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Business"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /business/list:
+    get:
+      summary: Get all businesses
+      description: Get all businesses related to the user.
+      parameters:
+        - name: Authorizer
+          in: header
+          required: true
+          description: The ID token of the user.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Businesses retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Business"
         "400":
           description: Bad request
           content:
@@ -150,6 +255,13 @@ paths:
     post:
       summary: Sign out
       description: Sign out the authenticated user.
+      parameters:
+        - name: Authorizer
+          in: header
+          required: true
+          description: The ID token of the user.
+          schema:
+            type: string
       requestBody:
         required: true
         content:
@@ -179,6 +291,13 @@ paths:
     post:
       summary: Create user
       description: Saves the data of a user in DocumentDB in the user collection, the email is a unique field that should not be repeated for any user.
+      parameters:
+        - name: Authorizer
+          in: header
+          required: true
+          description: The ID token of the user.
+          schema:
+            type: string
       requestBody:
         required: true
         content:
@@ -256,6 +375,8 @@ components:
         segment:
           type: string
         industry:
+          type: string
+        parent_business_id:
           type: string
       required:
         - name
@@ -337,19 +458,19 @@ components:
     CreateUser:
       type: object
       properties:
-        business_id: 
+        business_id:
           type: string
           example: id_123456kjhsad_3124987_sdak
-        full_name: 
+        full_name:
           type: string
           example: name completed user
-        email: 
+        email:
           type: string
           example: fake@mail.co
-        company_position: 
+        company_position:
           type: string
           example: auxiliar rrhh
-        rol: 
+        rol:
           type: string
           example: recruiter
     CreateUserResponse:

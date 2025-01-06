@@ -8,6 +8,7 @@ T = TypeVar("T", bound=BaseModel)
 
 
 class BaseEntity(BaseModel, Generic[T]):
+    id: str = Field(default="", alias="_id")
     created_at: datetime = Field(default_factory=datetime.now)
     updated_at: datetime = Field(default_factory=datetime.now)
     deleted_at: Union[datetime, None] = None
@@ -28,8 +29,23 @@ class BaseEntity(BaseModel, Generic[T]):
             }
 
         return {
-            "created_at": self.created_at,
-            "updated_at": self.updated_at,
-            "deleted_at": self.deleted_at,
+            "_id": self.id,
+            "created_at": self.created_at.isoformat(),
+            "updated_at": self.updated_at.isoformat(),
+            "deleted_at": self.deleted_at.isoformat() if self.deleted_at else None,
             **json.loads(self.props.model_dump_json()),
         }
+
+
+def from_dto_to_entity(entity: BaseEntity, dto: dict) -> BaseEntity:
+    """
+    Convert a DTO to an entity.
+    """
+    entity_data = {
+        "_id": dto.pop("_id", None),
+        "created_at": dto.pop("created_at", None),
+        "updated_at": dto.pop("updated_at", None),
+        "deleted_at": dto.pop("deleted_at", None),
+        "props": dto,
+    }
+    return entity(**entity_data)
