@@ -31,7 +31,7 @@ def get_user():
         return Response(
             status_code=400, body={"message": str(e)}, content_type=content_types.APPLICATION_JSON
         )
-    
+
     except ValueError as e:
         logger.error(str(e))
         return Response(

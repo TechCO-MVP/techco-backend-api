@@ -2,7 +2,7 @@ from aws_lambda_powertools import Logger
 from bson.objectid import ObjectId
 from pymongo.database import Database
 
-from src.db.constants import USER_COLLECTION_NAME, BUSINESS_COLLECTION_NAME
+from src.db.constants import BUSINESS_COLLECTION_NAME, USER_COLLECTION_NAME
 from src.domain.user import UserEntity, filter_user_dto_fields
 from src.repositories.document_db.client import create_documentdb_client
 from src.repositories.repository import IRepository
@@ -30,7 +30,7 @@ class UserDocumentDBAdapter(IRepository[UserEntity]):
 
         if not users_data:
             message = "No users found"
-        
+
         return {"message": message, "body": [filter_user_dto_fields(user) for user in users_data]}
 
     def getById(self, id: str, business_id: str) -> dict:
@@ -58,7 +58,7 @@ class UserDocumentDBAdapter(IRepository[UserEntity]):
             if exists_user:
                 logger.warning("User with email %s already exists.", user_data["email"])
                 raise ValueError("A user with this email already exists.")
-            
+
             business_collection = self._client[self._business_collection_name]
             business_object_id = ObjectId(user_data["business_id"])
             exists_business = business_collection.find_one({"_id": business_object_id})
