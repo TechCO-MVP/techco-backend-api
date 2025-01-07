@@ -1,4 +1,5 @@
 from unittest.mock import MagicMock
+from bson.objectid import ObjectId
 
 import pytest
 
@@ -14,7 +15,7 @@ def user_dto():
         company_position="Developer",
         rol="Admin",
         business="TechCo",
-        business_id="12345",
+        business_id="6778c3fa49a61649b054659d",
     )
 
 
@@ -35,7 +36,7 @@ def test_create_user_success(mocker, user_entity, mock_db_client):
     """Test successful creation of a user."""
     mock_collection = MagicMock()
     mock_db_client.return_value.__getitem__.return_value = mock_collection
-    mock_collection.find_one.return_value = None
+    mock_collection.find_one.side_effect = [None,{"_id": "6778c3fa49a61649b054659d", "name": "John Doe company"}]
     mock_collection.insert_one.return_value.inserted_id = "mock_id"
 
     adapter = UserDocumentDBAdapter()
@@ -43,8 +44,11 @@ def test_create_user_success(mocker, user_entity, mock_db_client):
 
     assert response["message"] == "User created successfully"
     assert response["body"]["user"]["_id"] == "mock_id"
-    mock_collection.find_one.assert_called_once_with({"email": user_entity.props.email})
-    mock_collection.insert_one.assert_called_once()
+    calls = [
+        mocker.call({"email": user_entity.props.email}),
+        mocker.call({"_id": ObjectId(user_entity.props.business_id)}),
+    ]
+    mock_collection.find_one.assert_has_calls(calls)
 
 
 def test_create_user_already_exists(mocker, user_entity, mock_db_client):
@@ -82,16 +86,33 @@ def test_get_all_users(mocker, mock_db_client):
     mock_collection = MagicMock()
     mock_db_client.return_value.__getitem__.return_value = mock_collection
     mock_collection.find.return_value = [
-        {"_id": "1", "full_name": "John Doe", "email": "john.doe@example.com"},
-        {"_id": "2", "full_name": "Jane Doe", "email": "jane.doe@example.com"},
+        {"_id": "1", "full_name": "John Doe", "email": "john.doe@example.com", "business_id": "6778c3fa49a61649b054659d", "company_position": "recluter", "rol": "recluter", "status": "Active"},
+        {"_id": "2", "full_name": "Jane Doe", "email": "jane.doe@example.com", "business_id": "6778c3fa49a61649b054659d", "company_position": "recluter", "rol": "recñluter", "status": "Active"}
     ]
 
     adapter = UserDocumentDBAdapter()
-    users = adapter.getAll()
+    users = adapter.getAll({"business_id": "6778c3fa49a61649b054659d"})
+    body = users["body"]
 
-    assert len(users) == 2
-    assert users[0]["full_name"] == "John Doe"
-    assert users[1]["full_name"] == "Jane Doe"
+    assert users["message"] == "Users found successfully"
+    assert len(body) == 2
+    assert body[0]["full_name"] == "John Doe"
+    assert body[1]["full_name"] == "Jane Doe"
+    mock_collection.find.assert_called_once()
+
+
+def test_get_all_users_not_users(mocker, mock_db_client):
+    """Test getAll function -> not user."""
+    mock_collection = MagicMock()
+    mock_db_client.return_value.__getitem__.return_value = mock_collection
+    mock_collection.find.return_value = []
+
+    adapter = UserDocumentDBAdapter()
+    users = adapter.getAll({"business_id": "6778c3fa49a61649b054659d"})
+    body = users["body"]
+
+    assert users["message"] == "Users not found"
+    assert len(body) == 0
     mock_collection.find.assert_called_once()
 
 
@@ -100,17 +121,33 @@ def test_get_by_id(mocker, mock_db_client):
     mock_collection = MagicMock()
     mock_db_client.return_value.__getitem__.return_value = mock_collection
     mock_collection.find_one.return_value = {
-        "_id": "1",
+        "_id": "6778c3fa49a61649b054659d",
+        "business_id": "6778c3fa49a61649b054659d",
         "full_name": "John Doe",
         "email": "john.doe@example.com",
     }
 
     adapter = UserDocumentDBAdapter()
-    user = adapter.getById("1")
+    user = adapter.getById("6778c3fa49a61649b054659d")
+    body = user["body"]
 
-    assert user["_id"] == "1"
-    assert user["full_name"] == "John Doe"
-    mock_collection.find_one.assert_called_once_with({"_id": "1"})
+    assert user["message"] == "User found successfully"
+    assert body[0]["email"] == "john.doe@example.com"
+    assert body[0]["full_name"] == "John Doe"
+    mock_collection.find_one.assert_called_once_with({"_id": ObjectId("6778c3fa49a61649b054659d")})
+
+
+def test_get_by_id_not_found_user(mocker, mock_db_client):
+    """Test getById function not users."""
+    mock_collection = MagicMock()
+    mock_db_client.return_value.__getitem__.return_value = mock_collection
+    mock_collection.find_one.return_value = {}
+
+    adapter = UserDocumentDBAdapter()
+    with pytest.raises(ValueError, match="User not found"):
+        adapter.getById("6778c3fa49a61649b054659d")
+
+    mock_collection.find_one.assert_called_once_with({"_id": ObjectId("6778c3fa49a61649b054659d")})
 
 
 def test_update_user(mocker, user_entity, mock_db_client):

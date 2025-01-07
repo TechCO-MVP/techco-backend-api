@@ -29,7 +29,7 @@ class UserDocumentDBAdapter(IRepository[UserEntity]):
         message = "Users found successfully"
 
         if not users_data:
-            message = "No users found"
+            message = "Users not found"
 
         return {"message": message, "body": [filter_user_dto_fields(user) for user in users_data]}
 
