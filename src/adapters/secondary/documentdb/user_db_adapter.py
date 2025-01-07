@@ -23,9 +23,9 @@ class UserDocumentDBAdapter(IRepository[UserEntity]):
         if self._collection_name not in self._client.list_collection_names():
             self._client.create_collection(self._collection_name)
 
-    def getAll(self, business_id: str) -> dict:
+    def getAll(self, params: dict) -> list:
         collection = self._client[self._collection_name]
-        users_data = list(collection.find({"business_id": business_id}))
+        users_data = collection.find({"business_id": ObjectId(params["business_id"])})
         message = "Users found successfully"
 
         if not users_data:
@@ -33,10 +33,10 @@ class UserDocumentDBAdapter(IRepository[UserEntity]):
 
         return {"message": message, "body": [filter_user_dto_fields(user) for user in users_data]}
 
-    def getById(self, id: str, business_id: str) -> dict:
+    def getById(self, id: str) -> dict:
         object_id = ObjectId(id)
         collection = self._client[self._collection_name]
-        user = collection.find_one({"_id": object_id, "business_id": business_id})
+        user = collection.find_one({"_id": object_id})
 
         if not user:
             raise ValueError("User not found")
@@ -67,6 +67,7 @@ class UserDocumentDBAdapter(IRepository[UserEntity]):
                 logger.warning("business with id %s not exists.", user_data["business_id"])
                 raise ValueError("A business_id not exists.")
 
+            user_data["business_id"] = business_object_id
             result = collection.insert_one(user_data)
             logger.info("User successfully inserted with _id: %s", result.inserted_id)
 

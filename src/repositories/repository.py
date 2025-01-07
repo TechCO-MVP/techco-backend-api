@@ -7,11 +7,11 @@ T = TypeVar("T")
 class IRepository(ABC, Generic[T]):
 
     @abstractmethod
-    def getAll(self, filter_params: dict = None) -> List[T]:
+    def getAll(self, filter_params: dict = {}) -> List[T]:
         pass
 
     @abstractmethod
-    def getById(self, id: int) -> T | None:
+    def getById(self, id: str) -> T | None:
         pass
 
     @abstractmethod

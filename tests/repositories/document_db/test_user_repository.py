@@ -36,7 +36,7 @@ def test_get_all_users(mock_adapter):
     ]
 
     repository = UserRepository()
-    users = repository.getAll()
+    users = repository.getAll({})
 
     assert len(users) == 2
     assert users[0]["full_name"] == "John Doe"
