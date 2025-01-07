@@ -3,7 +3,6 @@ from bson.objectid import ObjectId
 
 import pytest
 
-from src.adapters.secondary.documentdb.user_db_adapter import UserDocumentDBAdapter
 from src.domain.user import UserDTO, UserEntity
 
 
@@ -32,8 +31,17 @@ def mock_db_client(mocker):
     return mock_client
 
 
+@pytest.fixture(autouse=True)
+def set_env(monkeypatch):
+    monkeypatch.setenv("REGION_NAME", "fake-region")
+    monkeypatch.setenv("CLIENT_ID", "fake-client-id")
+    monkeypatch.setenv("ENV", "tests")
+
+
 def test_create_user_success(mocker, user_entity, mock_db_client):
     """Test successful creation of a user."""
+    from src.adapters.secondary.documentdb.user_db_adapter import UserDocumentDBAdapter
+
     mock_collection = MagicMock()
     mock_db_client.return_value.__getitem__.return_value = mock_collection
     mock_collection.find_one.side_effect = [None,{"_id": "6778c3fa49a61649b054659d", "name": "John Doe company"}]
@@ -53,6 +61,8 @@ def test_create_user_success(mocker, user_entity, mock_db_client):
 
 def test_create_user_already_exists(mocker, user_entity, mock_db_client):
     """Test creation of a user that already exists."""
+    from src.adapters.secondary.documentdb.user_db_adapter import UserDocumentDBAdapter
+
     mock_collection = MagicMock()
     mock_db_client.return_value.__getitem__.return_value = mock_collection
     mock_collection.find_one.return_value = {"email": user_entity.props.email}
@@ -68,6 +78,8 @@ def test_create_user_already_exists(mocker, user_entity, mock_db_client):
 
 def test_create_user_database_error(mocker, user_entity, mock_db_client):
     """Test creation of a user with a database error."""
+    from src.adapters.secondary.documentdb.user_db_adapter import UserDocumentDBAdapter
+
     mock_collection = MagicMock()
     mock_db_client.return_value.__getitem__.return_value = mock_collection
     mock_collection.find_one.side_effect = Exception("Database error")
@@ -83,6 +95,8 @@ def test_create_user_database_error(mocker, user_entity, mock_db_client):
 
 def test_get_all_users(mocker, mock_db_client):
     """Test getAll function."""
+    from src.adapters.secondary.documentdb.user_db_adapter import UserDocumentDBAdapter
+
     mock_collection = MagicMock()
     mock_db_client.return_value.__getitem__.return_value = mock_collection
     mock_collection.find.return_value = [
@@ -103,6 +117,8 @@ def test_get_all_users(mocker, mock_db_client):
 
 def test_get_all_users_not_users(mocker, mock_db_client):
     """Test getAll function -> not user."""
+    from src.adapters.secondary.documentdb.user_db_adapter import UserDocumentDBAdapter
+
     mock_collection = MagicMock()
     mock_db_client.return_value.__getitem__.return_value = mock_collection
     mock_collection.find.return_value = []
@@ -118,6 +134,8 @@ def test_get_all_users_not_users(mocker, mock_db_client):
 
 def test_get_by_id(mocker, mock_db_client):
     """Test getById function."""
+    from src.adapters.secondary.documentdb.user_db_adapter import UserDocumentDBAdapter
+
     mock_collection = MagicMock()
     mock_db_client.return_value.__getitem__.return_value = mock_collection
     mock_collection.find_one.return_value = {
@@ -139,6 +157,8 @@ def test_get_by_id(mocker, mock_db_client):
 
 def test_get_by_id_not_found_user(mocker, mock_db_client):
     """Test getById function not users."""
+    from src.adapters.secondary.documentdb.user_db_adapter import UserDocumentDBAdapter
+
     mock_collection = MagicMock()
     mock_db_client.return_value.__getitem__.return_value = mock_collection
     mock_collection.find_one.return_value = {}
@@ -152,6 +172,8 @@ def test_get_by_id_not_found_user(mocker, mock_db_client):
 
 def test_update_user(mocker, user_entity, mock_db_client):
     """Test update function."""
+    from src.adapters.secondary.documentdb.user_db_adapter import UserDocumentDBAdapter
+    
     mock_collection = MagicMock()
     mock_db_client.return_value.__getitem__.return_value = mock_collection
 
@@ -163,6 +185,8 @@ def test_update_user(mocker, user_entity, mock_db_client):
 
 def test_delete_user(mocker, mock_db_client):
     """Test delete function."""
+    from src.adapters.secondary.documentdb.user_db_adapter import UserDocumentDBAdapter
+
     mock_collection = MagicMock()
     mock_db_client.return_value.__getitem__.return_value = mock_collection
 

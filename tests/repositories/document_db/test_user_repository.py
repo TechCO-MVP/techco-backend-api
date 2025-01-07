@@ -1,7 +1,6 @@
 import pytest
 
 from src.domain.user import UserDTO, UserEntity
-from src.repositories.document_db.user_repository import UserRepository
 
 
 @pytest.fixture
@@ -27,9 +26,17 @@ def mock_adapter(mocker):
     )
     return mock_adapter
 
+@pytest.fixture(autouse=True)
+def set_env(monkeypatch):
+    monkeypatch.setenv("REGION_NAME", "fake-region")
+    monkeypatch.setenv("CLIENT_ID", "fake-client-id")
+    monkeypatch.setenv("ENV", "tests")
+
 
 def test_get_all_users(mock_adapter):
     """Test getAll function."""
+    from src.repositories.document_db.user_repository import UserRepository
+
     mock_adapter.return_value.getAll.return_value = [
         {"_id": "1", "full_name": "John Doe", "email": "john.doe@example.com"},
         {"_id": "2", "full_name": "Jane Doe", "email": "jane.doe@example.com"},
@@ -46,6 +53,8 @@ def test_get_all_users(mock_adapter):
 
 def test_get_by_id(mock_adapter):
     """Test getById function."""
+    from src.repositories.document_db.user_repository import UserRepository
+
     mock_adapter.return_value.getById.return_value = {
         "_id": "1",
         "full_name": "John Doe",
@@ -62,6 +71,8 @@ def test_get_by_id(mock_adapter):
 
 def test_create_user(mock_adapter, user_entity):
     """Test create function."""
+    from src.repositories.document_db.user_repository import UserRepository
+
     mock_adapter.return_value.create.return_value = {
         "message": "User created successfully",
         "body": {"user": {"_id": "mock_id"}},
@@ -77,6 +88,8 @@ def test_create_user(mock_adapter, user_entity):
 
 def test_update_user(mock_adapter, user_entity):
     """Test update function."""
+    from src.repositories.document_db.user_repository import UserRepository
+
     repository = UserRepository()
     repository.update("1", user_entity)
 
@@ -85,6 +98,8 @@ def test_update_user(mock_adapter, user_entity):
 
 def test_delete_user(mock_adapter):
     """Test delete function."""
+    from src.repositories.document_db.user_repository import UserRepository
+    
     repository = UserRepository()
     repository.delete("1")
 

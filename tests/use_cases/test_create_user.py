@@ -1,7 +1,6 @@
 import pytest
 
 from src.domain.user import UserDTO, UserEntity
-from src.use_cases.user.create_user import create_user_use_case
 
 
 @pytest.fixture
@@ -26,8 +25,17 @@ def mock_user_repository(mocker):
     return mock_repository
 
 
+@pytest.fixture(autouse=True)
+def set_env(monkeypatch):
+    monkeypatch.setenv("REGION_NAME", "fake-region")
+    monkeypatch.setenv("CLIENT_ID", "fake-client-id")
+    monkeypatch.setenv("ENV", "tests")
+
+
 def test_create_user_use_case_success(mock_user_repository, user_dto):
     """Test successful creation of a user."""
+    from src.use_cases.user.create_user import create_user_use_case
+    
     mock_user_repository.return_value.create.return_value = {
         "message": "User created successfully",
         "body": {"user": {"_id": "mock_id"}},
