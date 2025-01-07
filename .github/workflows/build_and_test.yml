@@ -24,7 +24,7 @@ jobs:
             - name: Install dependencies
               run: |
                 poetry config virtualenvs.create true
-                poetry lock --no-update
+                poetry lock
                 poetry install --no-root
 
             - name: Install serverless

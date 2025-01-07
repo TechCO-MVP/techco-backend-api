@@ -3,7 +3,8 @@ from typing import List
 from src.domain.business import BusinessEntity
 from src.errors.entity_not_found import EntityNotFound
 from src.repositories.document_db.business_repository import BusinessRepository
-from src.repositories.user.user_repository import UserRepository
+from src.repositories.document_db.user_repository import UserRepository
+from src.errors.entity_not_found import EntityNotFound
 
 
 def list_businesses_use_case(user_id: str) -> List[BusinessEntity]:
