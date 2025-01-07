@@ -11,11 +11,11 @@ class UserRepository(IRepository[UserEntity]):
         super().__init__()
         self._adapter = UserDocumentDBAdapter()
 
-    def getAll(self):
-        return self._adapter.getAll()
+    def getAll(self, business_id: str):
+        return self._adapter.getAll(business_id)
 
-    def getById(self, id: int):
-        return self._adapter.getById(id)
+    def getById(self, id: str, business_id: str):
+        return self._adapter.getById(id, business_id)
 
     def create(self, entity):
         return self._adapter.create(entity)
