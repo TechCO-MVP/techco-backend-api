@@ -1,14 +1,9 @@
-from bson import ObjectId
 from aws_lambda_powertools import Logger
-from bson.objectid import ObjectId
+from bson import ObjectId
 from pymongo.database import Database
 
 from src.db.constants import BUSINESS_COLLECTION_NAME, USER_COLLECTION_NAME
 from src.domain.user import UserEntity, filter_user_dto_fields
-from src.repositories.document_db.client import create_documentdb_client
-from src.db.constants import USER_COLLECTION_NAME
-from src.domain.user import UserEntity
-from src.domain.base_entity import from_dto_to_entity
 from src.repositories.document_db.client import DocumentDBClient
 from src.repositories.repository import IRepository
 
