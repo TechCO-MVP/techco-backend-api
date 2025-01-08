@@ -329,6 +329,48 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Exception"
+  /user/list:
+    get:
+      summary: List users
+      description: get user data for all user asociated to a business, or one user searched by id.
+      parameters:
+        - name: business_id
+          in: query
+          required: true
+          description: The ID of the business.
+          schema:
+            type: string
+        - name: id
+          in: query
+          required: false
+          description: The ID of the user.
+          schema:
+            type: string
+        - name: all
+          in: query
+          required: false
+          description: Flag to indicate if all users should be retrieved.
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: User found successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListUserResponse"
+        "400":
+          description: Value error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListUserValueError"
+        "500":
+          description: Exception response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exception"
 
 components:
   schemas:
@@ -500,3 +542,42 @@ components:
         message:
           type: string
           example: 1 validation error for UserDTO\nfull_name\n  Field required...
+    ListUserResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: User found successfully.
+        body:
+          type: object
+          properties:
+            data:
+              type: object
+              properties:
+                _id:
+                  type: string
+                  example: id_123456kjhsad_3124987_sdak
+                full_name:
+                  type: string
+                  example: name_1 name_2 last_name
+                email:
+                  type: string
+                  example: ecxample@email.com
+                company_position:
+                  type: string
+                  example: recluter rrhh
+                rol:
+                  type: string
+                  example: id_123456kjhsad_3124987_sdak
+                business_id:
+                  type: string
+                  example: id_123456kjhsad_3124987_sdak
+                status:
+                  type: string
+                  example: active
+    ListUserValueError:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Validation error while saving user.
