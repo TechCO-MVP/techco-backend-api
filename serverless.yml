@@ -55,12 +55,6 @@ provider:
 
 custom:
   userPoolName: ${self:provider.stage}-passwordless-user-pool
-  pythonRequirements:
-    dockerizePip: non-linux
-    dockerRunCmdExtraArgs: ["--platform", "linux/x86_64"]
-    usePipenv: false
-    slim: false
-    layer: true
 
 resources:
   Resources:
