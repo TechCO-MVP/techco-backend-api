@@ -61,7 +61,7 @@ def handler(event: dict, context: LambdaContext) -> dict:
             "full_name": "string",
             "email": "string"
             "company_position": "string"
-            "rol": "string"
+            "role": "string"
         }
     }
     """

@@ -5,15 +5,15 @@ from src.repositories.document_db.user_repository import UserRepository
 from src.errors.entity_not_found import EntityNotFound
 
 
-def list_businesses_use_case(user_id: str) -> List[BusinessEntity]:
+def list_businesses_use_case(email: str) -> List[BusinessEntity]:
     """
     List businesses by user
     """
     user_repository = UserRepository()
-    user_entity = user_repository.getById(user_id)
+    user_entity = user_repository.getByEmail(email)
 
     if user_entity is None:
-        raise EntityNotFound("User", user_id)
+        raise EntityNotFound("User", email)
 
     parent_business_id = user_entity.props.business_id
     business_repository = BusinessRepository()

@@ -11,8 +11,8 @@ logger = Logger()
 app = APIGatewayRestResolver()
 
 
-@app.put("/business/update/{id}")
-def update_business():
+@app.put("/business/update/<business_id>")
+def update_business(business_id: str):
     try:
         # validate body is not empty
         body = app.current_event.json_body
@@ -21,7 +21,6 @@ def update_business():
 
         # create DTO (once create pydantic validates the data)
         business_dto = BusinessDTO(**body)
-        business_id = app.current_event.path_parameters["id"]
 
         # call use case to update business
         business_entity = update_business_use_case(business_id, business_dto)

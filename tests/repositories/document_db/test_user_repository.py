@@ -10,7 +10,7 @@ def user_dto():
         full_name="John Doe",
         email="john.doe@example.com",
         company_position="Developer",
-        rol="Admin",
+        role="Admin",
         business_id="12345",
     )
 

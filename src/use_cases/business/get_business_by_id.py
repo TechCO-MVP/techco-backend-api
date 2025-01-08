@@ -4,12 +4,12 @@ from src.repositories.document_db.business_repository import BusinessRepository
 from src.repositories.document_db.user_repository import UserRepository
 
 
-def get_business_by_id_use_case(business_id: str, user_id: str) -> BusinessEntity:
+def get_business_by_id_use_case(business_id: str, email: str) -> BusinessEntity:
     user_repository = UserRepository()
-    user_entity = user_repository.getById(user_id)
+    user_entity = user_repository.getByEmail(email)
 
     if user_entity is None:
-        raise EntityNotFound("User", user_id)
+        raise EntityNotFound("User", email)
 
     business_repository = BusinessRepository()
     business_entity = business_repository.getById(business_id)

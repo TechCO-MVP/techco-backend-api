@@ -18,7 +18,7 @@ def event():
                 "full_name": "completed name",
                 "email": "fakemail@mail.com",
                 "company_position": "admin",
-                "rol": "general",
+                "role": "general",
             }
         ),
     }
