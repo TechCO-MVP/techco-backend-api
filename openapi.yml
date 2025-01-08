@@ -222,6 +222,35 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Exception"
+  /auth/verify_auth_otp_code_sign_up:
+    post:
+      summary: Verify OTP code
+      description: Verify the OTP code for authentication.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VerifyOTPSignUp"
+      responses:
+        "200":
+          description: OTP verified
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VerifyOTPResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exception"
   /auth/verify_auth_otp_code:
     post:
       summary: Verify OTP code
@@ -441,6 +470,31 @@ components:
           properties:
             session:
               example: example_session_string
+    VerifyOTPSignUp:
+      type: object
+      properties:
+        session:
+          type: string
+          example: example_session_string
+        otp:
+          type: string
+          example: 1234
+        email:
+          type: string
+          example: mail.@mail.co
+        company_name:
+          type: string
+          example: Pepsico
+        country_code:
+          type: string
+          example: CO
+        company_size:
+          type: string
+          example: A
+          description: Should follow next pattern [A,B,C,D] https://learn.microsoft.com/en-us/linkedin/shared/references/reference-tables/company-size-codes
+        role:
+          type: string
+          example: recruiter
     VerifyOTP:
       type: object
       properties:
@@ -453,6 +507,28 @@ components:
         otp:
           type: string
           example: 123456
+    VerifyOTPResponseSignUp:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Successfully authenticated.
+        body:
+          type: object
+          properties:
+            idToken:
+              type: string
+              example: fake_id_token.
+            accessToken:
+              type: string
+              example: fake access token.
+            refreshToken:
+              type: string
+              example: fale refresh token.
+            user:
+              type: "#/components/schemas/User"
+            business:
+              type: "#/components/schemas/Business"
     VerifyOTPResponse:
       type: object
       properties:
@@ -512,7 +588,7 @@ components:
         company_position:
           type: string
           example: auxiliar rrhh
-        rol:
+        role:
           type: string
           example: recruiter
     CreateUserResponse:

@@ -1,10 +1,11 @@
 from aws_lambda_powertools import Logger
-from bson.objectid import ObjectId
+from bson import ObjectId
 from pymongo.database import Database
 
 from src.db.constants import BUSINESS_COLLECTION_NAME, USER_COLLECTION_NAME
 from src.domain.user import UserEntity, filter_user_dto_fields
-from src.repositories.document_db.client import create_documentdb_client
+from src.domain.base_entity import from_dto_to_entity
+from src.repositories.document_db.client import DocumentDBClient
 from src.repositories.repository import IRepository
 
 logger = Logger("UserDocumentDBAdapter")
@@ -16,9 +17,11 @@ class UserDocumentDBAdapter(IRepository[UserEntity]):
 
     def __init__(self):
         super().__init__()
+        document_db_client = DocumentDBClient()
         self._collection_name = USER_COLLECTION_NAME
         self._business_collection_name = BUSINESS_COLLECTION_NAME
-        self._client = create_documentdb_client()
+        self._client = document_db_client.create_documentdb_database_client()
+        self._session = document_db_client.get_session()
 
         if self._collection_name not in self._client.list_collection_names():
             self._client.create_collection(self._collection_name)
@@ -32,6 +35,17 @@ class UserDocumentDBAdapter(IRepository[UserEntity]):
             message = "Users not found"
 
         return {"message": message, "body": {"data": [filter_user_dto_fields(user) for user in users_data]}}
+
+    def getByEmail(self, email: str) -> dict:
+        logger.info(f"Getting user entity with email: {email}")
+        collection = self._client[self._collection_name]
+        result = collection.find_one({"email": email})
+
+        if not result:
+            raise ValueError("User not found")
+
+        result["_id"] = str(result["_id"])
+        return from_dto_to_entity(UserEntity, result)
 
     def getById(self, id: str) -> dict:
         object_id = ObjectId(id)
@@ -61,14 +75,16 @@ class UserDocumentDBAdapter(IRepository[UserEntity]):
 
             business_collection = self._client[self._business_collection_name]
             business_object_id = ObjectId(user_data["business_id"])
-            exists_business = business_collection.find_one({"_id": business_object_id})
+            exists_business = business_collection.find_one(
+                {"_id": business_object_id}, session=self._session
+            )
 
             if not exists_business:
                 logger.warning("business with id %s not exists.", user_data["business_id"])
                 raise ValueError("A business_id not exists.")
 
             user_data["business_id"] = business_object_id
-            result = collection.insert_one(user_data)
+            result = collection.insert_one(user_data, session=self._session)
             logger.info("User successfully inserted with _id: %s", result.inserted_id)
 
             return {

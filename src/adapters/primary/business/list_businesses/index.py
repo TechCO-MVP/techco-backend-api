@@ -15,16 +15,16 @@ def list_businesses():
     try:
         # get user id from authorizer
         user = app.current_event.request_context.authorizer["claims"]
-        user_id = user["sub"]
+        email = user["email"]
 
         # call use case to get business by id
-        businesses = list_businesses_use_case(user_id)
+        businesses = list_businesses_use_case(email)
 
         return Response(
             status_code=200,
             body={
                 "message": "Business retrieved successfully",
-                "body": [business.to_dto() for business in businesses],
+                "body": [business.to_dto(flat=True) for business in businesses],
             },
             content_type=content_types.APPLICATION_JSON,
         )

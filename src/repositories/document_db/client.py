@@ -1,93 +1,59 @@
-import json
 import os
-
-import boto3
-from aws_lambda_powertools import Logger
 from pymongo import MongoClient
 from pymongo.database import Database
-
-from src.constants.index import ENV
-
-logger = Logger()
+from pymongo.client_session import ClientSession
 
 
-def create_documentdb_client() -> Database:
-    """
-    Create a documentdb client
-    return: The documentdb client for the database
-    """
-    if ENV == "local":
-        return create_documentdb_client_local()
-
-    logger.info("Creating documentdb client")
-
-    config = get_documentdb_config()
-    username = config["username"]
-    password = config["password"]
-    cluster_endpoint = config["cluster_endpoint"]
-    cluster_port = config["cluster_port"]
-    database_name = config["database_name"]
-
-    uri = (
-        f"mongodb://{username}:{password}@{cluster_endpoint}:{cluster_port}/"
-        "?tls=true"
-        "&replicaSet=rs0"
-        "&readPreference=secondaryPreferred"
-        "&retryWrites=false"
-        "&authSource=admin"
-    )
-    client = MongoClient(uri, tls=True, tlsCAFile="./certs/global-bundle.pem")
-
-    return client.get_database(database_name)
+from src.db.database_client import IDatabaseClient
+from src.repositories.document_db.utils import create_documentdb_client
 
 
-def get_documentdb_config() -> dict:
-    """
-    Get the configuration for the documentdb client
-    return: The configuration object
-    """
-    documentdb_secret_name = os.getenv("DOCUMENTDB_SECRET_NAME")
-    secret_value = get_user_password_secret(documentdb_secret_name)
+class DocumentDBClient(IDatabaseClient):
+    _instance: "DocumentDBClient" = None
+    _client: MongoClient
+    _session: ClientSession = None
 
-    return {
-        "username": secret_value["username"],
-        "password": secret_value["password"],
-        "cluster_endpoint": os.getenv("DOCUMENTDB_ENDPOINT"),
-        "cluster_port": os.getenv("DOCUMENTDB_PORT"),
-        "database_name": os.getenv("DOCUMENTDB_DATABASE"),
-    }
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super(DocumentDBClient, cls).__new__(cls)
+            cls._instance._initialize()
+        return cls._instance
 
+    def _initialize(self):
+        self._client = create_documentdb_client()
 
-def get_user_password_secret(secret_name: str) -> dict:
-    """
-    Get the password from the secret manager
-    secret_name: The secret name
-    """
-    try:
-        client = boto3.client("secretsmanager", region_name=os.getenv("REGION_NAME"))
-        response = client.get_secret_value(SecretId=secret_name)
-        secret_string = response["SecretString"]
+    def get_client(self):
+        return self._client
 
-        return json.loads(secret_string)
-    except Exception as e:
-        logger.exception(f"An error occurred while trying to get the secret {secret_name}")
-        raise e
+    def connect(self):
+        return self
 
+    def disconnect(self):
+        self._client.close()
+        DocumentDBClient._instance = None
 
-def create_documentdb_client_local() -> Database:
-    """
-    Create a documentdb client for local development
-    return: The documentdb client for the database
-    """
-    logger.info("Creating documentdb client for local development")
+    def get_session(self):
+        return self._session
 
-    username = os.getenv("DOCUMENTDB_USERNAME")
-    password = os.getenv("DOCUMENTDB_PASSWORD")
-    cluster_endpoint = os.getenv("DOCUMENTDB_ENDPOINT")
-    cluster_port = os.getenv("DOCUMENTDB_PORT")
-    database_name = os.getenv("DOCUMENTDB_DATABASE")
+    def set_session(self, session: ClientSession):
+        if self._session is not None:
+            raise Exception("Session is already initialized.")
+        self._session = session
 
-    uri = f"mongodb://{username}:{password}@{cluster_endpoint}:{cluster_port}/"
-    client = MongoClient(uri)
+    def close_session(self):
+        if self._session is None:
+            raise Exception("Session is not initialized.")
+        self._session.abort_transaction()
+        self._session.end_session()
+        self._session = None
 
-    return client.get_database(database_name)
+    @staticmethod
+    def create_documentdb_database_client(database_name: str = None) -> Database:
+        """
+        Create a documentdb database client
+        """
+        client = DocumentDBClient().get_client()
+
+        database_name = database_name or os.getenv("DOCUMENTDB_DATABASE")
+
+        return client.get_database(database_name)

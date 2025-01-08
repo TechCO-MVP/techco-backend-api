@@ -18,6 +18,7 @@ provider:
     - arn:aws:lambda:${aws:region}:017000801446:layer:AWSLambdaPowertoolsPythonV3-python311-x86_64:3
     - arn:aws:lambda:us-east-1:770693421928:layer:Klayers-p311-pymongo:11
   environment:
+    ENV: ${self:provider.stage}
     REGION_NAME: ${self:provider.region}
     COGNITO_USER_POOL_ID: !Ref CognitoUserPool
     COGNITO_USER_POOL_CLIENT_ID: !Ref CognitoPasswordlessUserPoolClient
@@ -54,6 +55,10 @@ provider:
 
 custom:
   userPoolName: ${self:provider.stage}-passwordless-user-pool
+  pythonRequirements:
+    dockerizePip: true
+    filename: requirements.txt
+    invalidateCaches: true
 
 resources:
   Resources:
@@ -160,8 +165,6 @@ functions:
           response:
             headers:
               Content-Type: "'application/json'"
-    environment:
-      ENV: ${self:provider.stage}
 
   start_auth:
     handler: src/adapters/primary/auth/start_auth.lambda_handler
@@ -177,8 +180,15 @@ functions:
           response:
             headers:
               Content-Type: "'application/json'"
-    environment:
-      ENV: ${self:provider.stage}
+
+  verify_auth_otp_code_signup:
+    handler: src/adapters/primary/auth/verify_auth_otp_code_signup.handler
+    events:
+      - http:
+          path: /auth/verify_auth_otp_code_signup
+          method: post
+          cors: true
+          private: true
 
   verify_auth_otp_code:
     handler: src/adapters/primary/auth/verify_auth_otp_code.lambda_handler
@@ -194,8 +204,6 @@ functions:
           response:
             headers:
               Content-Type: "'application/json'"
-    environment:
-      ENV: ${self:provider.stage}
 
   sign_out:
     handler: src/adapters/primary/auth/sign_out.lambda_handler
@@ -212,8 +220,6 @@ functions:
           response:
             headers:
               Content-Type: "'application/json'"
-    environment:
-      ENV: ${self:provider.stage}
 
   create_business:
     handler: src/adapters/primary/business/create_business/index.handler
@@ -242,8 +248,6 @@ functions:
             type: COGNITO_USER_POOLS
             authorizerId:
               Ref: ApiGatewayAuthorizer
-    environment:
-      ENV: ${self:provider.stage}
 
   get_business:
     handler: src/adapters/primary/business/get_business_by_id/index.handler
@@ -257,11 +261,9 @@ functions:
             type: COGNITO_USER_POOLS
             authorizerId:
               Ref: ApiGatewayAuthorizer
-    environment:
-      ENV: ${self:provider.stage}
 
   list_business:
-    handler: src/adapters/primary/business/list_business/index.handler
+    handler: src/adapters/primary/business/list_businesses/index.handler
     events:
       - http:
           path: /business/list
@@ -272,8 +274,6 @@ functions:
             type: COGNITO_USER_POOLS
             authorizerId:
               Ref: ApiGatewayAuthorizer
-    environment:
-      ENV: ${self:provider.stage}
 
   create_user:
     handler: src/adapters/primary/user/create_user/index.handler
@@ -304,8 +304,9 @@ functions:
             parameters:
               querystrings:
                 business_id: true
-  
+
     environment:
       ENV: ${self:provider.stage}
 plugins:
   - serverless-offline
+  - serverless-python-requirements
