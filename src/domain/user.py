@@ -47,6 +47,6 @@ class GetUserQueryParams(BaseModel):
 
 
 def filter_user_dto_fields(data: Dict[str, Any]) -> Dict[str, Any]:
-    user_dto_fields = UserDTO.model_fields.keys()
-    user_dto_fields["_id"] = None
+    user_dto_fields = list(UserDTO.model_fields.keys())
+    user_dto_fields.append("_id")
     return {key: value for key, value in data.items() if key in user_dto_fields}

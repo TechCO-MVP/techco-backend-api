@@ -106,12 +106,12 @@ def test_get_all_users(mocker, mock_db_client):
 
     adapter = UserDocumentDBAdapter()
     users = adapter.getAll({"business_id": "6778c3fa49a61649b054659d"})
-    body = users["body"]
+    data = users["body"]["data"]
 
     assert users["message"] == "Users found successfully"
-    assert len(body) == 2
-    assert body[0]["full_name"] == "John Doe"
-    assert body[1]["full_name"] == "Jane Doe"
+    assert len(data) == 2
+    assert data[0]["full_name"] == "John Doe"
+    assert data[1]["full_name"] == "Jane Doe"
     mock_collection.find.assert_called_once()
 
 
@@ -125,10 +125,10 @@ def test_get_all_users_not_users(mocker, mock_db_client):
 
     adapter = UserDocumentDBAdapter()
     users = adapter.getAll({"business_id": "6778c3fa49a61649b054659d"})
-    body = users["body"]
+    data = users["body"]["data"]
 
     assert users["message"] == "Users not found"
-    assert len(body) == 0
+    assert len(data) == 0
     mock_collection.find.assert_called_once()
 
 
@@ -147,11 +147,11 @@ def test_get_by_id(mocker, mock_db_client):
 
     adapter = UserDocumentDBAdapter()
     user = adapter.getById("6778c3fa49a61649b054659d")
-    body = user["body"]
+    data = user["body"]["data"]
 
     assert user["message"] == "User found successfully"
-    assert body[0]["email"] == "john.doe@example.com"
-    assert body[0]["full_name"] == "John Doe"
+    assert data[0]["email"] == "john.doe@example.com"
+    assert data[0]["full_name"] == "John Doe"
     mock_collection.find_one.assert_called_once_with({"_id": ObjectId("6778c3fa49a61649b054659d")})
 
 
