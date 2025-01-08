@@ -30,7 +30,7 @@ def create_documentdb_client() -> MongoClient:
         f"mongodb://{username}:{password}@{cluster_endpoint}:{cluster_port}/"
         "?tls=true"
         "&replicaSet=rs0"
-        "&readPreference=secondaryPreferred"
+        "&readPreference=primary"
         "&retryWrites=false"
         "&authSource=admin"
     )

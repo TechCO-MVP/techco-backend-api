@@ -64,7 +64,6 @@ class UserDocumentDBAdapter(IRepository[UserEntity]):
         try:
             user_data = entity.to_dto(flat=True)
             user_data.pop("_id", None)
-            user_data["business_id"] = ObjectId(user_data["business_id"])
             logger.info("Attempting to save user with email: %s", user_data["email"])
 
             collection = self._client[self._collection_name]
@@ -76,14 +75,15 @@ class UserDocumentDBAdapter(IRepository[UserEntity]):
 
             business_collection = self._client[self._business_collection_name]
             business_object_id = ObjectId(user_data["business_id"])
-            exists_business = business_collection.find_one({"_id": business_object_id})
+            exists_business = business_collection.find_one(
+                {"_id": business_object_id}, session=self._session
+            )
 
             if not exists_business:
                 logger.warning("business with id %s not exists.", user_data["business_id"])
                 raise ValueError("A business_id not exists.")
 
             user_data["business_id"] = business_object_id
-            result = collection.insert_one(user_data)
             result = collection.insert_one(user_data, session=self._session)
             logger.info("User successfully inserted with _id: %s", result.inserted_id)
 
