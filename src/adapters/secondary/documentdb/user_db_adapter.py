@@ -37,6 +37,7 @@ class UserDocumentDBAdapter(IRepository[UserEntity]):
         return {"message": message, "body": [filter_user_dto_fields(user) for user in users_data]}
 
     def getByEmail(self, email: str) -> dict:
+        logger.info(f"Getting user entity with email: {email}")
         collection = self._client[self._collection_name]
         result = collection.find_one({"email": email})
 
