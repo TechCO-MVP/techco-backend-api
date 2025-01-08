@@ -55,6 +55,10 @@ provider:
 
 custom:
   userPoolName: ${self:provider.stage}-passwordless-user-pool
+  pythonRequirements:
+    dockerizePip: true
+    filename: requirements.txt
+    invalidateCaches: true
 
 resources:
   Resources:
@@ -305,3 +309,4 @@ functions:
       ENV: ${self:provider.stage}
 plugins:
   - serverless-offline
+  - serverless-python-requirements

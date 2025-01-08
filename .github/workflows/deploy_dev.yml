@@ -17,7 +17,7 @@ jobs:
       - name: Set up python environment
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Install poetry
         run: |
@@ -39,6 +39,9 @@ jobs:
           audience: sts.amazonaws.com
           role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           aws-region: us-east-1
+
+      - name: Run poetry export
+        run: poetry export -f requirements.txt --without-hashes -o requirements.txt
 
       - name: Run build
         run: poetry run sls package
