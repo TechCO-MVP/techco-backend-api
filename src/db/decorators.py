@@ -1,4 +1,5 @@
 from aws_lambda_powertools import Logger
+
 from src.repositories.document_db.client import DocumentDBClient
 
 logger = Logger()

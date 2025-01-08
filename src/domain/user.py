@@ -1,8 +1,8 @@
-from bson import ObjectId
 from enum import Enum
 from typing import Any, Dict, Optional
 
-from pydantic import BaseModel, EmailStr, Field, ValidationError, model_validator, field_validator
+from bson import ObjectId
+from pydantic import BaseModel, EmailStr, Field, ValidationError, field_validator, model_validator
 
 from src.domain.base_entity import BaseEntity
 

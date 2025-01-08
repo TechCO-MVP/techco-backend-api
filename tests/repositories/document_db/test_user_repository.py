@@ -26,6 +26,7 @@ def mock_adapter(mocker):
     )
     return mock_adapter
 
+
 @pytest.fixture(autouse=True)
 def set_env(monkeypatch):
     monkeypatch.setenv("REGION_NAME", "fake-region")
@@ -99,7 +100,7 @@ def test_update_user(mock_adapter, user_entity):
 def test_delete_user(mock_adapter):
     """Test delete function."""
     from src.repositories.document_db.user_repository import UserRepository
-    
+
     repository = UserRepository()
     repository.delete("1")
 

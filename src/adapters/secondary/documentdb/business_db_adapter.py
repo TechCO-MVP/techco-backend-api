@@ -1,6 +1,7 @@
-from bson import ObjectId
 from datetime import datetime
+
 from aws_lambda_powertools import Logger
+from bson import ObjectId
 from pymongo.database import Database
 
 from src.db.constants import BUSINESS_COLLECTION_NAME
