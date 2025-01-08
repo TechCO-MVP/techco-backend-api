@@ -263,7 +263,7 @@ functions:
               Ref: ApiGatewayAuthorizer
 
   list_business:
-    handler: src/adapters/primary/business/list_business/index.handler
+    handler: src/adapters/primary/business/list_businesses/index.handler
     events:
       - http:
           path: /business/list
