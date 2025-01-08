@@ -55,6 +55,12 @@ provider:
 
 custom:
   userPoolName: ${self:provider.stage}-passwordless-user-pool
+  pythonRequirements:
+    dockerizePip: non-linux
+    dockerRunCmdExtraArgs: ["--platform", "linux/x86_64"]
+    usePipenv: false
+    slim: false
+    layer: true
 
 resources:
   Resources:
@@ -300,16 +306,9 @@ functions:
             parameters:
               querystrings:
                 business_id: true
-  
+
     environment:
       ENV: ${self:provider.stage}
 plugins:
   - serverless-offline
   - serverless-python-requirements
-
-pythonRequirements:
-  dockerizePip: non-linux
-  dockerRunCmdExtraArgs: ["--platform", "linux/x86_64"]
-  usePipenv: false
-  slim: false
-  layer: true
