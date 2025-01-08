@@ -272,7 +272,7 @@ functions:
               Ref: ApiGatewayAuthorizer
 
   create_user:
-    handler: src/adapters/primary/create_user/index.handler
+    handler: src/adapters/primary/user/create_user/index.handler
     events:
       - http:
           path: /user/create
@@ -284,6 +284,25 @@ functions:
             authorizerId:
               Ref: ApiGatewayAuthorizer
 
+  get_users:
+    handler: src/adapters/primary/user/get_user/index.handler
+    events:
+      - http:
+          path: /user/list
+          method: get
+          cors: true
+          private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          request:
+            parameters:
+              querystrings:
+                business_id: true
+  
+    environment:
+      ENV: ${self:provider.stage}
 plugins:
   - serverless-offline
   - serverless-python-requirements

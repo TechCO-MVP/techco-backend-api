@@ -44,7 +44,7 @@ def set_env(monkeypatch):
 
 def test_create_user_value_error(event, lambda_context):
     """Test create user value error."""
-    from src.adapters.primary.create_user.index import handler
+    from src.adapters.primary.user.create_user.index import handler
 
     event["body"] = json.dumps({})
     response = handler(event, lambda_context)
@@ -55,7 +55,7 @@ def test_create_user_value_error(event, lambda_context):
 
 def test_create_user_validation_error(event, lambda_context):
     """Test create user validation error."""
-    from src.adapters.primary.create_user.index import handler
+    from src.adapters.primary.user.create_user.index import handler
 
     body = json.loads(event["body"])
     body["full_name"] = "name_with special_characters"
@@ -68,10 +68,10 @@ def test_create_user_validation_error(event, lambda_context):
 
 def test_handler_general_exception(mocker, event, lambda_context):
     """Test handler for general exception."""
-    from src.adapters.primary.create_user.index import handler
+    from src.adapters.primary.user.create_user.index import handler
 
     mock_create_user_use_case = mocker.patch(
-        "src.adapters.primary.create_user.index.create_user_use_case"
+        "src.adapters.primary.user.create_user.index.create_user_use_case"
     )
     mock_create_user_use_case.side_effect = Exception("Unexpected error")
     response = handler(event, lambda_context)
@@ -83,10 +83,10 @@ def test_handler_general_exception(mocker, event, lambda_context):
 
 def test_create_user(mocker, event, lambda_context):
     """Test create user."""
-    from src.adapters.primary.create_user.index import handler
+    from src.adapters.primary.user.create_user.index import handler
 
     mock_create_user_use_case = mocker.patch(
-        "src.adapters.primary.create_user.index.create_user_use_case"
+        "src.adapters.primary.user.create_user.index.create_user_use_case"
     )
     mock_create_user_use_case.return_value = {"message": "User created successfully"}
     response = handler(event, lambda_context)
