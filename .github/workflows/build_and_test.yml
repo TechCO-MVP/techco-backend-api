@@ -1,43 +1,45 @@
 name: Code quality, tests and build
 
 on:
-    pull_request:
-        branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
 
 jobs:
-    ci_test_and_quality_checks:
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout the code
-              uses: actions/checkout@v3
+  ci_test_and_quality_checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v3
 
-            - name: Set up python environment
-              uses: actions/setup-python@v5
-              with:
-                python-version: '3.11'
-            
-            - name: Install poetry
-              run: |
-                curl -sSL https://install.python-poetry.org | python3 -
-                echo "$HOME/.local/bin" >> $GITHUB_PATH
+      - name: Set up python environment
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
 
-            - name: Install dependencies
-              run: |
-                poetry config virtualenvs.create true
-                poetry lock
-                poetry install --no-root
+      - name: Install poetry
+        run: |
+            curl -sSL https://install.python-poetry.org | POETRY_VERSION=1.8.2 python3 -
+            echo "$HOME/.local/bin" >> $GITHUB_PATH
 
-            - name: Install serverless
-              run: npm install -g serverless@3.39.0 serverless-offline serverless-python-requirements
+      - name: Install dependencies
+        run: |
+          poetry config virtualenvs.create true
+          poetry lock
+          poetry install --no-root
 
-            - name: Run build
-              run: poetry run sls package
+      - name: Install serverless
+        run: npm install -g serverless@3.39.0 serverless-offline serverless-python-requirements
 
-            - name: Run quality checks
-              run: |
-                chmod +x .code_quality/scripts/run_quality_checks.sh
-                ./.code_quality/scripts/run_quality_checks.sh
+      - name: Run poetry export
+        run: poetry export -f requirements.txt --without-hashes -o requirements.txt
 
-            - name: Run tests
-              run: poetry run pytest
-      
+      - name: Run build
+        run: poetry run sls package
+
+      - name: Run quality checks
+        run: |
+          chmod +x .code_quality/scripts/run_quality_checks.sh
+          ./.code_quality/scripts/run_quality_checks.sh
+
+      - name: Run tests
+        run: poetry run pytest
