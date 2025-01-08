@@ -10,14 +10,13 @@ logger = Logger()
 app = APIGatewayRestResolver()
 
 
-@app.get("/user/get")
+@app.get("/user/list")
 def get_user():
     """Get user."""
     try:
 
         query_params = app.current_event.query_string_parameters
         GetUserQueryParams.validate_params(query_params)
-
         response = get_user_use_case(query_params)
 
         return Response(

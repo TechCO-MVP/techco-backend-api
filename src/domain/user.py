@@ -1,8 +1,8 @@
-from bson import ObjectId
 from enum import Enum
 from typing import Any, Dict, Optional
 
-from pydantic import BaseModel, EmailStr, Field, ValidationError, model_validator, field_validator
+from bson import ObjectId
+from pydantic import BaseModel, EmailStr, Field, ValidationError, field_validator, model_validator
 
 from src.domain.base_entity import BaseEntity
 
@@ -55,5 +55,6 @@ class GetUserQueryParams(BaseModel):
 
 
 def filter_user_dto_fields(data: Dict[str, Any]) -> Dict[str, Any]:
-    user_dto_fields = UserDTO.model_fields.keys()
+    user_dto_fields = list(UserDTO.model_fields.keys())
+    user_dto_fields.append("_id")
     return {key: value for key, value in data.items() if key in user_dto_fields}

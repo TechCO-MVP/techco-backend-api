@@ -35,7 +35,7 @@ def set_env(monkeypatch):
 def test_create_user_use_case_success(mock_user_repository, user_dto):
     """Test successful creation of a user."""
     from src.use_cases.user.create_user import create_user_use_case
-    
+
     mock_user_repository.return_value.create.return_value = {
         "message": "User created successfully",
         "body": {"user": {"_id": "mock_id"}},
