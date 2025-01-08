@@ -177,6 +177,15 @@ functions:
             headers:
               Content-Type: "'application/json'"
 
+  verify_auth_otp_code_signup:
+    handler: src/adapters/primary/auth/verify_auth_otp_code_signup.handler
+    events:
+      - http:
+          path: /auth/verify_auth_otp_code_signup
+          method: post
+          cors: true
+          private: true
+
   verify_auth_otp_code:
     handler: src/adapters/primary/auth/verify_auth_otp_code.lambda_handler
     events:
@@ -291,7 +300,7 @@ functions:
             parameters:
               querystrings:
                 business_id: true
-  
+
     environment:
       ENV: ${self:provider.stage}
 plugins:

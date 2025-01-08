@@ -14,7 +14,7 @@ def pre_config(monkeypatch):
 
 @patch("boto3.client")
 def test_documentdb_config(mock_boto_client):
-    from src.repositories.document_db.client import get_documentdb_config
+    from src.repositories.document_db.utils import get_documentdb_config
 
     mock_secrets_client = mock_boto_client.return_value
     mock_secrets_client.get_secret_value.return_value = {
@@ -33,7 +33,7 @@ def test_documentdb_config(mock_boto_client):
 
 @patch("boto3.client")
 def test_get_password_secret(mock_boto_client):
-    from src.repositories.document_db.client import get_user_password_secret
+    from src.repositories.document_db.utils import get_user_password_secret
 
     mock_secrets_client = mock_boto_client.return_value
     mock_secrets_client.get_secret_value.return_value = {

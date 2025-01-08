@@ -28,7 +28,7 @@ jobs:
                 poetry install --no-root
 
             - name: Install serverless
-              run: npm install -g serverless@3.39.0 serverless-offline
+              run: npm install -g serverless@3.39.0 serverless-offline serverless-python-requirements
 
             - name: Run build
               run: poetry run sls package

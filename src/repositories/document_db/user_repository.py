@@ -5,7 +5,7 @@ from src.repositories.repository import IRepository
 
 class UserRepository(IRepository[UserEntity]):
 
-    _adapter: IRepository[UserEntity]
+    _adapter: UserDocumentDBAdapter
 
     def __init__(self):
         super().__init__()
@@ -16,6 +16,9 @@ class UserRepository(IRepository[UserEntity]):
 
     def getById(self, id: str):
         return self._adapter.getById(id)
+
+    def getByEmail(self, email: str):
+        return self._adapter.getByEmail(email)
 
     def create(self, entity):
         return self._adapter.create(entity)

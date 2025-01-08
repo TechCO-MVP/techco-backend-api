@@ -1,10 +1,10 @@
 from aws_lambda_powertools import Logger
-from bson.objectid import ObjectId
+from bson import ObjectId
 from pymongo.database import Database
 
 from src.db.constants import BUSINESS_COLLECTION_NAME, USER_COLLECTION_NAME
 from src.domain.user import UserEntity, filter_user_dto_fields
-from src.repositories.document_db.client import create_documentdb_client
+from src.repositories.document_db.client import DocumentDBClient
 from src.repositories.repository import IRepository
 
 logger = Logger("UserDocumentDBAdapter")
@@ -16,9 +16,11 @@ class UserDocumentDBAdapter(IRepository[UserEntity]):
 
     def __init__(self):
         super().__init__()
+        document_db_client = DocumentDBClient()
         self._collection_name = USER_COLLECTION_NAME
         self._business_collection_name = BUSINESS_COLLECTION_NAME
-        self._client = create_documentdb_client()
+        self._client = document_db_client.create_documentdb_database_client()
+        self._session = document_db_client.get_session()
 
         if self._collection_name not in self._client.list_collection_names():
             self._client.create_collection(self._collection_name)
@@ -50,6 +52,7 @@ class UserDocumentDBAdapter(IRepository[UserEntity]):
         try:
             user_data = entity.to_dto(flat=True)
             user_data.pop("_id", None)
+            user_data["business_id"] = ObjectId(user_data["business_id"])
             logger.info("Attempting to save user with email: %s", user_data["email"])
 
             collection = self._client[self._collection_name]
@@ -69,6 +72,7 @@ class UserDocumentDBAdapter(IRepository[UserEntity]):
 
             user_data["business_id"] = business_object_id
             result = collection.insert_one(user_data)
+            result = collection.insert_one(user_data, session=self._session)
             logger.info("User successfully inserted with _id: %s", result.inserted_id)
 
             return {

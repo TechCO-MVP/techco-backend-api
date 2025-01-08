@@ -10,24 +10,27 @@ logger = Logger()
 app = APIGatewayRestResolver()
 
 
-@app.get("/business/{id}")
-def get_business_by_id():
+@app.get("/business/<business_id>")
+def get_business_by_id(business_id: str):
+    """
+    Retrieve a business entity by its ID if the user belongs to the same business.
+
+    Returns:
+        Response: A response object containing the status code, message, and business entity data.
+    """
     try:
         # get user id from authorizer
         user = app.current_event.request_context.authorizer["claims"]
-        user_id = user["sub"]
-
-        # get business id from path parameters
-        business_id = app.current_event.path_parameters["id"]
+        email = user["email"]
 
         # call use case to get business by id
-        business_entity = get_business_by_id_use_case(business_id, user_id)
+        business_entity = get_business_by_id_use_case(business_id, email)
 
         return Response(
             status_code=200,
             body={
                 "message": "Business retrieved successfully",
-                "body": business_entity.to_dto(),
+                "body": business_entity.to_dto(flat=True),
             },
             content_type=content_types.APPLICATION_JSON,
         )

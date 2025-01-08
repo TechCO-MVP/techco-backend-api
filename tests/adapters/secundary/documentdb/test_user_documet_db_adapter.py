@@ -12,7 +12,7 @@ def user_dto():
         full_name="John Doe",
         email="john.doe@example.com",
         company_position="Developer",
-        rol="Admin",
+        role="Admin",
         business="TechCo",
         business_id="6778c3fa49a61649b054659d",
     )
@@ -26,7 +26,7 @@ def user_entity(user_dto):
 @pytest.fixture
 def mock_db_client(mocker):
     mock_client = mocker.patch(
-        "src.adapters.secondary.documentdb.user_db_adapter.create_documentdb_client"
+        "src.repositories.document_db.client.DocumentDBClient.create_documentdb_database_client",
     )
     return mock_client
 

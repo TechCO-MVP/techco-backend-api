@@ -18,7 +18,7 @@
       "company_position": {
         "type": "string"
       },
-      "rol": {
+      "role": {
         "type": "string"
       }
     },
@@ -28,7 +28,7 @@
       "full_name",
       "email",
       "company_position",
-      "rol"
+      "role"
     ]
   }
 }
