@@ -4,6 +4,7 @@ from pymongo.database import Database
 
 from src.db.constants import BUSINESS_COLLECTION_NAME, USER_COLLECTION_NAME
 from src.domain.user import UserEntity, filter_user_dto_fields
+from src.domain.base_entity import from_dto_to_entity
 from src.repositories.document_db.client import DocumentDBClient
 from src.repositories.repository import IRepository
 
@@ -34,6 +35,16 @@ class UserDocumentDBAdapter(IRepository[UserEntity]):
             message = "Users not found"
 
         return {"message": message, "body": [filter_user_dto_fields(user) for user in users_data]}
+
+    def getByEmail(self, email: str) -> dict:
+        collection = self._client[self._collection_name]
+        result = collection.find_one({"email": email})
+
+        if not result:
+            raise ValueError("User not found")
+
+        result["_id"] = str(result["_id"])
+        return from_dto_to_entity(UserEntity, result)
 
     def getById(self, id: str) -> dict:
         object_id = ObjectId(id)
