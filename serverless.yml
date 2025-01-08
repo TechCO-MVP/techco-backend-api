@@ -305,4 +305,3 @@ functions:
       ENV: ${self:provider.stage}
 plugins:
   - serverless-offline
-  - serverless-python-requirements
