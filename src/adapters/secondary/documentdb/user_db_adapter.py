@@ -31,7 +31,7 @@ class UserDocumentDBAdapter(IRepository[UserEntity]):
         if not users_data:
             message = "Users not found"
 
-        return {"message": message, "body": [filter_user_dto_fields(user) for user in users_data]}
+        return {"message": message, "body": {"data": [filter_user_dto_fields(user) for user in users_data]}}
 
     def getById(self, id: str) -> dict:
         object_id = ObjectId(id)
@@ -44,7 +44,7 @@ class UserDocumentDBAdapter(IRepository[UserEntity]):
         user_data = filter_user_dto_fields(user)
         message = "User found successfully"
 
-        return {"message": message, "body": [user_data]}
+        return {"message": message, "body": {"data": [user_data]}}
 
     def create(self, entity: UserEntity):
         try:
