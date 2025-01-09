@@ -28,7 +28,7 @@ def get_user():
     except ValidationError as e:
         logger.error(str(e))
         return Response(
-            status_code=400, body={"message": str(e)}, content_type=content_types.APPLICATION_JSON
+            status_code=422, body={"message": str(e)}, content_type=content_types.APPLICATION_JSON
         )
 
     except ValueError as e:
