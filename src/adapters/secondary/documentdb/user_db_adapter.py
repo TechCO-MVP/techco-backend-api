@@ -26,18 +26,15 @@ class UserDocumentDBAdapter(IRepository[UserEntity]):
         if self._collection_name not in self._client.list_collection_names():
             self._client.create_collection(self._collection_name)
 
-    def getAll(self, params: dict) -> list:
+    def getAll(self, params: dict) -> list[UserEntity] | None:
         collection = self._client[self._collection_name]
         users_data = collection.find({"business_id": ObjectId(params["business_id"])})
-        message = "Users found successfully"
-
-        if not users_data:
-            message = "Users not found"
-
-        return {
-            "message": message,
-            "body": {"data": [filter_user_dto_fields(user) for user in users_data]},
-        }
+        users_entities = []
+        for user in users_data:
+            user["_id"] = str(user["_id"])
+            user["business_id"] = str(user["business_id"])
+            users_entities.append(from_dto_to_entity(UserEntity, user))
+        return users_entities
 
     def getByEmail(self, email: str) -> dict:
         logger.info(f"Getting user entity with email: {email}")
@@ -50,7 +47,7 @@ class UserDocumentDBAdapter(IRepository[UserEntity]):
         result["_id"] = str(result["_id"])
         return from_dto_to_entity(UserEntity, result)
 
-    def getById(self, id: str) -> dict:
+    def getById(self, id: str) -> UserEntity:
         object_id = ObjectId(id)
         collection = self._client[self._collection_name]
         user = collection.find_one({"_id": object_id})
@@ -58,10 +55,10 @@ class UserDocumentDBAdapter(IRepository[UserEntity]):
         if not user:
             raise ValueError("User not found")
 
-        user_data = filter_user_dto_fields(user)
-        message = "User found successfully"
+        user["_id"] = str(user["_id"])
+        user["business_id"] = str(user["business_id"])
 
-        return {"message": message, "body": {"data": [user_data]}}
+        return from_dto_to_entity(UserEntity, user)
 
     def create(self, entity: UserEntity):
         try:

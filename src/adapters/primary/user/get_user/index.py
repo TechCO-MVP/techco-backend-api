@@ -6,6 +6,7 @@ from pydantic import ValidationError
 from src.domain.user import GetUserQueryParams
 from src.use_cases.user.get_user import get_user_use_case
 
+
 logger = Logger()
 app = APIGatewayRestResolver()
 
@@ -19,16 +20,28 @@ def get_user():
         GetUserQueryParams.validate_params(query_params)
         response = get_user_use_case(query_params)
 
+        if isinstance(response, list):
+            data = [user.to_dto(flat=True) for user in response]
+        else:
+            data = [response.to_dto(flat=True)]
+
+        message = "User found successfully" if data else "User not found" 
+
         return Response(
             status_code=200,
-            body=response,
+            body={
+                "message": message,
+                "body": {
+                        "data": data,
+                    }
+            },
             content_type=content_types.APPLICATION_JSON,
         )
 
     except ValidationError as e:
         logger.error(str(e))
         return Response(
-            status_code=400, body={"message": str(e)}, content_type=content_types.APPLICATION_JSON
+            status_code=422, body={"message": str(e)}, content_type=content_types.APPLICATION_JSON
         )
 
     except ValueError as e:
