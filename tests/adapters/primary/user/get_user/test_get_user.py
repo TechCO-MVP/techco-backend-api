@@ -76,13 +76,99 @@ def test_handler_general_exception(mocker, event, lambda_context):
 def test_get_user(mocker, event, lambda_context):
     """Test get user."""
     from src.adapters.primary.user.get_user.index import handler
+    from src.domain.user import UserEntity
+    from src.domain.base_entity import from_dto_to_entity
 
     mock_create_user_use_case = mocker.patch(
         "src.adapters.primary.user.get_user.index.get_user_use_case"
     )
-    mock_create_user_use_case.return_value = {"message": "User found successfully"}
+
+    mock_user_case = from_dto_to_entity(
+        UserEntity,
+        {
+            "_id": "6778c3fa49a61649b054659d",
+            "email": "mail@fake.co",
+            "company_position": "CEO",
+            "role": "admin",
+            "business_id": "6778c3fa49a61649b054659d",
+            "status": "enabled",
+            "full_name": "Fake Name",
+            "created_at": "2021-10-10T10:10:10",
+            "updated_at": "2021-10-10T10:10:10",
+            "deleted_at": None,
+        }
+    )
+    mock_create_user_use_case.return_value = mock_user_case
     response = handler(event, lambda_context)
 
     assert response["statusCode"] == 200
     body = json.loads(response["body"])
     assert body["message"] == "User found successfully"
+
+def test_get_list_users(mocker, event, lambda_context):
+    """Test get list users - all users."""
+    from src.adapters.primary.user.get_user.index import handler
+    from src.domain.user import UserEntity
+    from src.domain.base_entity import from_dto_to_entity
+
+    mock_create_user_use_case = mocker.patch(
+        "src.adapters.primary.user.get_user.index.get_user_use_case"
+    )
+
+    mock_user_case = [
+        from_dto_to_entity(
+            UserEntity,
+            {
+                "_id": "6778c3fa49a61649b054659d",
+                "email": "mail@fake.co",
+                "company_position": "CEO",
+                "role": "admin",
+                "business_id": "6778c3fa49a61649b054659d",
+                "status": "enabled",
+                "full_name": "Fake Name",
+                "created_at": "2021-10-10T10:10:10",
+                "updated_at": "2021-10-10T10:10:10",
+                "deleted_at": None,
+            }
+        ),
+        from_dto_to_entity(
+            UserEntity,
+            {
+                "_id": "6778c3fa49a61649b054659d",
+                "email": "mail@fake.co",
+                "company_position": "CEO",
+                "role": "admin",
+                "business_id": "6778c3fa49a61649b054659d",
+                "status": "enabled",
+                "full_name": "Fake Name",
+                "created_at": "2021-10-10T10:10:10",
+                "updated_at": "2021-10-10T10:10:10",
+                "deleted_at": None,
+            }
+        ),
+    ]
+    mock_create_user_use_case.return_value = mock_user_case
+    response = handler(event, lambda_context)
+
+    assert response["statusCode"] == 200
+    body = json.loads(response["body"])
+    assert body["message"] == "User found successfully"
+
+
+def test_get_void_list_users(mocker, event, lambda_context):
+    """Test get void list users - all users."""
+    from src.adapters.primary.user.get_user.index import handler
+    from src.domain.user import UserEntity
+    from src.domain.base_entity import from_dto_to_entity
+
+    mock_create_user_use_case = mocker.patch(
+        "src.adapters.primary.user.get_user.index.get_user_use_case"
+    )
+
+    mock_user_case = []
+    mock_create_user_use_case.return_value = mock_user_case
+    response = handler(event, lambda_context)
+
+    assert response["statusCode"] == 200
+    body = json.loads(response["body"])
+    assert body["message"] == "User not found"

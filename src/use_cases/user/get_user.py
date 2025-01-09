@@ -1,7 +1,8 @@
 from src.repositories.document_db.user_repository import UserRepository
+from src.domain.user import UserEntity
 
 
-def get_user_use_case(params: dict) -> dict:
+def get_user_use_case(params: dict) -> UserEntity:
     """get user use case."""
     user_repository = UserRepository()
 
