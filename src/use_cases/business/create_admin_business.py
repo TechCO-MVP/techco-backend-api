@@ -22,7 +22,9 @@ def create_business_and_user(business_dto: BusinessDTO, user_dto: UserDTO):
 
     user_repository = UserRepository()
     user_dto.business_id = str(business_entity.id)
+    user_dto.roles[0].business_id = str(business_entity.id)
     user_entity = UserEntity(props=user_dto)
+
     user_entity = user_repository.create(user_entity)
 
     return business_entity, user_entity

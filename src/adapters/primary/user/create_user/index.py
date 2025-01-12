@@ -4,6 +4,7 @@ from aws_lambda_powertools.utilities.typing import LambdaContext
 from pydantic import ValidationError
 
 from src.domain.user import UserDTO
+from src.domain.role import Role, BusinessRole
 from src.use_cases.user.create_user import create_user_use_case
 
 logger = Logger()
@@ -14,13 +15,21 @@ app = APIGatewayRestResolver()
 def create_user():
     """Create a user."""
     try:
-
         body = app.current_event.json_body
         if not body:
             raise ValueError("Request body is empty")
 
-        user_dto = UserDTO(**body)
-        response = create_user_use_case(user_dto)
+        role = body.pop("role", None)
+        if role not in Role:
+            raise ValueError(f"Invalid role: {role}")
+
+        business_id = body.pop("business_id")
+        business_role = BusinessRole(
+            role=role,
+            business_id=business_id,
+        )
+        user_dto = UserDTO(**body, roles=[business_role])
+        response = create_user_use_case(user_dto, business_id)
 
         return Response(
             status_code=200,

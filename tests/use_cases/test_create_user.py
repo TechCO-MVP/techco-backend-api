@@ -10,7 +10,8 @@ def user_dto():
         email="john.doe@example.com",
         company_position="Developer",
         role="Admin",
-        business_id="12345",
+        business_id="6778c3fa49a61649b054659d",
+        roles=[{"role": "business_admin", "business_id": "6778c3fa49a61649b054659d"}],
     )
 
 
@@ -25,6 +26,12 @@ def mock_user_repository(mocker):
     return mock_repository
 
 
+@pytest.fixture
+def mock_business_repository(mocker):
+    mock_repository = mocker.patch("src.use_cases.user.create_user.BusinessRepository")
+    return mock_repository
+
+
 @pytest.fixture(autouse=True)
 def set_env(monkeypatch):
     monkeypatch.setenv("REGION_NAME", "fake-region")
@@ -32,16 +39,21 @@ def set_env(monkeypatch):
     monkeypatch.setenv("ENV", "tests")
 
 
-def test_create_user_use_case_success(mock_user_repository, user_dto):
+def test_create_user_use_case_success(mock_user_repository, mock_business_repository, user_dto):
     """Test successful creation of a user."""
     from src.use_cases.user.create_user import create_user_use_case
 
-    mock_user_repository.return_value.create.return_value = {
-        "message": "User created successfully",
-        "body": {"user": {"_id": "mock_id"}},
+    mock_business_repository.return_value.create.return_value = {
+        "message": "Business created successfully",
+        "body": {"business": {"_id": "6778c3fa49a61649b054659d"}},
     }
 
-    response = create_user_use_case(user_dto)
+    mock_user_repository.return_value.create.return_value = {
+        "message": "User created successfully",
+        "body": {"user": {"_id": "6778c3fa49a61649b054659d"}},
+    }
+
+    response = create_user_use_case(user_dto, "6778c3fa49a61649b054659d")
 
     assert response["message"] == "User created successfully"
-    assert response["body"]["user"]["_id"] == "mock_id"
+    assert response["body"]["user"]["_id"] == "6778c3fa49a61649b054659d"

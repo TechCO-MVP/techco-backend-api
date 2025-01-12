@@ -1,10 +1,11 @@
 from enum import Enum
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, List
 
 from bson import ObjectId
 from pydantic import BaseModel, EmailStr, Field, ValidationError, field_validator, model_validator
 
 from src.domain.base_entity import BaseEntity
+from src.domain.role import BusinessRole
 
 
 class UserStatus(str, Enum):
@@ -16,10 +17,11 @@ class UserStatus(str, Enum):
 class UserDTO(BaseModel):
     full_name: Optional[str] = Field(None, pattern=r"^[a-zA-Z0-9 \s]+$")
     email: EmailStr
-    company_position: Optional[str] = Field(None, pattern=r"^[a-zA-Z0-9 \s]+$")
-    role: str = Field(..., pattern=r"^[a-zA-Z0-9 \s]+$")
+    company_position: str = Field(..., pattern=r"^[a-zA-Z0-9 \s]+$")
+    role: Optional[str] = Field("", pattern=r"^[a-zA-Z0-9 \s]+$")
     business_id: str = Field(default="", alias="business_id")
     status: Optional[UserStatus] = UserStatus.PENDING
+    roles: List[BusinessRole] = Field(..., alias="roles", min_length=1)
 
     @field_validator("business_id", mode="before")
     def validate_and_convert_business_id(cls, v):
