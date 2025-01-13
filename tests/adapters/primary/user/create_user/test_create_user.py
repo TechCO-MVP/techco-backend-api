@@ -18,7 +18,7 @@ def event():
                 "full_name": "completed name",
                 "email": "fakemail@mail.com",
                 "company_position": "admin",
-                "role": "general",
+                "role": "business_admin",
             }
         ),
     }
@@ -46,11 +46,16 @@ def test_create_user_value_error(event, lambda_context):
     """Test create user value error."""
     from src.adapters.primary.user.create_user.index import handler
 
-    event["body"] = json.dumps({})
+    event["body"] = json.dumps(
+        {
+            "roles": "business_admin",
+            "business_id": "12354",
+        }
+    )
     response = handler(event, lambda_context)
 
     assert response["statusCode"] == 400
-    assert json.loads(response["body"])["message"] == "Request body is empty"
+    assert json.loads(response["body"])["message"] == "Invalid role: None"
 
 
 def test_create_user_validation_error(event, lambda_context):

@@ -15,6 +15,7 @@ def user_dto():
         role="Admin",
         business="TechCo",
         business_id="6778c3fa49a61649b054659d",
+        roles=[{"role": "business_admin", "business_id": "6778c3fa49a61649b054659d"}],
     )
 
 
@@ -101,7 +102,7 @@ def test_get_all_users(mocker, mock_db_client):
     from src.adapters.secondary.documentdb.user_db_adapter import UserDocumentDBAdapter
     from src.domain.user import UserEntity
     from src.domain.base_entity import from_dto_to_entity
-    
+
     mock_collection = MagicMock()
     mock_db_client.return_value.__getitem__.return_value = mock_collection
     mock_collection.find.return_value = [
@@ -116,6 +117,7 @@ def test_get_all_users(mocker, mock_db_client):
             "created_at": "2021-10-10T10:10:10",
             "updated_at": "2021-10-10T10:10:10",
             "deleted_at": None,
+            "roles": [{"role": "business_admin", "business_id": "6778c3fa49a61649b054659d"}],
         },
         {
             "_id": ObjectId("6778c3fa49a61649b054659d"),
@@ -128,6 +130,7 @@ def test_get_all_users(mocker, mock_db_client):
             "created_at": "2021-10-10T10:10:10",
             "updated_at": "2021-10-10T10:10:10",
             "deleted_at": None,
+            "roles": [{"role": "business_admin", "business_id": "6778c3fa49a61649b054659d"}],
         },
     ]
 
@@ -145,7 +148,8 @@ def test_get_all_users(mocker, mock_db_client):
                 "created_at": "2021-10-10T10:10:10",
                 "updated_at": "2021-10-10T10:10:10",
                 "deleted_at": None,
-            }
+                "roles": [{"role": "business_admin", "business_id": "6778c3fa49a61649b054659d"}],
+            },
         ),
         from_dto_to_entity(
             UserEntity,
@@ -160,13 +164,14 @@ def test_get_all_users(mocker, mock_db_client):
                 "created_at": "2021-10-10T10:10:10",
                 "updated_at": "2021-10-10T10:10:10",
                 "deleted_at": None,
-            }
-        )
+                "roles": [{"role": "business_admin", "business_id": "6778c3fa49a61649b054659d"}],
+            },
+        ),
     ]
 
     adapter = UserDocumentDBAdapter()
     users = adapter.getAll({"business_id": "6778c3fa49a61649b054659d"})
-    
+
     assert users == mock_response
     mock_collection.find.assert_called_once()
 
@@ -191,7 +196,6 @@ def test_get_by_id(mocker, mock_db_client):
     from src.adapters.secondary.documentdb.user_db_adapter import UserDocumentDBAdapter
     from src.domain.user import UserEntity
     from src.domain.base_entity import from_dto_to_entity
-    
 
     mock_collection = MagicMock()
     mock_db_client.return_value.__getitem__.return_value = mock_collection
@@ -206,6 +210,7 @@ def test_get_by_id(mocker, mock_db_client):
         "created_at": "2021-10-10T10:10:10",
         "updated_at": "2021-10-10T10:10:10",
         "deleted_at": None,
+        "roles": [{"role": "business_admin", "business_id": "6778c3fa49a61649b054659d"}],
     }
     mock_collection.find_one.return_value = {
         "_id": ObjectId("6778c3fa49a61649b054659d"),
@@ -218,6 +223,7 @@ def test_get_by_id(mocker, mock_db_client):
         "created_at": "2021-10-10T10:10:10",
         "updated_at": "2021-10-10T10:10:10",
         "deleted_at": None,
+        "roles": [{"role": "business_admin", "business_id": "6778c3fa49a61649b054659d"}],
     }
     mock_response = from_dto_to_entity(UserEntity, mock_data_user)
 

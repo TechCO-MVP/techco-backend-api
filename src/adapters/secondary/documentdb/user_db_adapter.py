@@ -4,7 +4,7 @@ from pymongo.database import Database
 
 from src.db.constants import BUSINESS_COLLECTION_NAME, USER_COLLECTION_NAME
 from src.domain.base_entity import from_dto_to_entity
-from src.domain.user import UserEntity, filter_user_dto_fields
+from src.domain.user import UserEntity
 from src.repositories.document_db.client import DocumentDBClient
 from src.repositories.repository import IRepository
 
@@ -26,6 +26,10 @@ class UserDocumentDBAdapter(IRepository[UserEntity]):
         if self._collection_name not in self._client.list_collection_names():
             self._client.create_collection(self._collection_name)
 
+        indexes = self._client[self._collection_name].index_information()
+        if "email" not in indexes:
+            self._client[self._collection_name].create_index("email", unique=True)
+
     def getAll(self, params: dict) -> list[UserEntity] | None:
         collection = self._client[self._collection_name]
         users_data = collection.find({"business_id": ObjectId(params["business_id"])})
@@ -36,7 +40,7 @@ class UserDocumentDBAdapter(IRepository[UserEntity]):
             users_entities.append(from_dto_to_entity(UserEntity, user))
         return users_entities
 
-    def getByEmail(self, email: str) -> dict:
+    def getByEmail(self, email: str) -> UserEntity:
         logger.info(f"Getting user entity with email: {email}")
         collection = self._client[self._collection_name]
         result = collection.find_one({"email": email})

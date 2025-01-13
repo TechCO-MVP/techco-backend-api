@@ -4,6 +4,7 @@ from aws_lambda_powertools.utilities.typing import LambdaContext
 from botocore.exceptions import ClientError
 
 from src.domain.business import BusinessDTO
+from src.domain.role import BusinessRole, Role
 from src.domain.user import UserDTO, UserStatus
 from src.use_cases.business.create_admin_business import crete_admin_business_use_case
 
@@ -17,7 +18,7 @@ def verify_auth_otp_code_signup():
     send request to cognito to verify the otp code authentication process
     """
     body = app.current_event.json_body
-    print(body)
+
     email = body["email"]
     otp = body["otp"]
     session = body["session"]
@@ -25,11 +26,14 @@ def verify_auth_otp_code_signup():
     response_body = {}
 
     try:
+        business_role = BusinessRole(role=Role.SUPER_ADMIN)
+
         user_dto = UserDTO(
             email=email,
-            role=body["role"],
+            company_position=body.get("company_position", ""),
             business_id="",
             status=UserStatus.ENABLED,
+            roles=[business_role],
         )
 
         business_dto = BusinessDTO(

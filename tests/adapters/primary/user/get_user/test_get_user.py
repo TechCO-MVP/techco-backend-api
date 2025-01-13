@@ -96,7 +96,8 @@ def test_get_user(mocker, event, lambda_context):
             "created_at": "2021-10-10T10:10:10",
             "updated_at": "2021-10-10T10:10:10",
             "deleted_at": None,
-        }
+            "roles": [{"role": "business_admin", "business_id": "6778c3fa49a61649b054659d"}],
+        },
     )
     mock_create_user_use_case.return_value = mock_user_case
     response = handler(event, lambda_context)
@@ -104,6 +105,7 @@ def test_get_user(mocker, event, lambda_context):
     assert response["statusCode"] == 200
     body = json.loads(response["body"])
     assert body["message"] == "User found successfully"
+
 
 def test_get_list_users(mocker, event, lambda_context):
     """Test get list users - all users."""
@@ -129,7 +131,8 @@ def test_get_list_users(mocker, event, lambda_context):
                 "created_at": "2021-10-10T10:10:10",
                 "updated_at": "2021-10-10T10:10:10",
                 "deleted_at": None,
-            }
+                "roles": [{"role": "business_admin", "business_id": "6778c3fa49a61649b054659d"}],
+            },
         ),
         from_dto_to_entity(
             UserEntity,
@@ -144,7 +147,8 @@ def test_get_list_users(mocker, event, lambda_context):
                 "created_at": "2021-10-10T10:10:10",
                 "updated_at": "2021-10-10T10:10:10",
                 "deleted_at": None,
-            }
+                "roles": [{"role": "business_admin", "business_id": "6778c3fa49a61649b054659d"}],
+            },
         ),
     ]
     mock_create_user_use_case.return_value = mock_user_case

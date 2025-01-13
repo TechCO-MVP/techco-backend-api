@@ -11,6 +11,7 @@ def user_dto():
         company_position="Developer",
         role="Admin",
         business_id="12345",
+        roles=[{"role": "business_admin", "business_id": "12345"}],
     )
 
 

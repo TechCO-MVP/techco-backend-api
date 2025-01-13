@@ -11,8 +11,6 @@ servers:
   - url: https://staging-api.techco.com/v1
     description: Staging server
 
-resources:
-
 paths:
   /sign_up:
     post:
@@ -403,24 +401,52 @@ paths:
 
 components:
   schemas:
+    Role:
+      type: string
+      enum:
+        - super_admin
+        - business_admin
+        - position_owner
+        - recruiter
+    BusinessRole:
+      type: object
+      properties:
+        business_id:
+          type: string
+          format: uuid
+        role:
+          type: string
+          $ref: "#/components/schemas/Role"
     User:
       type: object
       properties:
         id:
           type: string
           format: uuid
-        name:
+        full_name:
           type: string
         email:
           type: string
           format: email
-        company:
+        company_position:
+          type: string
+        roles:
+          type: array
+          minItems: 1
+          items:
+            $ref: "#/components/schemas/BusinessRole"
+        business:
           type: object
           properties:
             name:
               type: string
             address:
               type: string
+      required:
+        - full_name
+        - email
+        - company_position
+        - business
     Business:
       type: object
       properties:
@@ -485,6 +511,9 @@ components:
         company_name:
           type: string
           example: Pepsico
+        company_position:
+          type: string
+          example: recruiter
         country_code:
           type: string
           example: CO
@@ -492,9 +521,6 @@ components:
           type: string
           example: A
           description: Should follow next pattern [A,B,C,D] https://learn.microsoft.com/en-us/linkedin/shared/references/reference-tables/company-size-codes
-        role:
-          type: string
-          example: recruiter
     VerifyOTP:
       type: object
       properties:
@@ -526,9 +552,11 @@ components:
               type: string
               example: fale refresh token.
             user:
-              type: "#/components/schemas/User"
+              type: object
+              $ref: "#/components/schemas/User"
             business:
-              type: "#/components/schemas/Business"
+              type: object
+              $ref: "#/components/schemas/Business"
     VerifyOTPResponse:
       type: object
       properties:
@@ -590,7 +618,14 @@ components:
           example: auxiliar rrhh
         role:
           type: string
+          $ref: "#/components/schemas/Role"
           example: recruiter
+      required:
+        - business_id
+        - full_name
+        - email
+        - company_position
+        - role
     CreateUserResponse:
       type: object
       properties:
