@@ -4,14 +4,17 @@ from aws_lambda_powertools.utilities.typing import LambdaContext
 from pydantic import ValidationError
 
 from src.domain.business import BusinessDTO
+from src.domain.role import Role
 from src.errors.entity_not_found import EntityNotFound
 from src.use_cases.business.update_business import update_business_use_case
+from src.utils.authorization import role_required
 
 logger = Logger()
 app = APIGatewayRestResolver()
 
 
 @app.put("/business/update/<business_id>")
+@role_required(app, [Role.SUPER_ADMIN, Role.BUSINESS_ADMIN])
 def update_business(business_id: str):
     try:
         # validate body is not empty
