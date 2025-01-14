@@ -4,7 +4,7 @@ from pymongo.database import Database
 
 from src.db.constants import BUSINESS_COLLECTION_NAME, USER_COLLECTION_NAME
 from src.domain.base_entity import from_dto_to_entity
-from src.domain.user import UserEntity, filter_user_dto_fields
+from src.domain.user import UserEntity
 from src.repositories.document_db.client import DocumentDBClient
 from src.repositories.repository import IRepository
 
@@ -100,7 +100,14 @@ class UserDocumentDBAdapter(IRepository[UserEntity]):
 
     def update(self, id: str, entity):
         collection = self._client[self._collection_name]
-        collection.update_one({"_id": id}, {"$set": entity.to_dto()})
+        dto = entity.to_dto(flat=True)
+        dto.pop("_id", None)
+        dto.pop("id", None)
+        dto.pop("created_at", None)
+        
+        collection.update_one({"_id": ObjectId(id)}, {"$set": dto})
+
+        return entity
 
     def delete(self, id: str):
         collection = self._client[self._collection_name]
