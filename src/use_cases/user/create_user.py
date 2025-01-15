@@ -5,6 +5,7 @@ from src.domain.user import UserDTO, UserEntity, UserStatus
 from src.repositories.document_db.business_repository import BusinessRepository
 from src.repositories.document_db.client import DocumentDBClient
 from src.repositories.document_db.user_repository import UserRepository
+from src.utils.authorization import sign_up_user_cognito
 
 
 def send_invitation_email(email: str):
@@ -55,6 +56,7 @@ def create_user_use_case(user_dto: UserDTO, business_id: str) -> dict:
             user_entity = UserEntity(props=user_dto)
 
             result = user_repository.create(user_entity)
+            sign_up_user_cognito(user_dto.email)
             send_invitation_email(user_dto.email)
 
             session.commit_transaction()
