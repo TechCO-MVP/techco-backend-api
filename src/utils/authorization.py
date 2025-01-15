@@ -1,10 +1,16 @@
+import boto3
+
 from functools import wraps
 from typing import List
 from aws_lambda_powertools import Logger
 from aws_lambda_powertools.event_handler import APIGatewayRestResolver, Response
+from botocore.exceptions import ClientError
 
+
+from src.constants.index import REGION_NAME, CLIENT_ID
 from src.repositories.document_db.user_repository import UserRepository
 from src.domain.user import UserEntity
+
 
 logger = Logger()
 
@@ -70,3 +76,27 @@ def _get_business_id(app: APIGatewayRestResolver, business_id_location: str) -> 
 def _get_user_role(user_entity: UserEntity, business_id: str):
     roles = user_entity.props.roles
     return next((r.role for r in roles if r.business_id == business_id), None)
+
+
+def create_random_password():
+    import random
+    import string
+
+    password = "".join(random.choices(string.ascii_letters + string.digits, k=8))
+    return password
+
+
+def sign_up_user_cognito(email: str):
+    """Sign up user cognito."""
+    try:
+        cognito_client = boto3.client("cognito-idp", region_name=REGION_NAME)
+
+        cognito_client.sign_up(
+            ClientId=CLIENT_ID,
+            Username=email,
+            Password=create_random_password(),
+            UserAttributes=[{"Name": "email", "Value": email}],
+        )
+    except Exception as e:
+        logger.exception("An error occurred", exc_info=e)
+        raise ClientError("Could not sign up user", e)
