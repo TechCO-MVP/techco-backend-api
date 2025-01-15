@@ -18,7 +18,7 @@ def sign_up():
         password = create_random_password()  # password not required so we can generate a random one
 
         cognito_client = boto3.client("cognito-idp")
-        print(cognito_client)
+
         result = cognito_client.sign_up(
             ClientId=CLIENT_ID,
             Username=body.get("email"),
