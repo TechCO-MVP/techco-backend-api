@@ -1,23 +1,65 @@
+import boto3
+
+from src.constants.index import REGION_NAME, EMAIL_OTP, UI_URI
 from src.domain.user import UserDTO, UserEntity, UserStatus
-from src.repositories.document_db.user_repository import UserRepository
 from src.repositories.document_db.business_repository import BusinessRepository
+from src.repositories.document_db.client import DocumentDBClient
+from src.repositories.document_db.user_repository import UserRepository
+
+
+def send_invitation_email(email: str):
+    """Send invitation email."""
+    ses_client = boto3.client("ses", region_name=REGION_NAME)
+    ses_client.send_email(
+        Source=EMAIL_OTP,
+        Destination={"ToAddresses": [email]},
+        Message={
+            "Subject": {"Data": "Invitation to join to TechCo"},
+            "Body": {
+                "Text": {
+                    "Data": (
+                        "You have been invited to join TechCo, "
+                        "you can login with your email to the next link: "
+                        f"{UI_URI}"
+                    )
+                }
+            },
+        },
+    )
 
 
 def create_user_use_case(user_dto: UserDTO, business_id: str) -> dict:
     """Create user use case."""
-    business_repository = BusinessRepository()
-    business_entity = business_repository.getById(business_id)
 
-    if business_entity is None:
-        raise ValueError("Business not found")
+    documebt_db_client = DocumentDBClient()
+    client = documebt_db_client.get_client()
 
-    if not business_entity.props.is_admin:
-        business_id = business_entity.props.parent_business_id
+    with client.start_session() as session:
+        documebt_db_client.set_session(session)
+        session.start_transaction()
 
-    user_dto.business_id = business_id
+        try:
+            business_repository = BusinessRepository()
+            business_entity = business_repository.getById(business_id)
 
-    user_repository = UserRepository()
-    user_dto.status = UserStatus.PENDING
-    user_entity = UserEntity(props=user_dto)
+            if business_entity is None:
+                raise ValueError("Business not found")
 
-    return user_repository.create(user_entity)
+            if not business_entity.props.is_admin:
+                business_id = business_entity.props.parent_business_id
+
+            user_dto.business_id = business_id
+
+            user_repository = UserRepository()
+            user_dto.status = UserStatus.PENDING
+            user_entity = UserEntity(props=user_dto)
+
+            result = user_repository.create(user_entity)
+            send_invitation_email(user_dto.email)
+
+            session.commit_transaction()
+
+            return result
+        except Exception as e:
+            session.abort_transaction()
+            raise e

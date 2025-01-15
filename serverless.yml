@@ -26,6 +26,7 @@ provider:
     DOCUMENTDB_ENDPOINT: !GetAtt DocumentDBCluster.Endpoint
     DOCUMENTDB_PORT: 27017
     DOCUMENTDB_DATABASE: techco
+    UI_URI: "https://develop.dzkuw34ypddf5.amplifyapp.com"
 
   logs:
     restApi: true
