@@ -62,6 +62,7 @@ class GetUserQueryParams(BaseModel):
 class UpdateUserStatusDTO(BaseModel):
     id: str
     status: Literal[UserStatus.ENABLED, UserStatus.DISABLED]
+    email: EmailStr
     
     @classmethod
     def validate_params(cls, params):

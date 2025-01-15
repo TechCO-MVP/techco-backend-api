@@ -3,7 +3,7 @@ from aws_lambda_powertools.event_handler import APIGatewayRestResolver, Response
 from aws_lambda_powertools.utilities.typing import LambdaContext
 from pydantic import ValidationError
 
-from src.domain.user import UpdateUserStatusDTO, UserDTO
+from src.domain.user import UpdateUserStatusDTO
 from src.use_cases.user.update_user_status import put_user_status_use_case
 
 
@@ -12,6 +12,7 @@ app = APIGatewayRestResolver()
 
 
 @app.put("/user/status")
+# business_id obligatorio por query params
 def put_user_status():
     """Update user status."""
     try:
@@ -31,12 +32,7 @@ def put_user_status():
             
         return Response(
             status_code=200,
-            body={
-                "message": message,
-                "body": {
-                        "data": response,
-                    }
-            },
+            body={"message": message},
             content_type=content_types.APPLICATION_JSON,
         )
 
