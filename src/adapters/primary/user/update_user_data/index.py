@@ -3,20 +3,17 @@ from aws_lambda_powertools.event_handler import APIGatewayRestResolver, Response
 from aws_lambda_powertools.utilities.typing import LambdaContext
 from pydantic import ValidationError
 
-from src.domain.role import Role
-from src.domain.user import UpdateUserStatusDTO
-from src.use_cases.user.update_user_status import put_user_status_use_case
-from src.utils.authorization import role_required
+from src.domain.user import UpdateUserDTO
+from src.use_cases.user.update_user_data import put_user_data_use_case
 
 
 logger = Logger()
 app = APIGatewayRestResolver()
 
 
-@app.put("/user/status")
-@role_required(app, [Role.SUPER_ADMIN, Role.BUSINESS_ADMIN])
-def put_user_status():
-    """Update user status."""
+@app.put("/user/data")
+def put_user_data():
+    """Update user data."""
     try:
 
         body = app.current_event.json_body
@@ -24,17 +21,12 @@ def put_user_status():
         if not body:
             raise ValueError("Request body is empty")
 
-        user_dto = UpdateUserStatusDTO(**body)
+        UpdateUserDTO(**body)
+        put_user_data_use_case(body)
 
-        put_user_status_use_case(user_dto)
-
-        message = "User status updated successfully" 
-        if body["user_status"] == "disabled":
-            message = "User disabled successfully"
-            
         return Response(
             status_code=200,
-            body={"message": message},
+            body={"message": "User data updated successfully" },
             content_type=content_types.APPLICATION_JSON,
         )
 
@@ -62,15 +54,14 @@ def put_user_status():
 @logger.inject_lambda_context
 def handler(event: dict, context: LambdaContext) -> dict:
     """
-    Handler function for get user
+    Handler function for put user data
     request: The request object, described like:
     {
         "body": {
             "user_id": "string",
-            "user_status": "string",
-            "user_email": "string"
-        },
-        "queryStringParameters": {email: "string"}
+            "full_name": "string",
+            "roles": "array"
+        }
     }
     """
 
