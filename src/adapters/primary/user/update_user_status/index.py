@@ -14,7 +14,7 @@ app = APIGatewayRestResolver()
 
 
 @app.put("/user/status")
-# @role_required(app, [Role.SUPER_ADMIN, Role.BUSINESS_ADMIN])
+@role_required(app, [Role.SUPER_ADMIN, Role.BUSINESS_ADMIN])
 def put_user_status():
     """Update user status."""
     try:
