@@ -398,6 +398,84 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Exception"
+  /user/status:
+    put:
+      summary: Update users status
+      description: Update user status, if new ststus is disabled, signout session for user.
+      parameters:
+        - name: email
+          in: query
+          required: true
+          description: in the user's email that the update is being made.
+          schema:
+            type: string
+        - name: Authorizer
+          in: header
+          required: true
+          description: The ID token of the user.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserStatus"
+      responses:
+        "200":
+          description: User updated successfully / User disabled successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UpdateUserStatusResponse"
+        "400":
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Exception response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exception"
+  /user/data:
+    put:
+      summary: Update users general data
+      description: Update user general data, full_name or role.
+      parameters:
+        - name: Authorizer
+          in: header
+          required: true
+          description: The ID token of the user.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserData"
+      responses:
+        "200":
+          description: User updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UpdateUserDataResponse"
+        "400":
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Exception response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exception"
 
 components:
   schemas:
@@ -692,3 +770,54 @@ components:
         message:
           type: string
           example: Validation error while saving user.
+    UpdateUserStatus:
+      type: object
+      properties:
+        user_id:
+          type: string
+          example: id_123456kjhsad_3124987_sdak
+        user_status:
+          type: string
+          example: enabled
+        user_email:
+          type: string
+          example: fake@mail.co
+      required:
+        - user_id
+        - user_status
+        - user_email
+    UpdateUserStatusResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: User updated successfully.
+    
+    UpdateUserData:
+      type: object
+      properties:
+        user_id:
+          type: string
+          example: id_123456kjhsad_3124987_sdak
+        user_full_name:
+          type: string
+          example: pepito perez
+        user_role:
+          type: string
+          example: recruiter
+        user_email:
+          type: string
+          example: fake@mail.co
+        business_id:
+          type: string
+          example: id_123456kjhsad_3124987_sdak
+      required:
+        - user_id
+        - user_email
+    UpdateUserDataResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: User updated successfully.
+    
