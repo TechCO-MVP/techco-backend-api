@@ -28,7 +28,8 @@ def put_user_status():
 
         put_user_status_use_case(user_dto)
 
-        message = "User status updated successfully" 
+        message = "User status updated successfully"
+
         if body["user_status"] == "disabled":
             message = "User disabled successfully"
             
