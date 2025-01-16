@@ -3,8 +3,10 @@ from aws_lambda_powertools.event_handler import APIGatewayRestResolver, Response
 from aws_lambda_powertools.utilities.typing import LambdaContext
 from pydantic import ValidationError
 
+from src.domain.role import Role
 from src.domain.user import UpdateUserStatusDTO
 from src.use_cases.user.update_user_status import put_user_status_use_case
+from src.utils.authorization import role_required
 
 
 logger = Logger()
@@ -12,7 +14,7 @@ app = APIGatewayRestResolver()
 
 
 @app.put("/user/status")
-# business_id obligatorio por query params
+# @role_required(app, [Role.SUPER_ADMIN, Role.BUSINESS_ADMIN])
 def put_user_status():
     """Update user status."""
     try:
@@ -22,12 +24,11 @@ def put_user_status():
             raise ValueError("Request body is empty")
 
         user_dto = UpdateUserStatusDTO(**body)
-        # user_dto = UserDTO(**body)
 
-        response = put_user_status_use_case(user_dto)
+        put_user_status_use_case(user_dto)
 
         message = "User status updated successfully" 
-        if body["status"] == "disabled":
+        if body["user_status"] == "disabled":
             message = "User disabled successfully"
             
         return Response(
@@ -66,6 +67,7 @@ def handler(event: dict, context: LambdaContext) -> dict:
         "body": {
             "user_id": "string",
             "status": "string",
+            "user_email": "string"
         }
     }
     """

@@ -106,7 +106,6 @@ class UserDocumentDBAdapter(IRepository[UserEntity]):
         collection = self._client[self._collection_name]
         dto = entity.to_dto(flat=True)
         dto.pop("_id", None)
-        dto.pop("id", None)
         dto.pop("created_at", None)
         
         collection.update_one({"_id": ObjectId(id)}, {"$set": dto})
