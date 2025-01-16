@@ -319,6 +319,19 @@ functions:
             authorizerId:
               Ref: ApiGatewayAuthorizer
 
+  update_user_data:
+    handler: src/adapters/primary/user/update_user_status/index.handler
+    events:
+      - http:
+          path: /user/data
+          method: put
+          cors: true
+          private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+
     environment:
       ENV: ${self:provider.stage}
 plugins:

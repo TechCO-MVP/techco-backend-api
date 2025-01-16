@@ -65,3 +65,15 @@ class UpdateUserStatusDTO(BaseModel):
             return cls(**params)
         except ValidationError as e:
             raise ValueError(f"Invalid parameters: {e}")
+class UpdateUserDTO(BaseModel):
+    user_id: str
+    user_email: EmailStr
+    user_full_name: Optional[str] = Field(None, pattern=r"^[a-zA-Z0-9 \s]+$")
+    user_roles: Optional[List[BusinessRole]] = [{}]
+    
+    @classmethod
+    def validate_params(cls, params):
+        try:
+            return cls(**params)
+        except ValidationError as e:
+            raise ValueError(f"Invalid parameters: {e}")
