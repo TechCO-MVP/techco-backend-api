@@ -5,7 +5,7 @@ from bson import ObjectId
 from pydantic import BaseModel, EmailStr, Field, ValidationError, field_validator, model_validator
 
 from src.domain.base_entity import BaseEntity
-from src.domain.role import BusinessRole
+from src.domain.role import BusinessRole, Role
 
 
 class UserStatus(str, Enum):
@@ -68,8 +68,9 @@ class UpdateUserStatusDTO(BaseModel):
 class UpdateUserDTO(BaseModel):
     user_id: str
     user_email: EmailStr
+    business_id: str
     user_full_name: Optional[str] = Field(None, pattern=r"^[a-zA-Z0-9 \s]+$")
-    user_roles: Optional[List[BusinessRole]] = [{}]
+    user_role: Optional[Role] = ()
     
     @classmethod
     def validate_params(cls, params):
