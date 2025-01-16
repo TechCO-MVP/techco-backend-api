@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Any, Dict, Optional, List
+from typing import Any, Dict, Optional, List, Literal
 
 from bson import ObjectId
 from pydantic import BaseModel, EmailStr, Field, ValidationError, field_validator, model_validator
@@ -12,7 +12,6 @@ class UserStatus(str, Enum):
     ENABLED = "enabled"
     DISABLED = "disabled"
     PENDING = "pending"
-
 
 class UserDTO(BaseModel):
     full_name: Optional[str] = Field(None, pattern=r"^[a-zA-Z0-9 \s]+$")
@@ -55,8 +54,14 @@ class GetUserQueryParams(BaseModel):
         except ValidationError as e:
             raise ValueError(f"Invalid query parameters: {e}")
 
-
-def filter_user_dto_fields(data: Dict[str, Any]) -> Dict[str, Any]:
-    user_dto_fields = list(UserDTO.model_fields.keys())
-    user_dto_fields.append("_id")
-    return {key: value for key, value in data.items() if key in user_dto_fields}
+class UpdateUserStatusDTO(BaseModel):
+    user_id: str
+    user_status: Literal[UserStatus.ENABLED, UserStatus.DISABLED]
+    user_email: EmailStr
+    
+    @classmethod
+    def validate_params(cls, params):
+        try:
+            return cls(**params)
+        except ValidationError as e:
+            raise ValueError(f"Invalid parameters: {e}")

@@ -306,6 +306,19 @@ functions:
               querystrings:
                 business_id: true
 
+  update_user_status:
+    handler: src/adapters/primary/user/update_user_status/index.handler
+    events:
+      - http:
+          path: /user/status
+          method: put
+          cors: true
+          private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+
     environment:
       ENV: ${self:provider.stage}
 plugins:
