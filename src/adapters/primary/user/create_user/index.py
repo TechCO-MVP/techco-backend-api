@@ -6,12 +6,14 @@ from pydantic import ValidationError
 from src.domain.user import UserDTO
 from src.domain.role import Role, BusinessRole
 from src.use_cases.user.create_user import create_user_use_case
+from src.utils.authorization import role_required
 
 logger = Logger()
 app = APIGatewayRestResolver()
 
 
 @app.post("/user/create")
+@role_required(app, [Role.SUPER_ADMIN, Role.BUSINESS_ADMIN])
 def create_user():
     """Create a user."""
     try:

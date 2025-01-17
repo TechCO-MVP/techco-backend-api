@@ -3,15 +3,17 @@ from aws_lambda_powertools.event_handler import APIGatewayRestResolver, Response
 from aws_lambda_powertools.utilities.typing import LambdaContext
 from pydantic import ValidationError
 
+from src.domain.role import Role
 from src.domain.user import GetUserQueryParams
 from src.use_cases.user.get_user import get_user_use_case
-
+from src.utils.authorization import role_required
 
 logger = Logger()
 app = APIGatewayRestResolver()
 
 
 @app.get("/user/list")
+@role_required(app, [Role.SUPER_ADMIN, Role.BUSINESS_ADMIN])
 def get_user():
     """Get user."""
     try:
@@ -25,15 +27,15 @@ def get_user():
         else:
             data = [response.to_dto(flat=True)]
 
-        message = "User found successfully" if data else "User not found" 
+        message = "User found successfully" if data else "User not found"
 
         return Response(
             status_code=200,
             body={
                 "message": message,
                 "body": {
-                        "data": data,
-                    }
+                    "data": data,
+                },
             },
             content_type=content_types.APPLICATION_JSON,
         )

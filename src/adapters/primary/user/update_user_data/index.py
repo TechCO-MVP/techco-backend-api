@@ -3,15 +3,17 @@ from aws_lambda_powertools.event_handler import APIGatewayRestResolver, Response
 from aws_lambda_powertools.utilities.typing import LambdaContext
 from pydantic import ValidationError
 
+from src.domain.role import Role
 from src.domain.user import UpdateUserDTO
 from src.use_cases.user.update_user_data import put_user_data_use_case
-
+from src.utils.authorization import role_required
 
 logger = Logger()
 app = APIGatewayRestResolver()
 
 
 @app.put("/user/data")
+@role_required(app, [Role.SUPER_ADMIN, Role.BUSINESS_ADMIN])
 def put_user_data():
     """Update user data."""
     try:
@@ -26,7 +28,7 @@ def put_user_data():
 
         return Response(
             status_code=200,
-            body={"message": "User data updated successfully" },
+            body={"message": "User data updated successfully"},
             content_type=content_types.APPLICATION_JSON,
         )
 
