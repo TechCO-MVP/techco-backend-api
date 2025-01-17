@@ -32,7 +32,7 @@ def put_user_status():
 
         if body["user_status"] == "disabled":
             message = "User disabled successfully"
-            
+
         return Response(
             status_code=200,
             body={"message": message},

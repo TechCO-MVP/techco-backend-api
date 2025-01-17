@@ -4,13 +4,16 @@ from aws_lambda_powertools.utilities.typing import LambdaContext
 from pydantic import ValidationError
 
 from src.domain.business import BusinessDTO
+from src.domain.role import Role
 from src.use_cases.business.create_business import create_business_use_case
+from src.utils.authorization import role_required
 
 logger = Logger()
 app = APIGatewayRestResolver()
 
 
 @app.post("/business/create")
+@role_required(app, [Role.SUPER_ADMIN])
 def create_business():
     try:
 

@@ -10,6 +10,7 @@ from botocore.exceptions import ClientError
 from src.constants.index import REGION_NAME, CLIENT_ID
 from src.repositories.document_db.user_repository import UserRepository
 from src.domain.user import UserEntity
+from src.domain.role import Role
 
 
 logger = Logger()
@@ -37,6 +38,12 @@ def role_required(
                 user_repository = UserRepository()
                 user_entity = user_repository.getByEmail(user["email"])
 
+                if not user_entity:
+                    return _unauthorized_response("Unauthorized")
+
+                if is_super_admin(user_entity):
+                    return func(*args, **kwargs)
+
                 business_id = _get_business_id(app, business_id_location)
                 if not business_id:
                     return _unauthorized_response(
@@ -55,6 +62,11 @@ def role_required(
         return wrapper
 
     return decorator
+
+
+def is_super_admin(user_entity: UserEntity):
+    roles = user_entity.props.roles
+    return any(r.role == Role.SUPER_ADMIN for r in roles)
 
 
 def _unauthorized_response(message: str) -> Response:
