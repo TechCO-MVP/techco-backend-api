@@ -7,6 +7,8 @@ from aws_lambda_powertools.utilities.typing import LambdaContext
 from botocore.exceptions import ClientError
 
 from src.constants.index import CLIENT_ID, REGION_NAME
+from src.use_cases.user.get_user_by_mail import get_user_by_mail_use_case
+from src.domain.user import UserStatus
 
 cognito_client = boto3.client("cognito-idp", region_name=REGION_NAME)
 
@@ -27,6 +29,12 @@ def start_auth():
     body = {}
 
     try:
+        user = get_user_by_mail_use_case(user_email)
+
+        if user.props.status != UserStatus.ENABLED:
+            body = {"message": "User is not enabled."}
+            return Response(status_code, body=body, content_type=content_types.APPLICATION_JSON)
+        
         response = cognito_client.initiate_auth(
             AuthFlow="CUSTOM_AUTH", AuthParameters={"USERNAME": user_email}, ClientId=client_id
         )
