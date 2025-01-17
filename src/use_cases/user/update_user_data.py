@@ -1,6 +1,10 @@
 from src.repositories.document_db.user_repository import UserRepository
 from src.domain.user import UserEntity
 from src.domain.role import Role
+from aws_lambda_powertools import Logger
+
+
+logger = Logger()
 
 def put_user_data_use_case(user_data: dict) -> UserEntity:
     """put user data use case."""
@@ -10,9 +14,10 @@ def put_user_data_use_case(user_data: dict) -> UserEntity:
     if user_data.get("user_full_name"):
         user_data_db.props.full_name = user_data["user_full_name"]
 
-    if user_data.get("business_id") and user_data.get("role"):
+    if user_data.get("business_id") and user_data.get("user_role"):
         user_data_db = update_role_in_business_id(user_data_db, user_data)
-
+    
+    logger.info(f"Updating user data: {user_data_db}")
     return user_repository.update(user_data["user_id"], user_data_db)
 
 def update_role_in_business_id(user_data_db: UserEntity, user_data: dict):
