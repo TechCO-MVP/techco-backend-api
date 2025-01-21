@@ -166,3 +166,4 @@ cython_debug/
 # others
 local_test/
 test.py
+certs/id_ec2-techo
