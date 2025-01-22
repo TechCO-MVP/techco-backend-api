@@ -37,7 +37,13 @@ def set_env(monkeypatch):
     monkeypatch.setenv("CLIENT_ID", "fake-client-id")
 
 
-def test_get_user_value_error(event, lambda_context):
+@pytest.fixture
+def mock_role_required(mocker):
+    """Mock del decorador role_required."""
+    return mocker.patch("src.utils.authorization.role_required", side_effect=lambda app, roles: lambda func: func)
+
+
+def test_get_user_value_error(event, lambda_context, mock_role_required):
     """Test get user value error."""
     from src.adapters.primary.user.get_user.index import handler
 
@@ -46,6 +52,7 @@ def test_get_user_value_error(event, lambda_context):
 
     assert response["statusCode"] == 400
     assert "Invalid query parameters" in json.loads(response["body"])["message"]
+    mock_role_required.assert_called_once()
 
 
 def test_get_user_validation_error(event, lambda_context):
@@ -162,8 +169,6 @@ def test_get_list_users(mocker, event, lambda_context):
 def test_get_void_list_users(mocker, event, lambda_context):
     """Test get void list users - all users."""
     from src.adapters.primary.user.get_user.index import handler
-    from src.domain.user import UserEntity
-    from src.domain.base_entity import from_dto_to_entity
 
     mock_create_user_use_case = mocker.patch(
         "src.adapters.primary.user.get_user.index.get_user_use_case"

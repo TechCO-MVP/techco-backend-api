@@ -252,14 +252,19 @@ def test_get_by_id_not_found_user(mocker, mock_db_client):
 def test_update_user(mocker, user_entity, mock_db_client):
     """Test update function."""
     from src.adapters.secondary.documentdb.user_db_adapter import UserDocumentDBAdapter
+    from src.domain.user import UserEntity, UserDTO
+
 
     mock_collection = MagicMock()
     mock_db_client.return_value.__getitem__.return_value = mock_collection
 
     adapter = UserDocumentDBAdapter()
-    adapter.update("1", user_entity)
-
-    mock_collection.update_one.assert_called_once_with({"_id": "1"}, {"$set": user_entity.to_dto()})
+    adapter.update("6778c3fa49a61649b054659d", user_entity)
+    dto = user_entity.to_dto(flat=True)
+    dto.pop("_id", None)
+    dto.pop("created_at", None)
+    
+    mock_collection.update_one.assert_called_once_with({"_id": ObjectId("6778c3fa49a61649b054659d")}, {"$set": dto})
 
 
 def test_delete_user(mocker, mock_db_client):
