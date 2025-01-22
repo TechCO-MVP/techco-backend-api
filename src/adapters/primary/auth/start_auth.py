@@ -29,12 +29,19 @@ def start_auth():
     body = {}
 
     try:
-        user = get_user_by_mail_use_case(user_email)
+        try:
+            user = get_user_by_mail_use_case(user_email)
 
-        if user.props.status != UserStatus.ENABLED:
-            body = {"message": "User is not enabled."}
-            return Response(status_code, body=body, content_type=content_types.APPLICATION_JSON)
-        
+            if user.props.status != UserStatus.ENABLED:
+                body = {"message": "User is not enabled."}
+                return
+        except ValueError as e:
+            if str(e) == "User not found":
+                logger.info(f"{str(e)} in DB")
+            else:
+                body = {"message": str(e)}
+                return
+                            
         response = cognito_client.initiate_auth(
             AuthFlow="CUSTOM_AUTH", AuthParameters={"USERNAME": user_email}, ClientId=client_id
         )
