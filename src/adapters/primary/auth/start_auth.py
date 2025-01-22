@@ -9,6 +9,7 @@ from botocore.exceptions import ClientError
 from src.constants.index import CLIENT_ID, REGION_NAME
 from src.use_cases.user.get_user_by_mail import get_user_by_mail_use_case
 from src.domain.user import UserStatus
+from src.errors.entity_not_found import EntityNotFound
 
 cognito_client = boto3.client("cognito-idp", region_name=REGION_NAME)
 
@@ -29,25 +30,17 @@ def start_auth():
     body = {}
 
     try:
-        try:
-            user = get_user_by_mail_use_case(user_email)
+        user = get_user_by_mail_use_case(user_email)
 
-            if user.props.status != UserStatus.ENABLED:
-                body = {"message": "User is not enabled."}
-                return
-        except ValueError as e:
-            if str(e) == "User not found":
-                logger.info(f"{str(e)} in DB")
-            else:
-                body = {"message": str(e)}
-                return
-                            
-        response = cognito_client.initiate_auth(
-            AuthFlow="CUSTOM_AUTH", AuthParameters={"USERNAME": user_email}, ClientId=client_id
-        )
-        session = response["Session"]
-        status_code = 200
-        body = {"message": "OTP sent successfully.", "body": {"session": session}}
+        if user.props.status != UserStatus.ENABLED:
+            body = {"message": "User is not enabled."}
+            return
+
+        status_code, body = initiate_auth(user_email, client_id)
+
+    except EntityNotFound as e:
+        logger.info(f"{str(e)} in DB")
+        status_code, body = initiate_auth(user_email, client_id)
 
     except ClientError as e:
         error_message = e.response["Error"]["Message"]
@@ -60,6 +53,15 @@ def start_auth():
     finally:
         return Response(status_code, body=body, content_type=content_types.APPLICATION_JSON)
 
+def initiate_auth(user_email: str, client_id: str):
+    response = cognito_client.initiate_auth(
+        AuthFlow="CUSTOM_AUTH", AuthParameters={"USERNAME": user_email}, ClientId=client_id
+    )
+    session = response["Session"]
+    status_code = 200
+    body = {"message": "OTP sent successfully.", "body": {"session": session}}
+
+    return status_code, body
 
 @logger.inject_lambda_context
 def lambda_handler(request: dict, context: LambdaContext) -> dict:
