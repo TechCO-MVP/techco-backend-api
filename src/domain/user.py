@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Any, Dict, Optional, List, Literal
+from typing import Optional, List, Literal
 
 from bson import ObjectId
 from pydantic import BaseModel, EmailStr, Field, ValidationError, field_validator, model_validator
@@ -13,11 +13,12 @@ class UserStatus(str, Enum):
     DISABLED = "disabled"
     PENDING = "pending"
 
+
 class UserDTO(BaseModel):
     full_name: Optional[str] = Field(None, pattern=r"^[a-zA-Z0-9 \s]+$")
     email: EmailStr
     company_position: str = Field(..., pattern=r"^[a-zA-Z0-9 \s]+$")
-    role: Optional[str] = Field("", pattern=r"^[a-zA-Z0-9 \s]+$")
+    role: Optional[str] = Field("", pattern=r"^[a-zA-Z0-9 \s]*$")
     business_id: str = Field(default="", alias="business_id")
     status: Optional[UserStatus] = UserStatus.PENDING
     roles: List[BusinessRole] = Field(..., alias="roles", min_length=1)
@@ -54,24 +55,27 @@ class GetUserQueryParams(BaseModel):
         except ValidationError as e:
             raise ValueError(f"Invalid query parameters: {e}")
 
+
 class UpdateUserStatusDTO(BaseModel):
     user_id: str
     user_status: Literal[UserStatus.ENABLED, UserStatus.DISABLED]
     user_email: EmailStr
-    
+
     @classmethod
     def validate_params(cls, params):
         try:
             return cls(**params)
         except ValidationError as e:
             raise ValueError(f"Invalid parameters: {e}")
+
+
 class UpdateUserDTO(BaseModel):
     user_id: str
     user_email: EmailStr
     business_id: str
     user_full_name: Optional[str] = Field(None, pattern=r"^[a-zA-Z0-9 \s]+$")
     user_role: Optional[Role] = ()
-    
+
     @classmethod
     def validate_params(cls, params):
         try:
