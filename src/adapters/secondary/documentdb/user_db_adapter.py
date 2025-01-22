@@ -7,6 +7,7 @@ from src.domain.base_entity import from_dto_to_entity
 from src.domain.user import UserEntity
 from src.repositories.document_db.client import DocumentDBClient
 from src.repositories.repository import IRepository
+from src.errors.entity_not_found import EntityNotFound
 
 logger = Logger("UserDocumentDBAdapter")
 
@@ -46,7 +47,7 @@ class UserDocumentDBAdapter(IRepository[UserEntity]):
         result = collection.find_one({"email": email})
 
         if not result:
-            raise ValueError("User not found")
+            raise EntityNotFound("User", email)
 
         result["_id"] = str(result["_id"])
         return from_dto_to_entity(UserEntity, result)
