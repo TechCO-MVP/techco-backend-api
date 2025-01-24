@@ -249,6 +249,29 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Exception"
+  /auth/refresh_tokens:
+    post:
+      summary: refresh tokens cognito
+      description: Service to refresh accessToken and IdToken from cognito.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/refreshTokens"
+      responses:
+        "200":
+          description: tokens refreshed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/refreshTokensResponse"
+        "500":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exception"
   /auth/verify_auth_otp_code:
     post:
       summary: Verify OTP code
@@ -650,6 +673,30 @@ components:
         refreshToken:
           type: string
           example: fale refresh token.
+    refreshTokens:
+      type: object
+      properties:
+        refresh_token:
+          type: string
+          example: fake-refresh-token
+    refreshTokensResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Tokens refreshed successfully.
+        body:
+          type: object
+          properties:
+            idToken:
+              type: string
+              example: fake_id_token.
+            accessToken:
+              type: string
+              example: fake access token.
+            expires_in:
+              type: string
+              example: 36000
     SignOut:
       type: object
       properties:
