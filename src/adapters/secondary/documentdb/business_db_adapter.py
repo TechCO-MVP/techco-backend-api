@@ -31,7 +31,19 @@ class BusinessDocumentDBAdapter(IRepository[BusinessEntity]):
     def getAll(self, filter_params: dict = None):
         collection = self._client[self._collection_name]
         filter_params = filter_params or {}
-        return list(collection.find(filter_params))
+
+        logger.info(f"Getting all business entities with filter: {filter_params}")
+
+        result = []
+        businesses = list(collection.find(filter_params))
+        if not businesses:
+            return []
+
+        for business in businesses:
+            business["_id"] = str(business["_id"])
+            result.append(from_dto_to_entity(BusinessEntity, business))
+
+        return result
 
     def getById(self, id: str) -> BusinessEntity | None:
         logger.info(f"Getting business entity with id: {id}")
