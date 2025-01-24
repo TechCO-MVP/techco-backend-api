@@ -222,6 +222,21 @@ functions:
             headers:
               Content-Type: "'application/json'"
 
+  refresh_tokens:
+    handler: src/adapters/primary/auth/post_refresh_token.lambda_handler
+    events:
+      - http:
+          path: /auth/refresh_tokens
+          method: post
+          cors: true
+          private: true
+          request:
+            schemas:
+              application/json: ${file(src/adapters/primary/auth/schemas/refresh_tokens.json)}
+          response:
+            headers:
+              Content-Type: "'application/json'"
+
   create_business:
     handler: src/adapters/primary/business/create_business/index.handler
     events:
