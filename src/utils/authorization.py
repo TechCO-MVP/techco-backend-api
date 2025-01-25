@@ -98,7 +98,7 @@ def create_random_password():
     return password
 
 
-def sign_up_user_cognito(email: str):
+def sign_up_user_cognito(email: str, name: str):
     """Sign up user cognito."""
     try:
         cognito_client = boto3.client("cognito-idp", region_name=REGION_NAME)
@@ -107,8 +107,14 @@ def sign_up_user_cognito(email: str):
             ClientId=CLIENT_ID,
             Username=email,
             Password=create_random_password(),
-            UserAttributes=[{"Name": "email", "Value": email}],
+            UserAttributes=[
+                {"Name": "email", "Value": email},
+                {"Name": "name", "Value": name},
+            ],
         )
+    except ClientError as e:
+        logger.exception("An error occurred", exc_info=e)
+        raise e
     except Exception as e:
         logger.exception("An error occurred", exc_info=e)
-        raise ClientError("Could not sign up user", e)
+        raise e

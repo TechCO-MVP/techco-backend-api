@@ -22,7 +22,7 @@ def create_user():
             raise ValueError("Request body is empty")
 
         role = body.pop("role", None)
-        if role not in Role:
+        if role not in Role._value2member_map_:
             raise ValueError(f"Invalid role: {role}")
 
         business_id = body.pop("business_id")
