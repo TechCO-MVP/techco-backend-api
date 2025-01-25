@@ -56,7 +56,7 @@ def create_user_use_case(user_dto: UserDTO, business_id: str) -> dict:
             user_entity = UserEntity(props=user_dto)
 
             result = user_repository.create(user_entity)
-            sign_up_user_cognito(user_dto.email)
+            sign_up_user_cognito(user_dto.email, user_dto.full_name)
             send_invitation_email(user_dto.email)
 
             session.commit_transaction()
