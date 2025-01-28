@@ -1,0 +1,22 @@
+service: backend-proposal-v2
+
+provider:
+  name: aws
+  architecture: x86_64
+  stage: ${opt:stage, 'dev'}
+  region: us-east-1
+
+stateMachines:
+  profileFilterProcess:
+    name: ProfileFilterProcess-${self:provider.stage}
+    definition:
+      Comment: "A simple AWS Step Functions state machine that filters profiles"
+      StartAt: FilterProfiles
+      States:
+        FilterProfiles:
+          Type: Task
+          Resource:
+            Fn::GetAtt:
+              - profile_query_brightdata
+              - Arn
+          End: true

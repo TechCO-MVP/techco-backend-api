@@ -27,6 +27,7 @@ provider:
     DOCUMENTDB_PORT: 27017
     DOCUMENTDB_DATABASE: techco
     UI_URI: "https://develop.dzkuw34ypddf5.amplifyapp.com"
+    PROFILE_FILTER_PROCESS_ARN: arn:aws:states:${self:provider.region}:#{AWS::AccountId}:stateMachine:ProfileFilterProcess-${self:provider.stage}
 
   logs:
     restApi: true
@@ -52,7 +53,11 @@ provider:
             - rds-db:connect
             - rds:DescribeDBInstances
           Resource:
-            - arn:aws:rds:us-east-1:961341535118:db:documentdbinstance-xsleqy2jx1aq
+            - arn:aws:rds:${self:provider.region}:#{AWS::AccountId}:db:documentdbinstance-xsleqy2jx1aq
+        - Effect: Allow
+          Action:
+            - states:StartExecution
+          Resource: ${self:provider.environment.PROFILE_FILTER_PROCESS_ARN}
 
 custom:
   userPoolName: ${self:provider.stage}-passwordless-user-pool
@@ -163,9 +168,6 @@ functions:
           method: post
           cors: true
           private: true
-          response:
-            headers:
-              Content-Type: "'application/json'"
 
   start_auth:
     handler: src/adapters/primary/auth/start_auth.lambda_handler
@@ -175,12 +177,6 @@ functions:
           method: post
           cors: true
           private: true
-          request:
-            schemas:
-              application/json: ${file(src/adapters/primary/auth/schemas/start_auth.json)}
-          response:
-            headers:
-              Content-Type: "'application/json'"
 
   verify_auth_otp_code_signup:
     handler: src/adapters/primary/auth/verify_auth_otp_code_signup.handler
@@ -199,12 +195,6 @@ functions:
           method: post
           cors: true
           private: true
-          request:
-            schemas:
-              application/json: ${file(src/adapters/primary/auth/schemas/verify_auth_otp_code.json)}
-          response:
-            headers:
-              Content-Type: "'application/json'"
 
   sign_out:
     handler: src/adapters/primary/auth/sign_out.lambda_handler
@@ -218,9 +208,6 @@ functions:
               Ref: ApiGatewayAuthorizer
           cors: true
           private: true
-          response:
-            headers:
-              Content-Type: "'application/json'"
 
   refresh_tokens:
     handler: src/adapters/primary/auth/post_refresh_token.lambda_handler
@@ -230,12 +217,6 @@ functions:
           method: post
           cors: true
           private: true
-          request:
-            schemas:
-              application/json: ${file(src/adapters/primary/auth/schemas/refresh_tokens.json)}
-          response:
-            headers:
-              Content-Type: "'application/json'"
 
   create_business:
     handler: src/adapters/primary/business/create_business/index.handler
@@ -349,6 +330,24 @@ functions:
 
     environment:
       ENV: ${self:provider.stage}
+
+  start_profile_filter_process:
+    handler: src/adapters/primary/profile/filter/start.lambda_handler
+    events:
+      - http:
+          path: /profile/filter/start
+          method: post
+          cors: true
+          private: true
+
+  profile_query_brightdata:
+    handler: src/adapters/primary/profile/query_brightdata/index.lambda_handler
+
+stepFunctions:
+  stateMachines: ${file(./src/resources/brightdata/serverless.yml):stateMachines}
+
 plugins:
   - serverless-offline
   - serverless-python-requirements
+  - serverless-step-functions
+  - serverless-pseudo-parameters
