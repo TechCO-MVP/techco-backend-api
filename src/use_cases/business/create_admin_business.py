@@ -71,8 +71,9 @@ def crete_admin_business_use_case(
                 "business": business_entity.to_dto(),
             }
             session.commit_transaction()
+            document_db_client.close_session()
             return result
 
         except Exception as e:
-            document_db_client.close_session()
+            document_db_client.abort_transaction()
             raise e

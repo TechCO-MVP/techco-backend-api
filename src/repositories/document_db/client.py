@@ -40,10 +40,18 @@ class DocumentDBClient(IDatabaseClient):
             raise Exception("Session is already initialized.")
         self._session = session
 
+    def abort_transaction(self):
+        if self._session is None:
+            raise Exception("Session is not initialized.")
+
+        self._session.abort_transaction()
+        self._session.end_session()
+        self._session = None
+
     def close_session(self):
         if self._session is None:
             raise Exception("Session is not initialized.")
-        self._session.abort_transaction()
+
         self._session.end_session()
         self._session = None
 
