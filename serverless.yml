@@ -349,6 +349,18 @@ functions:
   get_snapshot_data_brightdata:
     handler: src/adapters/primary/profile/query_brightdata/get_snapshot_data.lambda_handler
 
+  transform_and_refine_brightdata:
+    handler: src/adapters/primary/profile/query_brightdata/transform_and_refine.lambda_handler
+
+  query_and_build_openai_data:
+    handler: src/adapters/primary/profile/openai/query_and_build_openai_data.lambda_handler
+
+  notify_completion_profile_filter_process:
+    handler: src/adapters/primary/profile/filter/notify_completion.lambda_handler
+
+  notify_failure_profile_filter_process:
+    handler: src/adapters/primary/profile/filter/notify_failure.lambda_handler
+
 stepFunctions:
   stateMachines: ${file(./src/resources/brightdata/serverless.yml):stateMachines}
 
