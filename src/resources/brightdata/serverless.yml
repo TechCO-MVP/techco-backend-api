@@ -40,8 +40,29 @@ stateMachines:
             Fn::GetAtt:
               - get_snapshot_data_brightdata
               - Arn
+        TransformAndRefine:
+          Type: Task
+          Resource:
+            Fn::GetAtt:
+              - transform_and_refine_brightdata
+              - Arn
+        QueryAndBuildOpenAIData:
+          Type: Task
+          Resource:
+            Fn::GetAtt:
+              - query_and_build_openai_data
+              - Arn
+        NotifyCompletion:
+          Type: Task
+          Resource:
+            Fn::GetAtt:
+              - notify_completion_profile_filter_process
+              - Arn
           End: true
         Fail:
-          Type: Fail
-          Cause: "An error occurred"
-          Error: "Error"
+          Type: Task
+          Resource:
+            Fn::GetAtt:
+              - notify_failure_profile_filter_process
+              - Arn
+          End: true
