@@ -343,6 +343,12 @@ functions:
   profile_query_brightdata:
     handler: src/adapters/primary/profile/query_brightdata/index.lambda_handler
 
+  check_snapshot_status_brightdata:
+    handler: src/adapters/primary/profile/query_brightdata/check_snaphot_status.lambda_handler
+
+  get_snapshot_data_brightdata:
+    handler: src/adapters/primary/profile/query_brightdata/get_snapshot_data.lambda_handler
+
 stepFunctions:
   stateMachines: ${file(./src/resources/brightdata/serverless.yml):stateMachines}
 
