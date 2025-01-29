@@ -19,4 +19,29 @@ stateMachines:
             Fn::GetAtt:
               - profile_query_brightdata
               - Arn
+          Next: CheckSnapshotStatus
+        CheckSnapshotStatus:
+          Type: Task
+          Resource:
+            Fn::GetAtt:
+              - check_snapshot_status_brightdata
+              - Arn
+          Retry:
+            - ErrorEquals: ["States.ALL"]
+              IntervalSeconds: 150
+              MaxAttempts: 4
+          Catch:
+            - ErrorEquals: ["States.ALL"]
+              Next: Fail
+          Next: GetSnapshotData
+        GetSnapshotData:
+          Type: Task
+          Resource:
+            Fn::GetAtt:
+              - get_snapshot_data_brightdata
+              - Arn
           End: true
+        Fail:
+          Type: Fail
+          Cause: "An error occurred"
+          Error: "Error"
