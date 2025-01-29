@@ -60,6 +60,7 @@ def create_user_use_case(user_dto: UserDTO, business_id: str) -> dict:
             send_invitation_email(user_dto.email)
 
             session.commit_transaction()
+            documebt_db_client.close_session()
 
             return result
         except Exception as e:
