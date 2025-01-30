@@ -1,6 +1,7 @@
 from aws_lambda_powertools import Logger
 from aws_lambda_powertools.event_handler import APIGatewayRestResolver, Response, content_types
 from aws_lambda_powertools.utilities.typing import LambdaContext
+from pydantic import ValidationError
 
 from src.domain.profile import ProfileFilterProcessQueryDTO
 from src.use_cases.profile.start_filter_profile_use_case import start_filter_profile_use_case
@@ -26,12 +27,18 @@ def start_filter_profile():
 
         return Response(
             status_code=200,
-            body={
-                "message": "Filter profile started successfully",
-                "body": body,
-                "result": result,
-            },
+            body={"message": "Filter profile started successfully", "body": result},
             content_type=content_types.APPLICATION_JSON,
+        )
+    except ValidationError as e:
+        logger.error(str(e))
+        return Response(
+            status_code=400, body={"message": str(e)}, content_type=content_types.APPLICATION_JSON
+        )
+    except ValueError as e:
+        logger.error(str(e))
+        return Response(
+            status_code=400, body={"message": str(e)}, content_type=content_types.APPLICATION_JSON
         )
     except Exception:
         logger.exception("An error occurred")
@@ -51,7 +58,7 @@ def lambda_handler(event: dict, context: LambdaContext) -> dict:
             "filter": {
                 "role": "developer",
                 "seniority": "senior",
-                "country": "Colombia",
+                "country_code": "Colombia",
                 "city": "Medellin",
                 "description": "....",
                 "responsabilities": ["...."],

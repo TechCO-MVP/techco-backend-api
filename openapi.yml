@@ -500,6 +500,36 @@ paths:
               schema:
                 $ref: "#/components/schemas/Exception"
 
+  /profile/filter/start:
+    post:
+      summary: Start profile filter process
+      description: Start the profile filter process.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProfileFilterStart"
+      responses:
+        "200":
+          description: Profile filter process started
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProfileFilterStartResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Exception response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exception"
+
 components:
   schemas:
     Role:
@@ -839,7 +869,7 @@ components:
         message:
           type: string
           example: User updated successfully.
-    
+
     UpdateUserData:
       type: object
       properties:
@@ -867,4 +897,68 @@ components:
         message:
           type: string
           example: User updated successfully.
-    
+    ProfileFilterStart:
+      type: object
+      properties:
+        business_id:
+          type: string
+          example: id_123456kjhsad_3124987_sdak
+        position_id:
+          type: string
+          example: id_123456kjhsad_3124987_sdak
+        role:
+          type: string
+          example: recruiter
+        seniority:
+          type: string
+          example: junior
+        country_code:
+          type: string
+          example: CO
+        city:
+          type: string
+          example: Bogota
+        description:
+          type: string
+          example: description
+        responsabilities:
+          type: array
+          items:
+            type: string
+          example: [responsability_1, responsability_2]
+        skills:
+          type: array
+          items:
+            type: string
+          example: [django, python]
+      required:
+        - business_id
+        - position_id
+        - role
+        - seniority
+        - country_code
+        - city
+        - description
+        - responsabilities
+        - skills
+
+    ProfileFilterStartResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Profile filter process started.
+        body:
+          type: object
+          properties:
+            id:
+              type: string
+              example: id_123456kjhsad_3124987_sdak
+            position_id:
+              type: string
+              example: id_123456kjhsad_3124987_sdak
+            business_id:
+              type: string
+              example: id_123456kjhsad_3124987_sdak
+            process_filters:
+              $ref: "#/components/schemas/ProfileFilterStart"

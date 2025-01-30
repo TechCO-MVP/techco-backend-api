@@ -75,6 +75,7 @@ class BusinessDocumentDBAdapter(IRepository[BusinessEntity]):
 
         business_dto = entity.to_dto(flat=True)
         business_dto.pop("_id", None)
+        business_dto["updated_at"] = datetime.now()
 
         collection = self._client[self._collection_name]
         collection.update_one({"_id": ObjectId(id)}, {"$set": business_dto}, session=self._session)
