@@ -40,18 +40,21 @@ stateMachines:
             Fn::GetAtt:
               - get_snapshot_data_brightdata
               - Arn
+          Next: TransformAndRefine
         TransformAndRefine:
           Type: Task
           Resource:
             Fn::GetAtt:
               - transform_and_refine_brightdata
               - Arn
+          Next: QueryAndBuildOpenAIData
         QueryAndBuildOpenAIData:
           Type: Task
           Resource:
             Fn::GetAtt:
               - query_and_build_openai_data
               - Arn
+          Next: NotifyCompletion
         NotifyCompletion:
           Type: Task
           Resource:
