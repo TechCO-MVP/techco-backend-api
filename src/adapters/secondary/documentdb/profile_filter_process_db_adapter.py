@@ -65,7 +65,7 @@ class ProfileFilterProcessDocumentDBAdapter(IRepository[ProfileFilterProcessEnti
         profile_filter_process_data.pop("_id", None)
 
         collection = self._client[self._collection_name]
-        result = collection.insert_one(profile_filter_process_data)
+        result = collection.insert_one(profile_filter_process_data, session=self._session)
         entity.id = str(result.inserted_id)
 
         return entity
@@ -87,4 +87,6 @@ class ProfileFilterProcessDocumentDBAdapter(IRepository[ProfileFilterProcessEnti
 
     def delete(self, id: str):
         collection = self._client[self._collection_name]
-        collection.update_one({"_id": ObjectId(id)}, {"$set": {"deleted_at": datetime.now()}})
+        collection.update_one(
+            {"_id": ObjectId(id)}, {"$set": {"deleted_at": datetime.now()}}, session=self._session
+        )

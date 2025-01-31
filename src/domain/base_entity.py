@@ -36,6 +36,9 @@ class BaseEntity(BaseModel, Generic[T]):
             **json.loads(self.props.model_dump_json()),
         }
 
+    def to_dto_props(self) -> dict:
+        return json.loads(self.props.model_dump_json())
+
 
 def from_dto_to_entity(entity: BaseEntity, dto: dict) -> BaseEntity:
     """

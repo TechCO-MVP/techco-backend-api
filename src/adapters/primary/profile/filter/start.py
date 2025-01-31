@@ -3,6 +3,7 @@ from aws_lambda_powertools.event_handler import APIGatewayRestResolver, Response
 from aws_lambda_powertools.utilities.typing import LambdaContext
 from pydantic import ValidationError
 
+from src.errors.entity_not_found import EntityNotFound
 from src.domain.profile import ProfileFilterProcessQueryDTO
 from src.use_cases.profile.start_filter_profile_use_case import start_filter_profile_use_case
 
@@ -14,6 +15,9 @@ app = APIGatewayRestResolver()
 def start_filter_profile():
     try:
         logger.info("Starting filter profile")
+        user = app.current_event.request_context.authorizer["claims"]
+        user_email = user["email"]
+
         body = app.current_event.json_body
 
         # parse body
@@ -23,7 +27,7 @@ def start_filter_profile():
         profile_process_dto = ProfileFilterProcessQueryDTO(**body)
 
         # call use case to start filter profile
-        result = start_filter_profile_use_case(profile_process_dto)
+        result = start_filter_profile_use_case(profile_process_dto, user_email)
 
         return Response(
             status_code=200,
@@ -39,6 +43,11 @@ def start_filter_profile():
         logger.error(str(e))
         return Response(
             status_code=400, body={"message": str(e)}, content_type=content_types.APPLICATION_JSON
+        )
+    except EntityNotFound as e:
+        logger.error(str(e))
+        return Response(
+            status_code=404, body={"message": str(e)}, content_type=content_types.APPLICATION_JSON
         )
     except Exception:
         logger.exception("An error occurred")
