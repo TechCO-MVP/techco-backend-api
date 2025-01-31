@@ -1,11 +1,10 @@
 from enum import Enum
-from typing import List
+from typing import List, Optional
 
 from bson import ObjectId
 from pydantic import BaseModel, Field, field_validator
 
 from src.domain.base_entity import BaseEntity
-from src.domain.user import UserDTO
 
 
 class PROCESS_STATUS(str, Enum):
@@ -21,7 +20,7 @@ class ProfileFilterProcessQueryDTO(BaseModel):
     country_code: str = Field(..., min_length=2, max_length=3)
     city: str
     description: str
-    responsibilities: List[str] = Field(..., min_length=1)
+    responsabilities: List[str] = Field(..., min_length=1)
     skills: List[str] = Field(..., min_length=1)
     business_id: str = Field(default="", alias="business_id")
     position_id: str = Field(default="", alias="position_id")
@@ -29,7 +28,8 @@ class ProfileFilterProcessQueryDTO(BaseModel):
 
 class ProfileFilterProcessDTO(BaseModel):
     status: PROCESS_STATUS = PROCESS_STATUS.PENDING
-    user: UserDTO
+    execution_arn: Optional[str] = None
+    user_id: str
     position_id: str = Field(default="", alias="position_id")
     business_id: str = Field(default="", alias="business_id")
     process_filters: ProfileFilterProcessQueryDTO
