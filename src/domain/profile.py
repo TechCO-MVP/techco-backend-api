@@ -14,6 +14,10 @@ class PROCESS_STATUS(str, Enum):
     FAILED = "failed"
 
 
+class Skill(BaseModel):
+    name: str
+    required: bool
+
 class ProfileFilterProcessQueryDTO(BaseModel):
     role: str
     seniority: str
@@ -21,7 +25,7 @@ class ProfileFilterProcessQueryDTO(BaseModel):
     city: str
     description: str
     responsabilities: List[str] = Field(..., min_length=1)
-    skills: List[str] = Field(..., min_length=1)
+    skills: List[Skill] = Field(..., min_length=1)
     business_id: str = Field(default="", alias="business_id")
     position_id: str = Field(default="", alias="position_id")
 
