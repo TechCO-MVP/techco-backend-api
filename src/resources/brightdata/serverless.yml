@@ -6,6 +6,63 @@ provider:
   stage: ${opt:stage, 'dev'}
   region: us-east-1
 
+S3RawProfileDataIA:
+  Type: AWS::S3::Bucket
+  Properties:
+    BucketName: ${self:provider.stage}-raw-profile-data-infrequent-access
+    AccessControl: Private
+    LifecycleConfiguration:
+      Rules:
+        - Id: DeleteOldRawProfileData
+          Status: Enabled
+          ExpirationInDays: 30
+          Transitions:
+            - StorageClass: STANDARD_IA
+              TransitionInDays: 1
+    Tags:
+      - Key: Environment
+        Value: ${self:provider.stage}
+      - Key: Name
+        Value: ${self:provider.stage}-raw-profile-data-infrequent-access
+
+S3DepuratedProfileDataIA:
+  Type: AWS::S3::Bucket
+  Properties:
+    BucketName: ${self:provider.stage}-depurated-profile-data-infrequent-access
+    AccessControl: Private
+    LifecycleConfiguration:
+      Rules:
+        - Id: DeleteOldDepuratedProfileData
+          Status: Enabled
+          ExpirationInDays: 30
+          Transitions:
+            - StorageClass: STANDARD_IA
+              TransitionInDays: 1
+    Tags:
+      - Key: Environment
+        Value: ${self:provider.stage}
+      - Key: Name
+        Value: ${self:provider.stage}-depurated-profile-data-infrequent-access
+
+S3RefinedProfileDataIA:
+  Type: AWS::S3::Bucket
+  Properties:
+    BucketName: ${self:provider.stage}-refined-profile-data-infrequent-access
+    AccessControl: Private
+    LifecycleConfiguration:
+      Rules:
+        - Id: DeleteOldRefinedProfileData
+          Status: Enabled
+          ExpirationInDays: 30
+          Transitions:
+            - StorageClass: STANDARD_IA
+              TransitionInDays: 1
+    Tags:
+      - Key: Environment
+        Value: ${self:provider.stage}
+      - Key: Name
+        Value: ${self:provider.stage}-refined-profile-data-infrequent-access
+
 stateMachines:
   profileFilterProcess:
     name: ProfileFilterProcess-${self:provider.stage}
