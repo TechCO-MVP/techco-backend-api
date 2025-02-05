@@ -28,6 +28,9 @@ provider:
     DOCUMENTDB_DATABASE: techco
     UI_URI: "https://develop.dzkuw34ypddf5.amplifyapp.com"
     PROFILE_FILTER_PROCESS_ARN: arn:aws:states:${self:provider.region}:#{AWS::AccountId}:stateMachine:ProfileFilterProcess-${self:provider.stage}
+    S3_RAW_PROFILE_DATA_IA_BUCKET_NAME: !Ref S3RawProfileDataIA
+    S3_DEPURATED_PROFILE_DATA_IA_BUCKET_NAME: !Ref S3DepuratedProfileDataIA
+    S3_REFINED_PROFILE_DATA_IA_BUCKET_NAME: !Ref S3RefinedProfileDataIA
 
   logs:
     restApi: true
@@ -101,7 +104,9 @@ resources:
     DocumentDBInstance: ${file(./src/resources/db/serverless.yml):DocumentDBInstance}
     EC2KeyPair: ${file(./src/resources/db/serverless.yml):EC2KeyPair}
     EC2Instance: ${file(./src/resources/db/serverless.yml):EC2Instance}
-
+    S3RawProfileDataIA: ${file(./src/resources/brightdata/serverless.yml):S3RawProfileDataIA}
+    S3DepuratedProfileDataIA: ${file(./src/resources/brightdata/serverless.yml):S3DepuratedProfileDataIA}
+    S3RefinedProfileDataIA: ${file(./src/resources/brightdata/serverless.yml):S3RefinedProfileDataIA}
     serverlessApiGatewayCloudWatchRole:
       Type: AWS::IAM::Role
       Properties:

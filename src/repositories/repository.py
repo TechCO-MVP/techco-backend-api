@@ -25,3 +25,18 @@ class IRepository(ABC, Generic[T]):
     @abstractmethod
     def delete(self, id: str) -> bool:
         pass
+
+
+class IStorageRepository(ABC, Generic[T]):
+
+    @abstractmethod
+    def get(self, key: str) -> T:
+        pass
+
+    @abstractmethod
+    def put(self, key: str, value: T):
+        pass
+
+    @abstractmethod
+    def delete(self, key: str):
+        pass
