@@ -1,6 +1,9 @@
 from aws_lambda_powertools import Logger
 from aws_lambda_powertools.utilities.typing import LambdaContext
 
+from src.domain.profile import ProfileFilterProcessQueryDTO
+from src.use_cases.profile.send_profile_query import send_profile_query_use_case
+
 logger = Logger()
 
 
@@ -13,4 +16,8 @@ def lambda_handler(event, context: LambdaContext) -> dict:
     logger.info(event)
     logger.info(context)
 
-    return {"message": "Querying brightdata"}
+    profile_process_dto = ProfileFilterProcessQueryDTO(**event)
+    snapshot_id = send_profile_query_use_case(profile_process_dto)
+    event["snapshot_id"] = snapshot_id
+
+    return event

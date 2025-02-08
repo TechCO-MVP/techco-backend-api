@@ -28,6 +28,7 @@ class ProfileFilterProcessQueryDTO(BaseModel):
     skills: List[Skill] = Field(..., min_length=1)
     business_id: str = Field(default="", alias="business_id")
     position_id: str = Field(default="", alias="position_id")
+    snapshot_id: Optional[str] = ""
 
 
 class ProfileFilterProcessDTO(BaseModel):
