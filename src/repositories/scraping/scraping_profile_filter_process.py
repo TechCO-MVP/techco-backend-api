@@ -30,3 +30,6 @@ class ScrapingProfileFilterProcessRepository(IRepository[ProfileFilterProcessEnt
     
     def get_status(self, entity):
         return self._adapter.get_status(entity)
+
+    def get_data(self, entity):
+        return self._adapter.get_data(entity)

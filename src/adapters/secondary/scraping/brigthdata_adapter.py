@@ -130,3 +130,17 @@ class ScrapingProfileFilterProcessAdapter(IRepository[ProfileFilterProcessEntity
         else:
             logger.error(f"Failed to create profile filter process: {response.status_code} - {response.text}")
             raise Exception(f"Failed to get profile filter process: {response.status_code} - {response.text}")
+
+    def get_data(self, id: str):
+        logger.info(f"Getting profile filter process data from brigthdata - snapshoot_id: {id}")
+        
+        headers = {"Authorization": f"Bearer {TOKEN_BRIGHTDATA}"}
+        response = requests.request("GET", f"{BASE_URL_BRIGHTDATA}/snapshots/{id}/download", headers=headers)
+
+        logger.info(f"response brightdata: {response}")
+
+        if response.status_code == 200:
+            return response.text
+        else:
+            logger.error(f"Failed to create profile filter process: {response.status_code} - {response.text}")
+            raise Exception(f"Failed to get profile filter process: {response.status_code} - {response.text}")
