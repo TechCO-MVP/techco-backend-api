@@ -10,7 +10,29 @@ logger = Logger()
 @logger.inject_lambda_context
 def lambda_handler(event, context: LambdaContext) -> dict:
     """
-    Lambda handler to list businesses by user
+    Lambda handler to send reuqest to scraping profile filter process
+    {
+        "user_id": "123",
+        "position_id": "123",
+        "business_id": "123",
+        "role": "Software Engineer",
+        "seniority": "Senior",
+        "country": "USA",
+        "city": "San Francisco",
+        "description": "Experienced software engineer with expertise in Python and cloud technologies.",
+        "responsabilities": [
+            "Design and develop scalable and maintainable software solutions.",
+            "Collaborate with cross-functional teams to deliver high-quality products.",
+            "Participate in code reviews and provide constructive feedback."
+        ],
+        "skills": [
+            "Python",
+            "AWS",
+            "Docker",
+            "Kubernetes",
+            "Agile Methodologies"
+        ]
+    }
     """
     logger.info("Querying brightdata")
     logger.info(event)
