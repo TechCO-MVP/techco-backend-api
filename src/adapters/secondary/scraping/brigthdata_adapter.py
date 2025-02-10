@@ -4,9 +4,9 @@ from aws_lambda_powertools import Logger
 
 from src.adapters.secondary.scraping.constants import (
     TRADUCTION_FILTERS_BRIGHTDATA,
-    URL_BRIGHTDATA,
     RECORDS_LIMIT,
-    TOKEN_BRIGHTDATA
+    TOKEN_BRIGHTDATA,
+    BASE_URL_BRIGHTDATA
 )
 from src.domain.base_entity import from_dto_to_entity
 from src.domain.profile import ProfileFilterProcessEntity
@@ -26,8 +26,8 @@ class ScrapingProfileFilterProcessAdapter(IRepository[ProfileFilterProcessEntity
         return [ProfileFilterProcessEntity]
 
     def getById(self, id: str) -> ProfileFilterProcessEntity | None:
-        logger.info(f"Getting profile filter process entity with id: {id}")
-
+        logger.info(f"Getting profile filter process status from brigthdata - snapshoot_id: {id}")
+    
         return None  # from_dto_to_entity(ProfileFilterProcessEntity, result)
 
     def create(self, entity):
@@ -94,7 +94,7 @@ class ScrapingProfileFilterProcessAdapter(IRepository[ProfileFilterProcessEntity
         }
 
         logger.info(f"payload to brightdata: {payload}")
-        response = requests.request("POST", URL_BRIGHTDATA, json=payload, headers=headers)
+        response = requests.request("POST", f"{BASE_URL_BRIGHTDATA}/filter", json=payload, headers=headers)
 
         logger.info(f"response brightdata: {response}")
 
@@ -116,3 +116,17 @@ class ScrapingProfileFilterProcessAdapter(IRepository[ProfileFilterProcessEntity
 
     def delete(self, id: str):
         return True
+
+    def get_status(self, id: str) -> bool:
+        logger.info(f"Getting profile filter process status from brigthdata - snapshoot_id: {id}")
+        
+        headers = {"Authorization": f"Bearer {TOKEN_BRIGHTDATA}"}
+        response = requests.request("GET", f"{BASE_URL_BRIGHTDATA}/snapshots/{id}", headers=headers)
+
+        logger.info(f"response brightdata: {response}")
+
+        if response.status_code == 200 and response.json()["status"] == "ready":
+            return True
+        else:
+            logger.error(f"Failed to create profile filter process: {response.status_code} - {response.text}")
+            raise Exception(f"Failed to get profile filter process: {response.status_code} - {response.text}")
