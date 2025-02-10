@@ -27,3 +27,6 @@ class ScrapingProfileFilterProcessRepository(IRepository[ProfileFilterProcessEnt
 
     def delete(self, id: str):
         return self._adapter.delete(id)
+    
+    def get_status(self, entity):
+        return self._adapter.get_status(entity)
