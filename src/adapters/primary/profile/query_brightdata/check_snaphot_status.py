@@ -14,6 +14,7 @@ def lambda_handler(event, context: LambdaContext) -> dict:
     {
         "user_id": "123",
         "position_id": "123",
+        "_id": "123",
         "business_id": "123",
         "role": "Software Engineer",
         "seniority": "Senior",
