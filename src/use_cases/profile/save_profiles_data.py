@@ -12,6 +12,6 @@ def save_profiles_data_use_case(data: ProfileFilterProcessDTO) -> bool:
     response = scraping_profile_filter_process_repository.get_data(data.snapshot_id)
 
     storeage_repository = S3StorageRepository(S3_RAW_PROFILE_DATA_IA_BUCKET_NAME)
-    storeage_repository.put(data.process_id, response)
+    storeage_repository.put(data._id, response)
     
     return response

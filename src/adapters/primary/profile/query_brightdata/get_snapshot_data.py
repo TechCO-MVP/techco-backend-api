@@ -13,7 +13,7 @@ def lambda_handler(event, context: LambdaContext) -> dict:
     Lambda handler to get scraping data and save in S3
     {
         "user_id": "123",
-        "process_id": "123",
+        "_id": "123",
         "position_id": "123",
         "business_id": "123",
         "role": "Software Engineer",
