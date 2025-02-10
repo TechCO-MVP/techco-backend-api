@@ -2,7 +2,7 @@ from aws_lambda_powertools import Logger
 from aws_lambda_powertools.utilities.typing import LambdaContext
 
 from src.domain.profile import ProfileFilterProcessQueryDTO
-from src.use_cases.profile.vaidate_status_profile_query import validate_status_profile_query_use_case
+from src.use_cases.profile.validate_status_profile_query import validate_status_profile_query_use_case
 
 logger = Logger()
 
