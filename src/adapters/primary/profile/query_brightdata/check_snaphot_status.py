@@ -1,3 +1,4 @@
+import json
 from aws_lambda_powertools import Logger
 from aws_lambda_powertools.utilities.typing import LambdaContext
 
@@ -64,6 +65,9 @@ def lambda_handler(event, context: LambdaContext) -> dict:
     logger.info("Querying brightdata")
     logger.info(event)
     logger.info(context)
+
+    if isinstance(event, str):
+        event = json.loads(event)
 
     profile_process_entity = from_dto_to_entity(ProfileFilterProcessEntity, event)
     status = validate_status_profile_query_use_case(profile_process_entity)
