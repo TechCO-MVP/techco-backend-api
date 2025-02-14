@@ -107,6 +107,7 @@ resources:
     S3RawProfileDataIA: ${file(./src/resources/brightdata/serverless.yml):S3RawProfileDataIA}
     S3DepuratedProfileDataIA: ${file(./src/resources/brightdata/serverless.yml):S3DepuratedProfileDataIA}
     S3RefinedProfileDataIA: ${file(./src/resources/brightdata/serverless.yml):S3RefinedProfileDataIA}
+    SQSUserNotificatons: ${file(./src/resources/brightdata/serverless.yml):SQSUserNotificatons}
     serverlessApiGatewayCloudWatchRole:
       Type: AWS::IAM::Role
       Properties:
@@ -344,6 +345,12 @@ functions:
           method: post
           cors: true
           private: true
+
+  notify_user_process_completion:
+    handler: src/adapters/primary/profile/filter/start.lambda_handler
+    events:
+      - sqs:
+          arn: !GetAtt SQSUserNotificatons.Arn
 
   profile_query_brightdata:
     handler: src/adapters/primary/profile/query_brightdata/index.lambda_handler
