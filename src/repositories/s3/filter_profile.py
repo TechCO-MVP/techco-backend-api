@@ -15,8 +15,8 @@ class S3StorageRepository(IStorageRepository[dict]):
 
     def get(self, key: str) -> dict:
         try:
-            response = self.s3_client.get_object(Bucket=self.bucket_name, Key=key)
-            data = response["Body"].read().decode("utf-8")
+            file = self.get_file(key)
+            data = file.decode("utf-8")
             return json.loads(data)
         except self.s3_client.exceptions.NoSuchKey:
             raise KeyError(f"Key {key} not found in bucket {self.bucket_name}")
@@ -33,3 +33,10 @@ class S3StorageRepository(IStorageRepository[dict]):
             self.s3_client.delete_object(Bucket=self.bucket_name, Key=key)
         except Exception as e:
             raise RuntimeError(f"Failed to delete object {key} from bucket {self.bucket_name}: {e}")
+
+    def get_file(self, key: str) -> bytes:
+        try:
+            response = self.s3_client.get_object(Bucket=self.bucket_name, Key=key)
+            return response["Body"].read()
+        except self.s3_client.exceptions.NoSuchKey:
+            raise KeyError(f"Key {key} not found in bucket {self.bucket_name}")

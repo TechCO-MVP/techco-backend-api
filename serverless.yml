@@ -31,6 +31,7 @@ provider:
     S3_RAW_PROFILE_DATA_IA_BUCKET_NAME: !Ref S3RawProfileDataIA
     S3_DEPURATED_PROFILE_DATA_IA_BUCKET_NAME: !Ref S3DepuratedProfileDataIA
     S3_REFINED_PROFILE_DATA_IA_BUCKET_NAME: !Ref S3RefinedProfileDataIA
+    OPEN_AI_API_KEY_SECRET_NAME: openai_api_key_dev
 
   logs:
     restApi: true
