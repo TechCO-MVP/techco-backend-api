@@ -61,6 +61,14 @@ provider:
           Action:
             - states:StartExecution
           Resource: ${self:provider.environment.PROFILE_FILTER_PROCESS_ARN}
+        - Effect: Allow
+          Action:
+            - s3:PutObject
+            - s3:GetObject
+            - s3:ListBucket
+          Resource:
+            - arn:aws:s3:::dev-raw-profile-data-infrequent-access
+            - arn:aws:s3:::dev-raw-profile-data-infrequent-access/*
 
 custom:
   userPoolName: ${self:provider.stage}-passwordless-user-pool

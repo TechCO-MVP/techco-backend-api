@@ -9,7 +9,7 @@ def put_user_status_use_case(user_dto: UpdateUserStatusDTO) -> UserEntity:
     user_repository = UserRepository()
 
     if user_dto.user_status == "disabled":
-        user_sign_out(user_dto.email)
+        user_sign_out(user_dto.user_email)
 
     user_data_db = user_repository.getByEmail(user_dto.user_email)
     user_data_db.props.status = user_dto.user_status
