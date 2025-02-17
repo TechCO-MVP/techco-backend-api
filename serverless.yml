@@ -31,6 +31,7 @@ provider:
     S3_RAW_PROFILE_DATA_IA_BUCKET_NAME: !Ref S3RawProfileDataIA
     S3_DEPURATED_PROFILE_DATA_IA_BUCKET_NAME: !Ref S3DepuratedProfileDataIA
     S3_REFINED_PROFILE_DATA_IA_BUCKET_NAME: !Ref S3RefinedProfileDataIA
+    SQS_USER_NOTIFICATIONS_NAME: !Ref SQSUserNotificatons
 
   logs:
     restApi: true
@@ -69,6 +70,15 @@ provider:
           Resource:
             - arn:aws:s3:::dev-raw-profile-data-infrequent-access
             - arn:aws:s3:::dev-raw-profile-data-infrequent-access/*
+        - Effect: Allow
+          Action:
+            - sqs:SendMessage
+            - sqs:ReceiveMessage
+            - sqs:DeleteMessage
+            - sqs:GetQueueAttributes
+          Resource:
+            - arn:aws:sqs:${self:provider.region}:#{AWS::AccountId}:notifications_users
+
 
 custom:
   userPoolName: ${self:provider.stage}-passwordless-user-pool
@@ -115,6 +125,7 @@ resources:
     S3RawProfileDataIA: ${file(./src/resources/brightdata/serverless.yml):S3RawProfileDataIA}
     S3DepuratedProfileDataIA: ${file(./src/resources/brightdata/serverless.yml):S3DepuratedProfileDataIA}
     S3RefinedProfileDataIA: ${file(./src/resources/brightdata/serverless.yml):S3RefinedProfileDataIA}
+    SQSUserNotificatons: ${file(./src/resources/brightdata/serverless.yml):SQSUserNotificatons}
     serverlessApiGatewayCloudWatchRole:
       Type: AWS::IAM::Role
       Properties:
@@ -353,6 +364,12 @@ functions:
           cors: true
           private: true
 
+  # error_processing_profile_filter_process:
+  #   handler: src/adapters/primary/profile/error_profile_filter_process.lambda_handler
+  #   events:
+  #     - sqs:
+  #         arn: !GetAtt SQSUserNotificatons.Arn
+
   profile_query_brightdata:
     handler: src/adapters/primary/profile/query_brightdata/index.lambda_handler
 
@@ -373,6 +390,12 @@ functions:
 
   notify_failure_profile_filter_process:
     handler: src/adapters/primary/profile/filter/notify_failure.lambda_handler
+  
+  # handler_sqs_user_notifications:
+  #   handler: src/adapters/primary/notifications/index.lambda_handler
+  #   events:
+  #     - sqs:
+  #         arn: !GetAtt SQSUserNotificatons.Arn
 
 stepFunctions:
   stateMachines: ${file(./src/resources/brightdata/serverless.yml):stateMachines}

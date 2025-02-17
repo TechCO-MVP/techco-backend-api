@@ -63,6 +63,16 @@ S3RefinedProfileDataIA:
       - Key: Name
         Value: ${self:provider.stage}-refined-profile-data-infrequent-access
 
+SQSUserNotificatons:
+  Type: AWS::SQS::Queue
+  Properties:
+    FifoQueue : true
+    QueueName: ${self:provider.stage}-user-notifications.fifo
+    Tags:
+      - Key: Environment
+        Value: ${self:provider.stage}
+      - Key: Name
+        Value: ${self:provider.stage}-user-notifications.fifo
 
 stateMachines:
   profileFilterProcess:
