@@ -77,7 +77,8 @@ provider:
             - sqs:DeleteMessage
             - sqs:GetQueueAttributes
           Resource:
-            - arn:aws:sqs::dev-user-notifications.fifo
+            - !GetAtt SQSUserNotificatons.Arn
+            # - arn:aws:sqs::::dev-user-notifications.fifo
 
 
 
