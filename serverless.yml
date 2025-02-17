@@ -77,7 +77,8 @@ provider:
             - sqs:DeleteMessage
             - sqs:GetQueueAttributes
           Resource:
-            - arn:aws:sqs:${self:provider.region}:#{AWS::AccountId}:notifications_users
+            - arn:aws:sqs::dev-user-notifications.fifo
+
 
 
 custom:
