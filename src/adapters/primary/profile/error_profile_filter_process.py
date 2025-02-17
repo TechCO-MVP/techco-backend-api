@@ -73,9 +73,9 @@ def lambda_handler(event, context: LambdaContext) -> None:
     if isinstance(event, str):
         event = json.loads(event)
 
-    # from_dto_to_entity(ProfileFilterProcessEntity, json.loads(event))
+    from_dto_to_entity(ProfileFilterProcessEntity, json.loads(event))
     event["origin_process"] = "profile_filter_process"
     
-    send_event_SQS(event, os.getenv("SQS_USER_NOTIFICATIONS_NAME", ""))
+    send_event_SQS(event, os.getenv("SQS_USER_NOTIFICATIONS_NAME", ""), "profile_filter_process")
     
     return
