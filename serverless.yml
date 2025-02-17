@@ -364,11 +364,11 @@ functions:
           cors: true
           private: true
 
-  # error_processing_profile_filter_process:
-  #   handler: src/adapters/primary/profile/error_profile_filter_process.lambda_handler
-  #   events:
-  #     - sqs:
-  #         arn: !GetAtt SQSUserNotificatons.Arn
+  error_processing_profile_filter_process:
+    handler: src/adapters/primary/profile/error_profile_filter_process.lambda_handler
+    events:
+      - sqs:
+          arn: !GetAtt SQSUserNotificatons.Arn
 
   profile_query_brightdata:
     handler: src/adapters/primary/profile/query_brightdata/index.lambda_handler
@@ -391,11 +391,11 @@ functions:
   notify_failure_profile_filter_process:
     handler: src/adapters/primary/profile/filter/notify_failure.lambda_handler
   
-  # handler_sqs_user_notifications:
-  #   handler: src/adapters/primary/notifications/index.lambda_handler
-  #   events:
-  #     - sqs:
-  #         arn: !GetAtt SQSUserNotificatons.Arn
+  handler_sqs_user_notifications:
+    handler: src/adapters/primary/notifications/index.lambda_handler
+    events:
+      - sqs:
+          arn: !GetAtt SQSUserNotificatons.Arn
 
 stepFunctions:
   stateMachines: ${file(./src/resources/brightdata/serverless.yml):stateMachines}
