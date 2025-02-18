@@ -7,4 +7,4 @@ def send_profile_query_use_case(filters: ProfileFilterProcessEntity) -> ProfileF
 
     scraping_profile_filter_process_repository = ScrapingProfileFilterProcessRepository()
     response = scraping_profile_filter_process_repository.create(filters)
-    return response
+    return response.to_dto(flat=True)
