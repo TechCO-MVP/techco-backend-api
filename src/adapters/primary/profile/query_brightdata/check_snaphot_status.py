@@ -79,4 +79,4 @@ def lambda_handler(event, context: LambdaContext) -> dict:
             raise Exception("Error")
     except Exception as e:
         logger.error(e)
-        return event
+        return profile_process_entity.to_dto(flat=True)
