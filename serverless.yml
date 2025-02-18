@@ -381,6 +381,7 @@ functions:
 
   get_snapshot_data_brightdata:
     handler: src/adapters/primary/profile/query_brightdata/get_snapshot_data.lambda_handler
+    timeout: 310
 
   transform_and_refine_brightdata:
     handler: src/adapters/primary/profile/query_brightdata/transform_and_refine.lambda_handler
