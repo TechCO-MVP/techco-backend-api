@@ -1,4 +1,5 @@
 import requests
+import json
 
 from aws_lambda_powertools import Logger
 
@@ -140,12 +141,12 @@ class ScrapingProfileFilterProcessAdapter(IRepository[ProfileFilterProcessEntity
         logger.info(f"response brightdata: {response}")
 
         if response.status_code == 200:
-            return response.text
+            return json.dumps(response.text)
         elif response.status_code == 202:
             response_second_request = requests.request("GET", f"{BASE_URL_BRIGHTDATA}/snapshots/{id}/download", headers=headers, timeout=310)
             logger.info(f"response brightdata second request: {response}")
             if response_second_request.status_code == 200:
-                return response.text
+                return json.dumps(response.text)
         else:
             logger.error(f"Failed to create profile filter process: {response.status_code} - {response.text}")
             raise Exception(f"Failed to get profile filter process: {response.status_code} - {response.text}")
