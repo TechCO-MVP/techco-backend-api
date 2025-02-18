@@ -374,6 +374,7 @@ functions:
 
   profile_query_brightdata:
     handler: src/adapters/primary/profile/query_brightdata/index.lambda_handler
+    timeout: 310
 
   check_snapshot_status_brightdata:
     handler: src/adapters/primary/profile/query_brightdata/check_snaphot_status.lambda_handler
