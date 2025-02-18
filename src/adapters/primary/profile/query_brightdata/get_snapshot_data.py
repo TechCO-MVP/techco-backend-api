@@ -74,7 +74,7 @@ def lambda_handler(event, context: LambdaContext) -> dict:
         status = save_profiles_data_use_case(profile_process_entity)
 
         if status:
-            return event
+            return profile_process_entity.to_dto(flat=True)
         else:
             raise Exception("Error")
     except Exception as e:
