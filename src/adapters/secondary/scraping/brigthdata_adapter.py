@@ -94,7 +94,7 @@ class ScrapingProfileFilterProcessAdapter(IRepository[ProfileFilterProcessEntity
         }
 
         logger.info(f"payload to brightdata: {payload}")
-        response = requests.request("POST", f"{BASE_URL_BRIGHTDATA}/filter", json=payload, headers=headers)
+        response = requests.request("POST", f"{BASE_URL_BRIGHTDATA}/filter", json=payload, headers=headers, timeout=310)
 
         logger.info(f"response brightdata: {response}")
 
@@ -121,7 +121,7 @@ class ScrapingProfileFilterProcessAdapter(IRepository[ProfileFilterProcessEntity
         logger.info(f"Getting profile filter process status from brigthdata - snapshoot_id: {id}")
         
         headers = {"Authorization": f"Bearer {TOKEN_BRIGHTDATA}"}
-        response = requests.request("GET", f"{BASE_URL_BRIGHTDATA}/snapshots/{id}", headers=headers)
+        response = requests.request("GET", f"{BASE_URL_BRIGHTDATA}/snapshots/{id}", headers=headers, timeout=5)
 
         logger.info(f"response brightdata: {response}")
 
@@ -135,14 +135,14 @@ class ScrapingProfileFilterProcessAdapter(IRepository[ProfileFilterProcessEntity
         logger.info(f"Getting profile filter process data from brigthdata - snapshoot_id: {id}")
         
         headers = {"Authorization": f"Bearer {TOKEN_BRIGHTDATA}"}
-        response = requests.request("GET", f"{BASE_URL_BRIGHTDATA}/snapshots/{id}/download", headers=headers)
+        response = requests.request("GET", f"{BASE_URL_BRIGHTDATA}/snapshots/{id}/download", headers=headers, timeout=310)
 
         logger.info(f"response brightdata: {response}")
 
         if response.status_code == 200:
             return response.text
         elif response.status_code == 202:
-            response_second_request = requests.request("GET", f"{BASE_URL_BRIGHTDATA}/snapshots/{id}/download", headers=headers)
+            response_second_request = requests.request("GET", f"{BASE_URL_BRIGHTDATA}/snapshots/{id}/download", headers=headers, timeout=310)
             logger.info(f"response brightdata second request: {response}")
             if response_second_request.status_code == 200:
                 return response.text
