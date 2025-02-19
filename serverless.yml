@@ -31,6 +31,8 @@ provider:
     S3_RAW_PROFILE_DATA_IA_BUCKET_NAME: !Ref S3RawProfileDataIA
     S3_DEPURATED_PROFILE_DATA_IA_BUCKET_NAME: !Ref S3DepuratedProfileDataIA
     S3_REFINED_PROFILE_DATA_IA_BUCKET_NAME: !Ref S3RefinedProfileDataIA
+    OPEN_AI_API_KEY_SECRET_NAME: openai_api_key_dev
+    OPEN_AI_ASSISTANT_ID: asst_XKxSpnp03caySq26J2e80VPJ
     SQS_USER_NOTIFICATIONS_NAME: !Ref SQSUserNotificatons
 
   logs:
@@ -388,6 +390,7 @@ functions:
 
   query_and_build_openai_data:
     handler: src/adapters/primary/profile/openai/query_and_build_openai_data.lambda_handler
+    timeout: 310
 
   notify_completion_profile_filter_process:
     handler: src/adapters/primary/profile/filter/notify_completion.lambda_handler

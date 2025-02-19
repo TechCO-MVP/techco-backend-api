@@ -68,6 +68,8 @@ class ProfileFilterProcessDocumentDBAdapter(IRepository[ProfileFilterProcessEnti
         result = collection.insert_one(profile_filter_process_data, session=self._session)
         entity.id = str(result.inserted_id)
 
+        logger.info(f"Entity created with id: {entity.id}")
+        logger.info(result)
         return entity
 
     def update(self, id: str, entity):
@@ -76,7 +78,7 @@ class ProfileFilterProcessDocumentDBAdapter(IRepository[ProfileFilterProcessEnti
 
         profile_filter_process_data = entity.to_dto(flat=True)
         profile_filter_process_data.pop("_id", None)
-        profile_filter_process_data["updated_at"] = datetime.now()
+        profile_filter_process_data["updated_at"] = datetime.now().isoformat()
 
         collection = self._client[self._collection_name]
         collection.update_one(
