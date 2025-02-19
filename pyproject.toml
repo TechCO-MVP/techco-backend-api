@@ -13,6 +13,8 @@ pydantic = "^2.10.4"
 pymongo = "^4.10.1"
 email-validator = "^2.2.0"
 openai = "^1.61.1"
+requests = "^2.31.0"
+
 
 [tool.poetry.group.dev.dependencies]
 black = "^24.10.0"
@@ -25,6 +27,7 @@ pytest-cov = "^6.0.0"
 pytest-mock = "^3.14.0"
 moto = "^5.0.23"
 python-dotenv = "^1.0.1"
+
 
 [build-system]
 requires = ["poetry-core"]
