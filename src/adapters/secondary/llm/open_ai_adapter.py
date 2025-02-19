@@ -6,6 +6,7 @@ from typing import List
 import boto3
 from aws_lambda_powertools import Logger
 from openai import OpenAI
+from openai.types.beta.threads.run import Run
 
 from src.models.openai.index import OpenAIMessage
 from src.services.llm.llm_service import LLMService
@@ -28,12 +29,17 @@ class OpenAIAdapter(LLMService):
         file_id = self.upload_file(file_path)
         thread_run = self.create_and_run_thread(messages, file_id)
         self.wait_for_completion(thread_run)
+        self.delete_file(file_id)
         return self.get_thread_response(thread_run)
 
     def upload_file(self, file_path: str) -> str:
         with open(file_path, "rb") as file:
             uploaded_file = self.client.files.create(file=file, purpose="assistants")
         return uploaded_file.id
+
+    def delete_file(self, file_id: str) -> bool:
+        self.client.files.delete(file_id)
+        return True
 
     def create_and_run_thread(self, messages: List[OpenAIMessage], file_id: str):
         return self.client.beta.threads.create_and_run(
@@ -52,7 +58,7 @@ class OpenAIAdapter(LLMService):
             },
         )
 
-    def wait_for_completion(self, thread_run):
+    def wait_for_completion(self, thread_run: Run):
         while True:
             run = self.client.beta.threads.runs.retrieve(
                 run_id=thread_run.id,
@@ -67,7 +73,7 @@ class OpenAIAdapter(LLMService):
 
             sleep(5)
 
-    def get_thread_response(self, thread_run) -> str:
+    def get_thread_response(self, thread_run: Run) -> str:
         messages_thread = self.client.beta.threads.messages.list(thread_id=thread_run.thread_id)
         return messages_thread.data[0].content[0].text.value
 
