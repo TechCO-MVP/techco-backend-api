@@ -40,3 +40,7 @@ class IStorageRepository(ABC, Generic[T]):
     @abstractmethod
     def delete(self, key: str):
         pass
+
+    @abstractmethod
+    def get_file(self, key: str) -> bytes:
+        pass
