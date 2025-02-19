@@ -71,12 +71,14 @@ def lambda_handler(event, context: LambdaContext) -> dict:
             event = json.loads(event)
 
         profile_process_entity = from_dto_to_entity(ProfileFilterProcessEntity, event)
-        status = validate_status_profile_query_use_case(profile_process_entity)
+        validate_status_profile_query_use_case(profile_process_entity)
 
-        if status:
-            return profile_process_entity.to_dto(flat=True)
-        else:
-            raise Exception("Error")
-    except Exception as e:
-        logger.error(e)
         return profile_process_entity.to_dto(flat=True)
+
+
+    except Exception as e:
+        process_dto = profile_process_entity.to_dto(flat=True)
+        e.args[0]["event"] = process_dto
+        e.args[0]["process_id"] = process_dto.get("_id")
+        logger.error(e)
+        raise e
