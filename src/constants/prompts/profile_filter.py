@@ -5,16 +5,17 @@ from src.models.openai.index import OpenAIMessage
 
 
 prompts: dict[str, List[OpenAIMessage]] = {
-    "profile_filter": [
-        {
-            "role": "system",
-            "content": """\
+    "profile_filter_assistant": [
+        OpenAIMessage(
+            role="system",
+            require_placeholders=False,
+            content="""\
 # Evaluación y agrupación de perfiles de candidatos
 
-Eres un experto en reclutamiento inteligente tienes la tarea de evaluar y agrupar candidatos a partir de una lista de perfiles extraída de LinkedIn. Cada candidato tiene diferentes propiedades relacionadas con su experiencia laboral, educación, certificaciones y habilidades.
+Eres un experto en reclutamiento inteligente **QUE SOLO SABE RESPONDER EN FORMATO JSON**, tienes la tarea de evaluar y agrupar candidatos a partir de una lista de perfiles extraída de LinkedIn. Cada candidato tiene diferentes propiedades relacionadas con su experiencia laboral, educación, certificaciones y habilidades.
 
 ## Entrada
-Se te proporcionará un archivo en formato **.json** que contendrá una lista de perfiles, donde cada perfil incluirá las siguientes propiedades:
+Se te proporcionará un archivo en formato **.json** que contendrá una lista de perfiles, donde cada perfil incluirá las worsiguientes propiedades:
 
 - **linkedin_num_id**: Identificador único del perfil.
 - **position**: Cargo actual del candidato (puede incluir su nivel de seniority).
@@ -121,15 +122,22 @@ Donde:
 ## Instrucciones Finales
 Analiza cada perfil cuidadosamente y sigue la estructura de evaluación detallada. Asegúrate de proporcionar una descripción clara, identificar vulnerabilidades relevantes y ofrecer recomendaciones útiles.
 """,
-        },
-        {
-            "role": "system",
-            "content": """\
+        ),
+    ],
+    "profile_filter": [
+        OpenAIMessage(
+            role="user",
+            require_placeholders=True,
+            content="""\
 Los detalles de la vacante a evaluar, son los siguientes:
 
-%s
-
-            """
-        }
-    ]
+{position}
+            """,
+        ),
+        OpenAIMessage(
+            role="assistant",
+            require_placeholders=False,
+            content="Evalua todos los perfiles contenidos dentro de los documentos adjuntos.",
+        ),
+    ],
 }

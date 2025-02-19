@@ -5,6 +5,7 @@ from bson import ObjectId
 from pydantic import BaseModel, Field, field_validator
 
 from src.domain.base_entity import BaseEntity
+from src.domain.profile_brightdata import ProfileBrightDataDTO
 
 
 class PROCESS_STATUS(str, Enum):
@@ -17,6 +18,7 @@ class PROCESS_STATUS(str, Enum):
 class Skill(BaseModel):
     name: str
     required: bool
+
 
 class ProfileFilterProcessQueryDTO(BaseModel):
     role: str
@@ -38,6 +40,7 @@ class ProfileFilterProcessDTO(BaseModel):
     position_id: str = Field(default="", alias="position_id")
     business_id: str = Field(default="", alias="business_id")
     process_filters: ProfileFilterProcessQueryDTO
+    profiles: Optional[List[ProfileBrightDataDTO]] = []
 
     @field_validator("position_id", mode="before")
     def validate_and_convert_position_id(cls, v):

@@ -1,6 +1,7 @@
 from aws_lambda_powertools import Logger
 from aws_lambda_powertools.utilities.typing import LambdaContext
 
+from src.domain.profile import ProfileFilterProcessDTO, ProfileFilterProcessQueryDTO
 from src.use_cases.profile.filter_profiles_ai_use_case import query_profiles_ai_use_case
 
 logger = Logger()
@@ -15,6 +16,13 @@ def lambda_handler(event: dict, context: LambdaContext) -> dict:
     if not process_id:
         return {"message": "The id is required"}
 
-    query_profiles_ai_use_case(process_id, event)
+    profile_filter_process = ProfileFilterProcessDTO(
+        status=event.get("status"),
+        execution_arn=event.get("execution_arn"),
+        user_id=event.get("user_id"),
+        position_id=event.get("position_id"),
+        company_id=event.get("company_id"),
+        process_filters=ProfileFilterProcessQueryDTO(**event.get("process_filters", {})),
+    )
 
-    return event
+    return query_profiles_ai_use_case(process_id, profile_filter_process)

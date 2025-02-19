@@ -78,7 +78,7 @@ class ProfileFilterProcessDocumentDBAdapter(IRepository[ProfileFilterProcessEnti
 
         profile_filter_process_data = entity.to_dto(flat=True)
         profile_filter_process_data.pop("_id", None)
-        profile_filter_process_data["updated_at"] = datetime.now()
+        profile_filter_process_data["updated_at"] = datetime.now().isoformat()
 
         collection = self._client[self._collection_name]
         collection.update_one(

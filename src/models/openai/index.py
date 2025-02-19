@@ -6,11 +6,13 @@ from pydantic import BaseModel
 class OPEN_AI_ROLE(str, Enum):
     USER = "user"
     SYSTEM = "system"
+    ASSISTANT = "assistant"
 
 
 class OpenAIMessage(BaseModel):
     role: OPEN_AI_ROLE
     content: str
+    require_placeholders: bool
 
 
 class OpenAITool(BaseModel):

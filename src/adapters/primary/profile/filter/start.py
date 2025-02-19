@@ -2,6 +2,7 @@ from aws_lambda_powertools import Logger
 from aws_lambda_powertools.event_handler import APIGatewayRestResolver, Response, content_types
 from aws_lambda_powertools.utilities.typing import LambdaContext
 from pydantic import ValidationError
+from botocore.exceptions import ParamValidationError
 
 from src.errors.entity_not_found import EntityNotFound
 from src.domain.profile import ProfileFilterProcessQueryDTO
@@ -33,6 +34,11 @@ def start_filter_profile():
             status_code=200,
             body={"message": "Filter profile started successfully", "body": result},
             content_type=content_types.APPLICATION_JSON,
+        )
+    except ParamValidationError as e:
+        logger.error(str(e))
+        return Response(
+            status_code=400, body={"message": str(e)}, content_type=content_types.APPLICATION_JSON
         )
     except ValidationError as e:
         logger.error(str(e))
