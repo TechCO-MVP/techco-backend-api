@@ -103,7 +103,13 @@ class ScrapingProfileFilterProcessAdapter(IRepository[ProfileFilterProcessEntity
             entity_dto["process_filters"]["snapshot_id"] = snapshot_id
             entity = from_dto_to_entity(ProfileFilterProcessEntity, entity_dto)
         else:
-            logger.error(f"Failed to create profile filter process: {response.status_code} - {response.text}")
+            error = {
+                "message": f"Failed to create profile filter process: {response.status_code} - {response.text}",
+                "event": entity_dto,
+                "process_id": entity_dto.get("_id"),
+            }
+            logger.error(error["message"])
+            raise Exception(error)
 
         logger.info(f"Entity: {entity}")
         return entity
