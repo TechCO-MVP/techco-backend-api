@@ -66,13 +66,15 @@ def lambda_handler(event, context: LambdaContext) -> dict:
     logger.info(event)
     logger.info(context)
 
-    if isinstance(event, str):
-        event = json.loads(event)
+    try:
+        if isinstance(event, str):
+            event = json.loads(event)
 
-    profile_process_entity = from_dto_to_entity(ProfileFilterProcessEntity, event)
-    status = save_profiles_data_use_case(profile_process_entity)
+        profile_process_entity = from_dto_to_entity(ProfileFilterProcessEntity, event)
+        save_profiles_data_use_case(profile_process_entity)
+        return profile_process_entity.to_dto(flat=True)
 
-    if status:
-        return event
-    else:
-        raise Exception("Error")
+    except Exception as e:
+        logger.error(e)
+        raise e
+    
