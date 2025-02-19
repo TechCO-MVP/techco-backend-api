@@ -129,8 +129,11 @@ class ScrapingProfileFilterProcessAdapter(IRepository[ProfileFilterProcessEntity
         if response.status_code == 200 and response.json()["status"] == "ready":
             return True
         else:
-            logger.error(f"Failed to create profile filter process: {response.status_code} - {response.text}")
-            raise Exception(f"Failed to get profile filter process: {response.status_code} - {response.text}")
+            error = {
+                "message": f"Failed to create profile filter process: {response.status_code} - {response.text}"
+            }
+            logger.error(error["message"])
+            raise Exception(error)
 
     def get_data(self, id: str):
         logger.info(f"Getting profile filter process data from brigthdata - snapshoot_id: {id}")
