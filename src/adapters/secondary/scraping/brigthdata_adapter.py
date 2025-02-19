@@ -1,5 +1,6 @@
-import requests
 import json
+import requests
+import time
 
 from aws_lambda_powertools import Logger
 
@@ -107,9 +108,13 @@ class ScrapingProfileFilterProcessAdapter(IRepository[ProfileFilterProcessEntity
             entity_dto["process_filters"]["snapshot_id"] = snapshot_id
             entity = from_dto_to_entity(ProfileFilterProcessEntity, entity_dto)
         else:
-            logger.error(
-                f"Failed to create profile filter process: {response.status_code} - {response.text}"
-            )
+            error = {
+                "message": f"Failed to create profile filter process: {response.status_code} - {response.text}",
+                "event": entity_dto,
+                "process_id": entity_dto.get("_id"),
+            }
+            logger.error(error["message"])
+            raise Exception(error)
 
         logger.info(f"Entity: {entity}")
         return entity
@@ -136,12 +141,12 @@ class ScrapingProfileFilterProcessAdapter(IRepository[ProfileFilterProcessEntity
         if response.status_code == 200 and response.json()["status"] == "ready":
             return True
         else:
-            logger.error(
-                f"Failed to create profile filter process: {response.status_code} - {response.text}"
-            )
-            raise Exception(
-                f"Failed to get profile filter process: {response.status_code} - {response.text}"
-            )
+            error = {
+                "message": f"Failed to get status snapshoot: {response.status_code} - {response.text}",
+                "snapshoot_id": id,
+            }
+            logger.error(error["message"])
+            raise Exception(error)
 
     def get_data(self, id: str):
         logger.info(f"Getting profile filter process data from brigthdata - snapshoot_id: {id}")
@@ -157,6 +162,7 @@ class ScrapingProfileFilterProcessAdapter(IRepository[ProfileFilterProcessEntity
         if response.status_code == 200:
             return json.dumps(response.text)
         elif response.status_code == 202:
+            time.sleep(5)
             response_second_request = requests.request(
                 "GET", f"{BASE_URL_BRIGHTDATA}/snapshots/{id}/download", headers=headers
             )
@@ -172,9 +178,9 @@ class ScrapingProfileFilterProcessAdapter(IRepository[ProfileFilterProcessEntity
             if response_second_request.status_code == 200:
                 return json.dumps(response.text)
         else:
-            logger.error(
-                f"Failed to create profile filter process: {response.status_code} - {response.text}"
-            )
-            raise Exception(
-                f"Failed to get profile filter process: {response.status_code} - {response.text}"
-            )
+            error = {
+                "message": f"Failed to daowload snapshoot_id: {response.status_code} - {response.text}",
+                "snapshoot_id": id,
+            }
+            logger.error(error["message"])
+            raise Exception(error)
