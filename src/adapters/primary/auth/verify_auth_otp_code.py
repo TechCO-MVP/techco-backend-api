@@ -6,6 +6,11 @@ from aws_lambda_powertools.event_handler import APIGatewayRestResolver, Response
 from aws_lambda_powertools.utilities.typing import LambdaContext
 from botocore.exceptions import ClientError
 
+from src.use_cases.user.get_user_by_mail import get_user_by_mail_use_case
+from src.domain.user import UserDTO, UserStatus
+from src.domain.role import BusinessRole, Role
+from src.domain.user import UpdateUserStatusDTO
+from src.use_cases.user.update_user_status import put_user_status_use_case
 from src.constants.index import CLIENT_ID, REGION_NAME
 
 cognito_client = boto3.client("cognito-idp", region_name=REGION_NAME)
@@ -27,6 +32,13 @@ def verify_auth_otp_code():
     body = {}
 
     try:
+        # user = get_user_by_mail_use_case(user_email)
+        # if user.status == UserStatus.PENDING:
+        #     user.status = UserStatus.ENABLED
+        #     # user_dto = UpdateUserStatusDTO(user)
+
+        #     put_user_status_use_case(user)
+
         response = cognito_client.respond_to_auth_challenge(
             ClientId=CLIENT_ID,
             ChallengeName="CUSTOM_CHALLENGE",
