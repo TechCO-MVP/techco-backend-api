@@ -34,7 +34,7 @@ def remove_keys(profiles: List[ProfileBrightDataDTO]) -> List[ProfileBrightDataD
 def transform_and_refine_use_case(process_id: str):
     """Transform and refine bright data use case."""
     s3_storage_repository = S3StorageRepository(S3_RAW_PROFILE_DATA_IA_BUCKET_NAME)
-    profiles: List[ProfileBrightDataDTO] = s3_storage_repository.get(process_id)
+    profiles: List[ProfileBrightDataDTO] = s3_storage_repository.get(process_id, "json")
 
     profiles = remove_keys(profiles)
 
