@@ -6,7 +6,10 @@ from src.adapters.secondary.documentdb.profile_filter_process_db_adapter import 
     ProfileFilterProcessDocumentDBAdapter,
 )
 from src.adapters.secondary.llm.open_ai_adapter import OpenAIAdapter
-from src.constants.index import S3_DEPURATED_PROFILE_DATA_IA_BUCKET_NAME
+from src.constants.index import (
+    S3_DEPURATED_PROFILE_DATA_IA_BUCKET_NAME,
+    S3_REFINED_PROFILE_DATA_IA_BUCKET_NAME,
+)
 from src.constants.prompts.profile_filter import prompts
 from src.domain.profile import ProfileFilterProcessDTO
 from src.domain.profile_brightdata import ProfileBrightDataDTO
@@ -28,6 +31,7 @@ def query_profiles_ai_use_case(
     clusters = cluster_profiles(profile_clustering_response, profiles)
     selected_profiles = select_top_profiles(clusters, len(profiles))
     update_profile_filter_process(process_id, selected_profiles)
+    save_s3_cluster_profiles(process_id, clusters)
     return get_profile_filter_process_dto(process_id)
 
 
@@ -65,15 +69,16 @@ def get_profile_clustering_response(
     return profile_clustering_response
 
 
-def load_profiles(process_id: str) -> dict:
+def load_profiles(process_id: str) -> dict[str, ProfileBrightDataDTO]:
     s3_storage_repository = S3StorageRepository(S3_DEPURATED_PROFILE_DATA_IA_BUCKET_NAME)
     profiles = s3_storage_repository.get(process_id, "json")
     return {profile["linkedin_num_id"]: ProfileBrightDataDTO(**profile) for profile in profiles}
 
 
 def cluster_profiles(
-    profile_clustering_response: ProfileClusteringResponse, profiles: dict
-) -> dict:
+    profile_clustering_response: ProfileClusteringResponse,
+    profiles: dict[str, ProfileBrightDataDTO],
+) -> dict[str, List[ProfileBrightDataDTO]]:
     clusters = {
         PROFILE_GROUP.HIGH.value: [],
         PROFILE_GROUP.MID_HIGH.value: [],
@@ -86,6 +91,19 @@ def cluster_profiles(
         profile.profile_evaluation = evaluation
         cluster.append(profile)
     return clusters
+
+
+def save_s3_cluster_profiles(
+    process_id: str, clusters: dict[str, List[ProfileBrightDataDTO]]
+) -> None:
+    s3_storage_repository = S3StorageRepository(S3_REFINED_PROFILE_DATA_IA_BUCKET_NAME)
+
+    _clusters = {}
+    for key, profiles in clusters.items():
+        _profiles = [profile.model_dump() for profile in profiles]
+        _clusters[key] = _profiles
+
+    s3_storage_repository.put(process_id, _clusters)
 
 
 def select_top_profiles(clusters: dict, total_profiles: int) -> List[ProfileBrightDataDTO]:

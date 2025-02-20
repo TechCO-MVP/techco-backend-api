@@ -1,5 +1,5 @@
 from typing import List, Optional
-from pydantic import BaseModel, HttpUrl, Field
+from pydantic import BaseModel, Field
 from datetime import datetime
 
 from src.domain.profile_evaluation import ProfileEvaluation
@@ -7,16 +7,16 @@ from src.domain.profile_evaluation import ProfileEvaluation
 
 class Company(BaseModel):
     company_id: Optional[str] = None
-    link: Optional[HttpUrl] = None
+    link: Optional[str] = None
     name: Optional[str] = None
 
 
 class Post(BaseModel):
     created_at: Optional[datetime] = None
     id: Optional[str] = None
-    img: Optional[HttpUrl] = None
+    img: Optional[str] = None
     interaction: Optional[str] = None
-    link: Optional[HttpUrl] = None
+    link: Optional[str] = None
     title: Optional[str] = None
 
 
@@ -24,13 +24,13 @@ class PersonAlsoViewed(BaseModel):
     about: Optional[str] = None
     location: Optional[str] = None
     name: Optional[str] = None
-    profile_link: Optional[HttpUrl] = None
+    profile_link: Optional[str] = None
 
 
 class ExperienceProfile(BaseModel):
     company: Optional[str] = Field(None, description="Company name")
     company_id: Optional[str] = Field(None, description="Unique identifier for the company")
-    company_logo_url: Optional[HttpUrl] = Field(None, description="URL of the company logo")
+    company_logo_url: Optional[str] = Field(None, description="URL of the company logo")
     description: Optional[str] = Field(None, description="Text description of the experience")
     description_html: Optional[str] = Field(
         None, description="HTML formatted description of the experience"
@@ -45,14 +45,14 @@ class ExperienceProfile(BaseModel):
     location: Optional[str] = Field(None, description="Location where the experience took place")
     start_date: Optional[str] = Field(None, description="Start date of the experience")
     title: Optional[str] = Field(None, description="Job title in the company")
-    url: Optional[HttpUrl] = Field(None, description="Company's LinkedIn or official website URL")
+    url: Optional[str] = Field(None, description="Company's LinkedIn or official website URL")
 
 
 class Education(BaseModel):
     description: Optional[str] = None
     description_html: Optional[str] = None
     end_year: Optional[str] = None
-    institute_logo_url: Optional[HttpUrl] = None
+    institute_logo_url: Optional[str] = None
     start_year: Optional[str] = None
     title: Optional[str] = None
 
@@ -63,7 +63,7 @@ class Language(BaseModel):
 
 
 class Certification(BaseModel):
-    credential_url: Optional[HttpUrl] = None
+    credential_url: Optional[str] = None
     meta: Optional[str] = None
     subtitle: Optional[str] = None
     title: Optional[str] = None
@@ -95,9 +95,9 @@ class Organization(BaseModel):
 
 class Activity(BaseModel):
     id: Optional[str] = None
-    img: Optional[HttpUrl] = None
+    img: Optional[str] = None
     interaction: Optional[str] = None
-    link: Optional[HttpUrl] = None
+    link: Optional[str] = None
     title: Optional[str] = None
 
 
@@ -126,12 +126,12 @@ class ProfileBrightDataDTO(BaseModel):
     about: Optional[str] = None
     posts: Optional[List[Post]] = None
     experience: Optional[List[ExperienceProfile]] = None
-    url: Optional[HttpUrl] = None
+    url: Optional[str] = None
     people_also_viewed: Optional[List[PersonAlsoViewed]] = None
     educations_details: Optional[str] = None
     education: Optional[List[Education]] = None
     recommendations_count: Optional[int] = None
-    avatar: Optional[HttpUrl] = None
+    avatar: Optional[str] = None
     languages: Optional[List[Language]] = None
     certifications: Optional[List[Certification]] = None
     recommendations: Optional[List[str]] = None
@@ -145,7 +145,7 @@ class ProfileBrightDataDTO(BaseModel):
     patents: Optional[str] = None
     projects: Optional[str] = None
     organizations: Optional[List[Organization]] = None
-    input_url: Optional[HttpUrl] = None
+    input_url: Optional[str] = None
     linkedin_id: Optional[str] = None
     activity: Optional[List[Activity]] = None
     banner_image: Optional[str] = None
