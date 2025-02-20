@@ -32,12 +32,15 @@ def verify_auth_otp_code():
     body = {}
 
     try:
-        # user = get_user_by_mail_use_case(user_email)
-        # if user.status == UserStatus.PENDING:
-        #     user.status = UserStatus.ENABLED
-        #     # user_dto = UpdateUserStatusDTO(user)
+        user = get_user_by_mail_use_case(user_email)
 
-        #     put_user_status_use_case(user)
+        if user.props.status == UserStatus.PENDING:
+            user_update_dto = UpdateUserStatusDTO(
+                user_id=user.id,
+                user_status=UserStatus.ENABLED,
+                user_email=user_email
+            )
+            put_user_status_use_case(user_update_dto)
 
         response = cognito_client.respond_to_auth_challenge(
             ClientId=CLIENT_ID,
