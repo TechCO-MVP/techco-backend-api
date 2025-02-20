@@ -24,7 +24,7 @@ class S3StorageRepository(IStorageRepository[dict]):
     def put(self, key: str, value: dict):
         try:
             data = json.dumps(value)
-            self.s3_client.put_object(Bucket=self.bucket_name, Key=key, Body=data)
+            self.s3_client.put_object(Bucket=self.bucket_name, Key=f"{key}.json", Body=data)
         except Exception as e:
             raise RuntimeError(f"Failed to put object {key} in bucket {self.bucket_name}: {e}")
 
