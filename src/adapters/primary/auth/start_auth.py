@@ -32,7 +32,7 @@ def start_auth():
     try:
         user = get_user_by_mail_use_case(user_email)
 
-        if user.props.status != UserStatus.ENABLED:
+        if user.props.status == UserStatus.DISABLED:
             body = {"message": "User is not enabled."}
             return
 
