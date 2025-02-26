@@ -405,7 +405,7 @@ functions:
       - sqs:
           arn: !GetAtt SQSUserNotificatons.Arn
 
-  create_pipe_configuration_for_open_position:
+  create_pipe_configuration_open_position:
     handler: src/adapters/primary/pipefy/create_pipe_configuration_for_open_position.lambda_handler
 
 stepFunctions:

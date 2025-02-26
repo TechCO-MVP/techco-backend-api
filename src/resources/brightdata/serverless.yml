@@ -127,7 +127,7 @@ stateMachines:
           Type: Task
           Resource:
             Fn::GetAtt:
-              - create_pipe_configuration_for_open_position
+              - create_pipe_configuration_open_position
               - Arn
           Next: NotifyCompletion
         NotifyCompletion:
