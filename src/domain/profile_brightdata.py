@@ -154,3 +154,4 @@ class ProfileBrightDataDTO(BaseModel):
     default_avatar: Optional[bool] = None
     memorialized_account: Optional[bool] = None
     profile_evaluation: Optional[ProfileEvaluation] = None
+    card_id: Optional[str] = None

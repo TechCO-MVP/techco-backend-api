@@ -66,7 +66,7 @@ S3RefinedProfileDataIA:
 SQSUserNotificatons:
   Type: AWS::SQS::Queue
   Properties:
-    FifoQueue : true
+    FifoQueue: true
     QueueName: ${self:provider.stage}-user-notifications.fifo
     Tags:
       - Key: Environment
@@ -121,6 +121,13 @@ stateMachines:
           Resource:
             Fn::GetAtt:
               - query_and_build_openai_data
+              - Arn
+          Next: CreatePipeConfigurationForOpenPosition
+        CreatePipeConfigurationForOpenPosition:
+          Type: Task
+          Resource:
+            Fn::GetAtt:
+              - create_pipe_configuration_for_open_position
               - Arn
           Next: NotifyCompletion
         NotifyCompletion:

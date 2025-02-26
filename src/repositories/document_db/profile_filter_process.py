@@ -16,7 +16,7 @@ class ProfileFilterProcessRepository(IRepository[ProfileFilterProcessEntity]):
     def getAll(self, filter_params: dict = None):
         return self._adapter.getAll(filter_params)
 
-    def getById(self, id: int):
+    def getById(self, id: str):
         return self._adapter.getById(id)
 
     def create(self, entity):

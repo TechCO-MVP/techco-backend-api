@@ -34,6 +34,9 @@ provider:
     OPEN_AI_API_KEY_SECRET_NAME: openai_api_key_dev
     OPEN_AI_ASSISTANT_ID: asst_XKxSpnp03caySq26J2e80VPJ
     SQS_USER_NOTIFICATIONS_NAME: !Ref SQSUserNotificatons
+    PIPEFY_API_KEY_SECRET_NAME: pipefy_api_key
+    PIPEFY_ORGANIZATION_ID: "301603037"
+    PIPE_TEMPLATE_ID: "305713420"
 
   logs:
     restApi: true
@@ -81,8 +84,6 @@ provider:
           Resource:
             - !GetAtt SQSUserNotificatons.Arn
             # - arn:aws:sqs::::dev-user-notifications.fifo
-
-
 
 custom:
   userPoolName: ${self:provider.stage}-passwordless-user-pool
@@ -397,12 +398,15 @@ functions:
 
   notify_failure_profile_filter_process:
     handler: src/adapters/primary/profile/filter/notify_failure.lambda_handler
-  
+
   handler_sqs_user_notifications:
     handler: src/adapters/primary/notifications/index.lambda_handler
     events:
       - sqs:
           arn: !GetAtt SQSUserNotificatons.Arn
+
+  create_pipe_configuration_for_open_position:
+    handler: src/adapters/primary/pipefy/create_pipe_configuration_for_open_position.lambda_handler
 
 stepFunctions:
   stateMachines: ${file(./src/resources/brightdata/serverless.yml):stateMachines}
