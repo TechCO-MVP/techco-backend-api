@@ -1,3 +1,5 @@
+# flake8: noqa: E501
+
 import json
 import requests
 import time
