@@ -108,7 +108,8 @@ class UserDocumentDBAdapter(IRepository[UserEntity]):
         dto = entity.to_dto(flat=True)
         dto.pop("_id", None)
         dto.pop("created_at", None)
-        
+        dto["business_id"] = ObjectId(dto["business_id"])
+
         collection.update_one({"_id": ObjectId(id)}, {"$set": dto})
 
         return entity

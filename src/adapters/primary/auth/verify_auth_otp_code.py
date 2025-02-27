@@ -6,12 +6,10 @@ from aws_lambda_powertools.event_handler import APIGatewayRestResolver, Response
 from aws_lambda_powertools.utilities.typing import LambdaContext
 from botocore.exceptions import ClientError
 
-from src.use_cases.user.get_user_by_mail import get_user_by_mail_use_case
-from src.domain.user import UserDTO, UserStatus
-from src.domain.role import BusinessRole, Role
-from src.domain.user import UpdateUserStatusDTO
-from src.use_cases.user.update_user_status import put_user_status_use_case
 from src.constants.index import CLIENT_ID, REGION_NAME
+from src.domain.user import UpdateUserStatusDTO, UserStatus
+from src.use_cases.user.get_user_by_mail import get_user_by_mail_use_case
+from src.use_cases.user.update_user_status import put_user_status_use_case
 
 cognito_client = boto3.client("cognito-idp", region_name=REGION_NAME)
 
