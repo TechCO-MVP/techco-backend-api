@@ -20,7 +20,10 @@ class DocumentDBClient(IDatabaseClient):
         return cls._instance
 
     def _initialize(self):
-        self._client = create_documentdb_client()
+        try:
+            self._client = create_documentdb_client()
+        except Exception as e:
+            raise RuntimeError(f"Failed to create MongoDB client: {e}")
 
     def get_client(self):
         return self._client
@@ -33,16 +36,16 @@ class DocumentDBClient(IDatabaseClient):
         DocumentDBClient._instance = None
 
     def get_session(self):
-        return self._session
+        raise RuntimeError("Session is already initialized.")
 
     def set_session(self, session: ClientSession):
         if self._session is not None:
-            raise Exception("Session is already initialized.")
+            raise RuntimeError("Session is already initialized.")
         self._session = session
 
     def abort_transaction(self):
         if self._session is None:
-            raise Exception("Session is not initialized.")
+            raise RuntimeError("Session is not initialized.")
 
         self._session.abort_transaction()
         self._session.end_session()
@@ -63,5 +66,7 @@ class DocumentDBClient(IDatabaseClient):
         client = DocumentDBClient().get_client()
 
         database_name = database_name or os.getenv("DOCUMENTDB_DATABASE")
+        if not database_name:
+            raise ValueError("Database name must be provided")
 
         return client.get_database(database_name)
