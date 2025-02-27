@@ -32,11 +32,11 @@ def send_invitation_email(email: str):
 def create_user_use_case(user_dto: UserDTO, business_id: str) -> dict:
     """Create user use case."""
 
-    documebt_db_client = DocumentDBClient()
-    client = documebt_db_client.get_client()
+    document_db_client = DocumentDBClient()
+    client = document_db_client.get_client()
 
     with client.start_session() as session:
-        documebt_db_client.set_session(session)
+        document_db_client.set_session(session)
         session.start_transaction()
 
         try:
@@ -60,9 +60,9 @@ def create_user_use_case(user_dto: UserDTO, business_id: str) -> dict:
             send_invitation_email(user_dto.email)
 
             session.commit_transaction()
-            documebt_db_client.close_session()
+            document_db_client.close_session()
 
             return result
         except Exception as e:
-            session.abort_transaction()
+            document_db_client.abort_transaction()
             raise e
