@@ -392,6 +392,9 @@ functions:
     handler: src/adapters/primary/profile/openai/query_and_build_openai_data.lambda_handler
     timeout: 310
 
+  add_link_vacancy_form:
+    handler: src/adapters/primary/profile/filter/add_link_vacancy_form.lambda_handler
+
   notify_completion_profile_filter_process:
     handler: src/adapters/primary/profile/filter/notify_completion.lambda_handler
 
