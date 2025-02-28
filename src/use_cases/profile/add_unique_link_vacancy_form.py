@@ -23,7 +23,7 @@ def add_links_form(event: ProfileFilterProcessEntity) -> ProfileFilterProcessEnt
     """add links form for each profile use case."""
     for profile in event.props.profiles:
         token = encript_data(profile, event)
-        vancancy_name = event.props.process_filters.role
+        vancancy_name = (event.props.process_filters.role).replace(" ", "_")
         profile.link_vacancy_form = f"https://www.evoly.ofertas/{vancancy_name}?token={token}"
     return event
 
