@@ -36,7 +36,7 @@ class DocumentDBClient(IDatabaseClient):
         DocumentDBClient._instance = None
 
     def get_session(self):
-        raise RuntimeError("Session is already initialized.")
+        return self._session
 
     def set_session(self, session: ClientSession):
         if self._session is not None:
