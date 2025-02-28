@@ -83,4 +83,8 @@ class BusinessDocumentDBAdapter(IRepository[BusinessEntity]):
 
     def delete(self, id: str):
         collection = self._client[self._collection_name]
-        collection.update_one({"_id": ObjectId(id)}, {"$set": {"deleted_at": datetime.now()}})
+        collection.update_one(
+            {"_id": ObjectId(id)},
+            {"$set": {"deleted_at": datetime.now().isoformat()}},
+            session=self._session,
+        )

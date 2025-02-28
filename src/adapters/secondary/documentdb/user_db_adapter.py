@@ -1,3 +1,4 @@
+from datetime import datetime
 from aws_lambda_powertools import Logger
 from bson import ObjectId
 from pymongo.database import Database
@@ -109,6 +110,7 @@ class UserDocumentDBAdapter(IRepository[UserEntity]):
         dto.pop("_id", None)
         dto.pop("created_at", None)
         dto["business_id"] = ObjectId(dto["business_id"])
+        dto["updated_at"] = datetime.now().isoformat()
 
         collection.update_one({"_id": ObjectId(id)}, {"$set": dto})
 
