@@ -14,7 +14,11 @@ def lambda_handler(event: dict, context: LambdaContext) -> dict:
 
     process_id: str = event.get("_id", None)
     if not process_id:
-        return {"message": "The id is required"}
+        return {
+            "status": "ERROR",
+            "error_message": "The id is required",
+            "error_details": "The id is required",
+        }
 
     profile_filter_process = ProfileFilterProcessDTO(
         status=event.get("status"),
