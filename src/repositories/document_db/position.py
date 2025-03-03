@@ -1,17 +1,17 @@
-from src.adapters.secondary.documentdb.vacancy import (
-    VacancyDBAdapter,
+from src.adapters.secondary.documentdb.position import (
+    PositionDBAdapter,
 )
-from src.domain.vacancy import VacancyEntity
+from src.domain.position import PositionEntity
 from src.repositories.repository import IRepository
 
 
-class ProfileFilterProcessRepository(IRepository[VacancyEntity]):
+class ProfileFilterProcessRepository(IRepository[PositionEntity]):
 
-    _adapter: IRepository[VacancyEntity]
+    _adapter: IRepository[PositionEntity]
 
     def __init__(self):
         super().__init__()
-        self._adapter = VacancyDBAdapter()
+        self._adapter = PositionDBAdapter()
 
     def getAll(self, filter_params: dict = None):
         return self._adapter.getAll(filter_params)
