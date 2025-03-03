@@ -4,6 +4,7 @@ import os
 from src.repositories.document_db.user_repository import UserRepository
 from src.domain.user import UserEntity, UpdateUserStatusDTO
 
+
 def put_user_status_use_case(user_dto: UpdateUserStatusDTO) -> UserEntity:
     """put user status use case."""
     user_repository = UserRepository()
@@ -23,17 +24,12 @@ def user_sign_out(email: str):
     user_pool_id = os.getenv("COGNITO_USER_POOL_ID")
 
     response = cognito_client.list_users(
-            UserPoolId=user_pool_id,
-            Filter=f'email = "{email}"',
-            Limit=1
-        )
-    
-    if not response['Users']:
+        UserPoolId=user_pool_id, Filter=f'email = "{email}"', Limit=1
+    )
+
+    if not response["Users"]:
         raise ValueError("User not found")
 
-    user_sub = response['Users'][0]['Attributes'][0]['Value']
+    user_sub = response["Users"][0]["Attributes"][0]["Value"]
 
-    cognito_client.admin_user_global_sign_out(
-        UserPoolId=user_pool_id,
-        Username=user_sub
-    )
+    cognito_client.admin_user_global_sign_out(UserPoolId=user_pool_id, Username=user_sub)
