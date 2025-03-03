@@ -38,20 +38,7 @@ class Salary(BaseModel):
     salara_range: str
 
 
-# class ProfileFilterProcessQueryDTO(BaseModel):
-#     role: str
-#     seniority: str
-#     country_code: str = Field(..., min_length=2, max_length=3)
-#     city: str
-#     description: str
-#     responsabilities: List[str] = Field(..., min_length=1)
-#     skills: List[Skill] = Field(..., min_length=1)
-#     business_id: str = Field(default="", alias="business_id")
-#     position_id: str = Field(default="", alias="position_id")
-#     snapshot_id: Optional[str] = ""
-
-
-class VacancyDTO(BaseModel):
+class PositionDTO(BaseModel):
     business_id: str = Field(default="", alias="business_id")
     role: str
     seniority: str
@@ -77,5 +64,5 @@ class VacancyDTO(BaseModel):
         raise ValueError("Invalid business_id format. Must be a string or ObjectId.")
 
 
-class VacancyEntity(BaseEntity[VacancyDTO]):
+class PositionEntity(BaseEntity[PositionDTO]):
     pass

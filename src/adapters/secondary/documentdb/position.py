@@ -4,23 +4,23 @@ from aws_lambda_powertools import Logger
 from bson import ObjectId
 from pymongo.database import Database
 
-from src.db.constants import VACANCY_COLLECTION_NAME
+from src.db.constants import POSITION_COLLECTION_NAME
 from src.domain.base_entity import from_dto_to_entity
-from src.domain.vacancy import VacancyEntity
+from src.domain.position import PositionEntity
 from src.repositories.document_db.client import DocumentDBClient
 from src.repositories.repository import IRepository
 
-logger = Logger("VacancyDBAdapter")
+logger = Logger("PositionDBAdapter")
 
 
-class VacancyDBAdapter(IRepository[VacancyEntity]):
+class PositionDBAdapter(IRepository[PositionEntity]):
 
     _client: Database
 
     def __init__(self):
         super().__init__()
         document_db_client = DocumentDBClient()
-        self._collection_name = VACANCY_COLLECTION_NAME
+        self._collection_name = POSITION_COLLECTION_NAME
         self._client = document_db_client.create_documentdb_database_client()
         self._session = document_db_client.get_session()
 
@@ -32,21 +32,21 @@ class VacancyDBAdapter(IRepository[VacancyEntity]):
         collection = self._client[self._collection_name]
         filter_params = filter_params or {}
 
-        logger.info(f"Getting all vacancy entities with filter: {filter_params}")
+        logger.info(f"Getting all position entities with filter: {filter_params}")
 
         result = []
-        vacancies = list(collection.find(filter_params))
-        if not vacancies:
+        positions = list(collection.find(filter_params))
+        if not positions:
             return []
 
-        for vacancy in vacancies:
-            vacancy["_id"] = str(vacancy["_id"])
-            result.append(from_dto_to_entity(VacancyEntity, vacancy))
+        for position in positions:
+            position["_id"] = str(position["_id"])
+            result.append(from_dto_to_entity(PositionEntity, position))
 
         return result
 
-    def getById(self, id: str) -> VacancyEntity | None:
-        logger.info(f"Getting vacancy entity with id: {id}")
+    def getById(self, id: str) -> PositionEntity | None:
+        logger.info(f"Getting position entity with id: {id}")
 
         collection = self._client[self._collection_name]
         result = collection.find_one({"_id": ObjectId(id)})
@@ -55,17 +55,17 @@ class VacancyDBAdapter(IRepository[VacancyEntity]):
             return None
 
         result["_id"] = str(result["_id"])
-        return from_dto_to_entity(VacancyEntity, result)
+        return from_dto_to_entity(PositionEntity, result)
 
     def create(self, entity):
-        logger.info("Creating Vacancy entity")
+        logger.info("Creating Position entity")
         logger.info(f"Entity: {entity.to_dto(flat=True)}")
 
-        vacancy = entity.to_dto(flat=True)
-        vacancy.pop("_id", None)
+        position = entity.to_dto(flat=True)
+        position.pop("_id", None)
 
         collection = self._client[self._collection_name]
-        result = collection.insert_one(vacancy, session=self._session)
+        result = collection.insert_one(position, session=self._session)
         entity.id = str(result.inserted_id)
 
         logger.info(f"Entity created with id: {entity.id}")
@@ -73,16 +73,16 @@ class VacancyDBAdapter(IRepository[VacancyEntity]):
         return entity
 
     def update(self, id: str, entity):
-        logger.info("Updating vacancy entity")
+        logger.info("Updating position entity")
         logger.info(f"Entity: {entity.to_dto(flat=True)}")
 
-        vacancy = entity.to_dto(flat=True)
-        vacancy.pop("_id", None)
-        vacancy["updated_at"] = datetime.now().isoformat()
+        position = entity.to_dto(flat=True)
+        position.pop("_id", None)
+        position["updated_at"] = datetime.now().isoformat()
 
         collection = self._client[self._collection_name]
         collection.update_one(
-            {"_id": ObjectId(id)}, {"$set": vacancy}, session=self._session
+            {"_id": ObjectId(id)}, {"$set": position}, session=self._session
         )
 
         return entity
