@@ -3,7 +3,7 @@ from src.domain.hiring_process import HiringProcessEntity
 from src.repositories.repository import IRepository
 
 
-class UserRepository(IRepository[HiringProcessEntity]):
+class HiringProcessRepository(IRepository[HiringProcessEntity]):
 
     _adapter: HiringProcessDBAdapter
 

@@ -18,7 +18,15 @@ def lambda_handler(event: dict, _):
         if not process_id:
             raise Exception("The id is required")
 
-        create_pipe_configuration_open_position(process_id)
+        position_id: str = event.get("position_id", None)
+        if not position_id:
+            raise Exception("The position_id is required")
+
+        business_id: str = event.get("business_id", None)
+        if not business_id:
+            raise Exception("The business_id is required")
+
+        create_pipe_configuration_open_position(process_id, position_id, business_id)
 
         return event
     except Exception as e:

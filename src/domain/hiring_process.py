@@ -39,8 +39,8 @@ class HiringProcessPhaseHistory(BaseModel):
 
 
 class HiringProcessDTO(BaseModel):
-    position_id: str = Field(default="", alias="position_id")
-    bussiness_id: str = Field(default="", alias="bussiness_id")
+    position_id: str = Field(..., alias="position_id")
+    business_id: str = Field(..., alias="business_id")
     card_id: str = Field(...)
     phase_id: str = Field(...)
     status: HIRING_PROCESS_STATUS = HIRING_PROCESS_STATUS.STARTED
@@ -57,7 +57,7 @@ class HiringProcessDTO(BaseModel):
 
         raise ValueError("Invalid position_id format. Must be a string or ObjectId.")
 
-    @field_validator("bussiness_id", mode="before")
+    @field_validator("business_id", mode="before")
     def validate_and_convert_business_id(cls, v):
         if isinstance(v, ObjectId):
             return str(v)
