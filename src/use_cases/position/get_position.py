@@ -1,4 +1,5 @@
 from src.repositories.document_db.position_repository import PositionRepository
+from src.repositories.document_db.hiring_process_repository import HiringProcessRepository
 from src.domain.position import PositionEntity
 
 
@@ -7,7 +8,7 @@ def get_position_use_case(params: dict) -> PositionEntity:
     position_repository = PositionRepository()
 
     if id := params.get("id"):
-        return position_repository.getById(id)
+        positions = [position_repository.getById(id)]
     elif params["all"].lower() == "true":
         user_id = params["user_id"]
         query = {
@@ -18,6 +19,11 @@ def get_position_use_case(params: dict) -> PositionEntity:
                 {"responsible_users": {"$elemMatch": {"user_id": user_id}}}
             ]
         }
-        return position_repository.getAll(query)
+        positions = position_repository.getAll(query)
     else:
         raise ValueError("Invalid values")
+    
+    hiring_repository = HiringProcessRepository()
+    for position in positions:
+        hiring_process = hiring_repository.getAll({"position_id": position.id})
+
