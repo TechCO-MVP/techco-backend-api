@@ -1,9 +1,10 @@
 from src.repositories.document_db.position_repository import PositionRepository
 from src.repositories.document_db.hiring_process_repository import HiringProcessRepository
+from src.repositories.document_db.user_repository import UserRepository
 from src.domain.position import PositionEntity
 
 
-def get_position_use_case(params: dict) -> PositionEntity:
+def get_position_use_case(params: dict) -> list[dict]:
     """get position use case."""
     position_repository = PositionRepository()
 
@@ -24,6 +25,12 @@ def get_position_use_case(params: dict) -> PositionEntity:
         raise ValueError("Invalid values")
     
     hiring_repository = HiringProcessRepository()
+
+    position_fields = ("owner_position_user_id", "recruiter_user_id", "responsible_users", "role", "hiring_priority")
+    hiring_fields = ("id", "card_id", "status")
+    response = []
     for position in positions:
+        data = {""}
         hiring_process = hiring_repository.getAll({"position_id": position.id})
+
 
