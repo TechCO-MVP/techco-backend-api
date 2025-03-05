@@ -16,3 +16,5 @@ S3_DEPURATED_PROFILE_DATA_IA_BUCKET_NAME = environ.get(
 S3_REFINED_PROFILE_DATA_IA_BUCKET_NAME = environ.get("S3_REFINED_PROFILE_DATA_IA_BUCKET_NAME", "")
 
 DEFAULT_PIPE_TEMPLATE_ID = environ.get("PIPE_TEMPLATE_ID", "305713420")
+
+API_URL = environ.get("API_URL", "https://zcich4tlm3.execute-api.us-east-1.amazonaws.com/dev")
