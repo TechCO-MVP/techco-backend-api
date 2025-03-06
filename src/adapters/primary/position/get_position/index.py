@@ -20,19 +20,14 @@ def get_position():
         
         response = get_position_use_case(query_params)
 
-        if isinstance(response, list):
-            data = [position.to_dto(flat=True) for position in response]
-        else:
-            data = [response.to_dto(flat=True)]
-
-        message = "Position found successfully" if data else "Position not found"
+        message = "Position found successfully" if response else "Position not found"
 
         return Response(
             status_code=200,
             body={
                 "message": message,
                 "body": {
-                    "data": data,
+                    "data": response,
                 },
             },
             content_type=content_types.APPLICATION_JSON,

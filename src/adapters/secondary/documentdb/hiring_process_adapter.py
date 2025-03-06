@@ -81,3 +81,15 @@ class HiringProcessDBAdapter(IRepository[HiringProcessEntity]):
     def delete(self, id: str):
         collection = self._client[self._collection_name]
         collection.delete_one({"_id": ObjectId(id)}, session=self._session)
+
+    def getByPositionId(self, params: dict) -> list[HiringProcessEntity] | None:
+        collection = self._client[self._collection_name]
+        hiring_processes_data = collection.find({"position_id": params["position_id"]})
+        hiring_processes_entities = []
+        for hiring_process in hiring_processes_data:
+            hiring_process["_id"] = str(hiring_process["_id"])
+
+            hiring_processes_entities.append(
+                from_dto_to_entity(HiringProcessEntity, hiring_process)
+            )
+        return hiring_processes_entities
