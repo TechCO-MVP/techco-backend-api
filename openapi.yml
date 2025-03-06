@@ -499,7 +499,54 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Exception"
-
+  /position/list:
+    get:
+      summary: List positions
+      description: get vacancies data asociated to a business and the user, or an especific position_id.
+      parameters:
+        - name: business_id
+          in: query
+          required: true
+          description: The ID of the business.
+          schema:
+            type: string
+        - name: user_id
+          in: query
+          required: true
+          description: The ID of the user.
+          schema:
+            type: string
+        - name: id
+          in: query
+          required: false
+          description: The ID of the position.
+          schema:
+            type: string
+        - name: all
+          in: query
+          required: false
+          description: Flag to indicate if all users should be retrieved.
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: Position found successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListPositionResponse"
+        "400":
+          description: Value error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListPositionValueError"
+        "500":
+          description: Exception response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exception"
   /profile/filter/start:
     post:
       summary: Start profile filter process
@@ -897,6 +944,79 @@ components:
         message:
           type: string
           example: User updated successfully.
+    ListPositionResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Position found successfully.
+        body:
+          type: object
+          properties:
+            data:
+              type: array
+              items:
+                type: object
+                properties:
+                  hiring_processes:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        card_id:
+                          type: string
+                          example: "1234568979"
+                        status:
+                          type: string
+                          example: "STARTED"
+                        id:
+                          type: string
+                          example: "67c930fe1ad8328f2a3184c2"
+                  owner_position_user:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: "mario zamora"
+                      id:
+                        type: string
+                        example: "6777862efe77308365432a36"
+                  recruiter_user:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: "johan parra"
+                      id:
+                        type: string
+                        example: "679077da2d6626a2b007f8fa"
+                  responsible_users:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          example: "johan parra"
+                        id:
+                          type: string
+                          example: "679077da2d6626a2b007f8fa"
+                        can_edit:
+                          type: boolean
+                          example: true
+                  role:
+                    type: string
+                    example: "developer"
+                  hiring_priority:
+                    type: string
+                    enum: ["low", "medium", "high"]
+                    example: "high"
+    ListPositionValueError:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Validation error while get position.
     ProfileFilterStart:
       type: object
       properties:
