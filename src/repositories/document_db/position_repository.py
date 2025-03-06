@@ -5,7 +5,7 @@ from src.domain.position import PositionEntity
 from src.repositories.repository import IRepository
 
 
-class ProfileFilterProcessRepository(IRepository[PositionEntity]):
+class PositionRepository(IRepository[PositionEntity]):
 
     _adapter: IRepository[PositionEntity]
 

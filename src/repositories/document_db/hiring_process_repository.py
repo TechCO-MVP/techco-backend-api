@@ -28,3 +28,6 @@ class HiringProcessRepository(IRepository[HiringProcessEntity]):
 
     def delete(self, id: str):
         return self._adapter.delete(id)
+
+    def getByPositionId(self, params: dict):
+        return self._adapter.getByPositionId(params)

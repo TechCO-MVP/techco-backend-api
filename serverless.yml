@@ -362,6 +362,24 @@ functions:
     environment:
       ENV: ${self:provider.stage}
 
+  get_position_list:
+    handler: src/adapters/primary/position/get_position/index.handler
+    events:
+      - http:
+          path: /position/list
+          method: get
+          cors: true
+          private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          request:
+            parameters:
+              querystrings:
+                business_id: true
+                user_id: true
+
   start_profile_filter_process:
     handler: src/adapters/primary/profile/filter/start.lambda_handler
     events:
