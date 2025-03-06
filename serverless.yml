@@ -37,6 +37,8 @@ provider:
     PIPEFY_API_KEY_SECRET_NAME: pipefy_api_key
     PIPEFY_ORGANIZATION_ID: "301603037"
     PIPE_TEMPLATE_ID: "305713420"
+    API_URL: "https://zcich4tlm3.execute-api.us-east-1.amazonaws.com/dev"
+    API_GATEWAY_API_KEY_SECRET_NAME: api-key-apigtw-dev
 
   logs:
     restApi: true
@@ -410,6 +412,14 @@ functions:
 
   create_pipe_configuration_open_position:
     handler: src/adapters/primary/pipefy/create_pipe_configuration_for_open_position.lambda_handler
+
+  pipefy_webhook:
+    handler: src/adapters/primary/pipefy/webhook.lambda_handler
+    events:
+      - http:
+          path: /pipefy/webhook
+          method: post
+          private: true
 
 stepFunctions:
   stateMachines: ${file(./src/resources/brightdata/serverless.yml):stateMachines}

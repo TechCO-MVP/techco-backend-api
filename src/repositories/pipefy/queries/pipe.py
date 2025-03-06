@@ -21,6 +21,9 @@ query GetPipe($id: ID!) {
                 totalCount
             }
         }
+        webhooks {
+            id
+        }
     }
 }
 """
