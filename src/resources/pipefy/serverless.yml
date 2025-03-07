@@ -6,6 +6,7 @@ provider:
   stage: ${opt:stage, 'dev'}
   region: us-east-1
 
+
 PipefyEventBus:
   Type: AWS::Events::EventBus
   Properties:
@@ -16,74 +17,59 @@ PipefyEventBus:
       - Key: Name
         Value: ${self:provider.stage}-pipefy-event-bus
 
-PipefyCardMoveRule:
-  Type: AWS::Events::Rule
+PipefyCardMovePipe:
+  Type: AWS::Pipes::Pipe
   Properties:
-    Name: ${self:provider.stage}-pipefy-card-move-rule
-    Description: Rule to trigger the card move event
-    EventBusName: !Ref PipefyEventBus
-    EventPattern:
-      source:
-        - pipefy
-      detail-type:
-        - card-move
-    State: ENABLED
-    Targets:
-      - Id: PipefyCardMoveLambda
-        Arn: !GetAtt PipefyCardMoveQueue.Arn
-        InputTransformer:
-          InputPathsMap:
-            action: "$.data.action"
-            from: "$.data.from"
-            to: "$.data.to"
-            movedBy: "$.data.moved_by"
-            cardId: "$.data.card.id"
-            pipeId: "$.data.card.pipe_id"
-          InputTemplate: |
-            {
-              "MessageBody": {
-                "action": <action>,
-                "from": <from>,
-                "to": <to>,
-                "moved_by": <movedBy>,
-                "card_id": <cardId>,
-                "pipe_id": <pipeId>
-              },
-              "MessageGroupId": <cardId>
-            }
+    Name: ${self:provider.stage}-pipefy-card-move-pipe
+    Description: Pipe to route Pipefy card move events to SQS
+    Source: !GetAtt PipefyEventBus.Arn
+    SourceParameters:
+      FilterCriteria:
+        Filters:
+          - Pattern: |
+              { "source": ["pipefy"], "detail-type": ["card.move"] }
+    Target: !GetAtt PipefyCardMoveQueue.Arn
+    TargetParameters:
+      SqsQueueParameters:
+        MessageGroupId: "$.data.card.id"
+      InputTemplate: |
+        {
+          "MessageBody": {
+            "action": <$.data.action>,
+            "from": <$.data.from>,
+            "to": <$.data.to>,
+            "moved_by": <$.data.moved_by>,
+            "card_id": <$.data.card.id>,
+            "pipe_id": <$.data.card.pipe_id>
+          }
+        }
+    RoleArn: !GetAtt PipefyPipesRole.Arn
 
-PipefyFieldUpdateRule:
-  Type: AWS::Events::Rule
+PipefyFieldUpdatePipe:
+  Type: AWS::Pipes::Pipe
   Properties:
-    Name: ${self:provider.stage}-pipefy-field-update-rule
-    Description: Rule to trigger the field update event
-    EventBusName: !Ref PipefyEventBus
-    EventPattern:
-      source:
-        - pipefy
-      detail-type:
-        - field-update
-    State: ENABLED
-    Targets:
-      - Id: PipefyFieldUpdateLambda
-        Arn: !GetAtt PipefyFieldUpdateQueue.Arn
-        InputTransformer:
-          InputPathsMap:
-            action: "$.data.action"
-            fieldId: "$.data.field.id"
-            cardId: "$.data.card.id"
-            pipeId: "$.data.card.pipe_id"
-            newValue: "$.data.new_value"
-          InputTemplate: |
-            {
-              "MessageBody": {
-                "field_id": <fieldId>,
-                "card_id": <cardId>,
-                "pipe_id": <pipeId>,
-                "new_value": <newValue>
-              },
-              "MessageGroupId": <cardId>
-            }
+    Name: ${self:provider.stage}-pipefy-field-update-pipe
+    Description: Pipe to route Pipefy field update events to SQS
+    Source: !GetAtt PipefyEventBus.Arn
+    SourceParameters:
+      FilterCriteria:
+        Filters:
+          - Pattern: |
+              { "source": ["pipefy"], "detail-type": ["card.field_update"] }
+    Target: !GetAtt PipefyFieldUpdateQueue.Arn
+    TargetParameters:
+      SqsQueueParameters:
+        MessageGroupId: "$.data.card.id"
+      InputTemplate: |
+        {
+          "MessageBody": {
+            "field_id": <$.data.field.id>,
+            "card_id": <$.data.card.id>,
+            "pipe_id": <$.data.card.pipe_id>,
+            "new_value": <$.data.new_value>
+          }
+        }
+    RoleArn: !GetAtt PipefyPipesRole.Arn
 
 PipefyCardMoveQueue:
   Type: AWS::SQS::Queue
@@ -117,3 +103,32 @@ PipefyFieldUpdateQueue:
       - Key: Name
         Value: ${self:provider.stage}-pipefy-field-update-queue
 
+PipefyPipesRole:
+  Type: AWS::IAM::Role
+  Properties:
+    RoleName: ${self:provider.stage}-pipefy-pipes-role
+    AssumeRolePolicyDocument:
+      Version: "2012-10-17"
+      Statement:
+        - Effect: Allow
+          Principal:
+            Service: pipes.amazonaws.com
+          Action: sts:AssumeRole
+    Policies:
+      - PolicyName: ${self:provider.stage}-pipefy-pipes-policy
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Action:
+                - sqs:SendMessage
+                - sqs:GetQueueAttributes
+                - sqs:GetQueueUrl
+              Resource:
+                - !GetAtt PipefyCardMoveQueue.Arn
+                - !GetAtt PipefyFieldUpdateQueue.Arn
+            - Effect: Allow
+              Action:
+                - events:PutEvents
+              Resource:
+                - !GetAtt PipefyEventBus.Arn

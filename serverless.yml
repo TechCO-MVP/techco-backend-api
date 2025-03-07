@@ -85,7 +85,11 @@ provider:
             - sqs:GetQueueAttributes
           Resource:
             - !GetAtt SQSUserNotificatons.Arn
-            # - arn:aws:sqs::::dev-user-notifications.fifo
+        - Effect: Allow
+          Action:
+            - events:PutEvents
+          Resource:
+            - !GetAtt PipefyEventBus.Arn
 
 custom:
   userPoolName: ${self:provider.stage}-passwordless-user-pool
@@ -134,10 +138,11 @@ resources:
     S3RefinedProfileDataIA: ${file(./src/resources/brightdata/serverless.yml):S3RefinedProfileDataIA}
     SQSUserNotificatons: ${file(./src/resources/brightdata/serverless.yml):SQSUserNotificatons}
     PipefyEventBus: ${file(./src/resources/pipefy/serverless.yml):PipefyEventBus}
-    PipefyCardMoveRule: ${file(./src/resources/pipefy/serverless.yml):PipefyCardMoveRule}
-    PipefyFieldUpdateRule: ${file(./src/resources/pipefy/serverless.yml):PipefyFieldUpdateRule}
+    PipefyCardMovePipe: ${file(./src/resources/pipefy/serverless.yml):PipefyCardMovePipe}
+    PipefyFieldUpdatePipe: ${file(./src/resources/pipefy/serverless.yml):PipefyFieldUpdatePipe}
     PipefyCardMoveQueue: ${file(./src/resources/pipefy/serverless.yml):PipefyCardMoveQueue}
     PipefyFieldUpdateQueue: ${file(./src/resources/pipefy/serverless.yml):PipefyFieldUpdateQueue}
+    PipefyPipesRole: ${file(./src/resources/pipefy/serverless.yml):PipefyPipesRole}
     serverlessApiGatewayCloudWatchRole:
       Type: AWS::IAM::Role
       Properties:
@@ -437,7 +442,6 @@ functions:
     events:
       - sqs:
           arn: !GetAtt PipefyFieldUpdateQueue.Arn
-
 
 stepFunctions:
   stateMachines: ${file(./src/resources/brightdata/serverless.yml):stateMachines}
