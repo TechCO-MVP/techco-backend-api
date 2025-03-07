@@ -24,7 +24,7 @@ def handler_pipefy_webhook():
         )
 
 
-def lambda_hanlder(event: dict, context: LambdaContext) -> dict:
+def lambda_handler(event: dict, context: LambdaContext) -> dict:
     """
     Lambda handler for pipefy webhook
     request: The request object, described like:
