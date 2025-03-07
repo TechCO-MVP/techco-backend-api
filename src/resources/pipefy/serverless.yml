@@ -113,3 +113,30 @@ PipefyFieldUpdateQueue:
         Value: ${self:provider.stage}
       - Key: Name
         Value: ${self:provider.stage}-pipefy-field-update-queue
+
+EventBridgeToSQSRole:
+  Type: AWS::IAM::Role
+  Properties:
+    RoleName: ${self:provider.stage}-eventbridge-to-sqs-role
+    AssumeRolePolicyDocument:
+      Version: "2012-10-17"
+      Statement:
+        - Effect: Allow
+          Principal:
+            Service: events.amazonaws.com
+          Action: sts:AssumeRole
+    Policies:
+      - PolicyName: AllowEventBridgeToSQS
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Action:
+                - sqs:SendMessage
+                - sqs:SendMessageBatch
+                - sqs:ReceiveMessage
+                - sqs:DeleteMessage
+                - sqs:GetQueueAttributes
+              Resource:
+                - !GetAtt PipefyCardMoveQueue.Arn
+                - !GetAtt PipefyFieldUpdateQueue.Arn
