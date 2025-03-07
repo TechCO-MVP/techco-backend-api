@@ -453,12 +453,14 @@ functions:
     events:
       - sqs:
           arn: !GetAtt PipefyCardMoveQueue.Arn
+    timeout: 60
 
   pipefy_field_update:
     handler: src/adapters/primary/pipefy/field_update.lambda_handler
     events:
       - sqs:
           arn: !GetAtt PipefyFieldUpdateQueue.Arn
+    timeout: 60
 
 stepFunctions:
   stateMachines: ${file(./src/resources/brightdata/serverless.yml):stateMachines}
