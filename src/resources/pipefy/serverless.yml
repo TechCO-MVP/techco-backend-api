@@ -1,0 +1,119 @@
+service: backend-proposal-v2
+
+provider:
+  name: aws
+  architecture: x86_64
+  stage: ${opt:stage, 'dev'}
+  region: us-east-1
+
+PipefyEventBus:
+  Type: AWS::Events::EventBus
+  Properties:
+    Name: ${self:provider.stage}-pipefy-event-bus
+    Tags:
+      - Key: Environment
+        Value: ${self:provider.stage}
+      - Key: Name
+        Value: ${self:provider.stage}-pipefy-event-bus
+
+PipefyCardMoveRule:
+  Type: AWS::Events::Rule
+  Properties:
+    Name: ${self:provider.stage}-pipefy-card-move-rule
+    Description: Rule to trigger the card move event
+    EventBusName: !Ref PipefyEventBus
+    EventPattern:
+      source:
+        - pipefy
+      detail-type:
+        - card-move
+    State: ENABLED
+    Targets:
+      - Id: PipefyCardMoveLambda
+        Arn: !GetAtt PipefyCardMoveQueue.Arn
+        InputTransformer:
+          InputPathsMap:
+            action: "$.data.action"
+            from: "$.data.from"
+            to: "$.data.to"
+            movedBy: "$.data.moved_by"
+            cardId: "$.data.card.id"
+            pipeId: "$.data.card.pipe_id"
+          InputTemplate: |
+            {
+              "MessageBody": {
+                "action": <action>,
+                "from": <from>,
+                "to": <to>,
+                "moved_by": <movedBy>,
+                "card_id": <cardId>,
+                "pipe_id": <pipeId>
+              },
+              "MessageGroupId": <cardId>
+            }
+
+PipefyFieldUpdateRule:
+  Type: AWS::Events::Rule
+  Properties:
+    Name: ${self:provider.stage}-pipefy-field-update-rule
+    Description: Rule to trigger the field update event
+    EventBusName: !Ref PipefyEventBus
+    EventPattern:
+      source:
+        - pipefy
+      detail-type:
+        - field-update
+    State: ENABLED
+    Targets:
+      - Id: PipefyFieldUpdateLambda
+        Arn: !GetAtt PipefyFieldUpdateQueue.Arn
+        InputTransformer:
+          InputPathsMap:
+            action: "$.data.action"
+            fieldId: "$.data.field.id"
+            cardId: "$.data.card.id"
+            pipeId: "$.data.card.pipe_id"
+            newValue: "$.data.new_value"
+          InputTemplate: |
+            {
+              "MessageBody": {
+                "field_id": <fieldId>,
+                "card_id": <cardId>,
+                "pipe_id": <pipeId>,
+                "new_value": <newValue>
+              },
+              "MessageGroupId": <cardId>
+            }
+
+PipefyCardMoveQueue:
+  Type: AWS::SQS::Queue
+  Properties:
+    QueueName: ${self:provider.stage}-pipefy-card-move-queue.fifo
+    FifoQueue: true
+    ContentBasedDeduplication: true
+    DeduplicationScope: messageGroup
+    VisibilityTimeout: 60
+    DelaySeconds: 20
+    ReceiveMessageWaitTimeSeconds: 20
+    Tags:
+      - Key: Environment
+        Value: ${self:provider.stage}
+      - Key: Name
+        Value: ${self:provider.stage}-pipefy-card-move-queue
+
+PipefyFieldUpdateQueue:
+  Type: AWS::SQS::Queue
+  Properties:
+    QueueName: ${self:provider.stage}-pipefy-field-update-queue.fifo
+    FifoQueue: true
+    ContentBasedDeduplication: true
+    DeduplicationScope: messageGroup
+    VisibilityTimeout: 0
+    DelaySeconds: 0
+    ReceiveMessageWaitTimeSeconds: 20
+    Tags:
+      - Key: Environment
+        Value: ${self:provider.stage}
+      - Key: Name
+        Value: ${self:provider.stage}-pipefy-field-update-queue
+

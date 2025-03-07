@@ -133,6 +133,11 @@ resources:
     S3DepuratedProfileDataIA: ${file(./src/resources/brightdata/serverless.yml):S3DepuratedProfileDataIA}
     S3RefinedProfileDataIA: ${file(./src/resources/brightdata/serverless.yml):S3RefinedProfileDataIA}
     SQSUserNotificatons: ${file(./src/resources/brightdata/serverless.yml):SQSUserNotificatons}
+    PipefyEventBus: ${file(./src/resources/pipefy/serverless.yml):PipefyEventBus}
+    PipefyCardMoveRule: ${file(./src/resources/pipefy/serverless.yml):PipefyCardMoveRule}
+    PipefyFieldUpdateRule: ${file(./src/resources/pipefy/serverless.yml):PipefyFieldUpdateRule}
+    PipefyCardMoveQueue: ${file(./src/resources/pipefy/serverless.yml):PipefyCardMoveQueue}
+    PipefyFieldUpdateQueue: ${file(./src/resources/pipefy/serverless.yml):PipefyFieldUpdateQueue}
     serverlessApiGatewayCloudWatchRole:
       Type: AWS::IAM::Role
       Properties:
@@ -438,6 +443,19 @@ functions:
           path: /pipefy/webhook
           method: post
           private: true
+
+  pipefy_card_move:
+    handler: src/adapters/primary/pipefy/card_move.lambda_handler
+    events:
+      - sqs:
+          arn: !GetAtt PipefyCardMoveQueue.Arn
+
+  pipefy_field_update:
+    handler: src/adapters/primary/pipefy/field_update.lambda_handler
+    events:
+      - sqs:
+          arn: !GetAtt PipefyFieldUpdateQueue.Arn
+
 
 stepFunctions:
   stateMachines: ${file(./src/resources/brightdata/serverless.yml):stateMachines}
