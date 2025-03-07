@@ -32,24 +32,7 @@ PipefyCardMoveRule:
       - Id: PipefyCardMoveQueue
         Arn: !GetAtt PipefyCardMoveQueue.Arn
         SqsParameters:
-          MessageGroupId: "$.data.card.id"
-        InputTransformer:
-          InputPathsMap:
-            action: "$.data.action"
-            from: "$.data.from"
-            to: "$.data.to"
-            movedBy: "$.data.moved_by"
-            cardId: "$.data.card.id"
-            pipeId: "$.data.card.pipe_id"
-          InputTemplate: |
-            {
-              "action": <action>,
-              "from": <from>,
-              "to": <to>,
-              "moved_by": <movedBy>,
-              "card_id": <cardId>,
-              "pipe_id": <pipeId>
-            }
+          MessageGroupId: "$.detail.data.card.id"
 
 PipefyFieldUpdateRule:
   Type: AWS::Events::Rule
@@ -67,20 +50,7 @@ PipefyFieldUpdateRule:
       - Id: PipefyFieldUpdateQueue
         Arn: !GetAtt PipefyFieldUpdateQueue.Arn
         SqsParameters:
-          MessageGroupId: "$.data.card.id"
-        InputTransformer:
-          InputPathsMap:
-            fieldId: "$.data.field.id"
-            cardId: "$.data.card.id"
-            pipeId: "$.data.card.pipe_id"
-            newValue: "$.data.new_value"
-          InputTemplate: |
-            {
-              "field_id": <fieldId>,
-              "card_id": <cardId>,
-              "pipe_id": <pipeId>,
-              "new_value": <newValue>
-            }
+          MessageGroupId: "$.detail.data.card.id"
 
 PipefyCardMoveQueue:
   Type: AWS::SQS::Queue
