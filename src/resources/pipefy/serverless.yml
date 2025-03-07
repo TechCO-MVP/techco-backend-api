@@ -90,8 +90,8 @@ PipefyCardMoveQueue:
     FifoQueue: true
     ContentBasedDeduplication: true
     DeduplicationScope: messageGroup
-    VisibilityTimeout: 60
-    DelaySeconds: 20
+    VisibilityTimeout: 120
+    DelaySeconds: 120
     ReceiveMessageWaitTimeSeconds: 20
     Tags:
       - Key: Environment
@@ -106,7 +106,7 @@ PipefyFieldUpdateQueue:
     FifoQueue: true
     ContentBasedDeduplication: true
     DeduplicationScope: messageGroup
-    VisibilityTimeout: 0
+    VisibilityTimeout: 120
     DelaySeconds: 0
     ReceiveMessageWaitTimeSeconds: 20
     Tags:
