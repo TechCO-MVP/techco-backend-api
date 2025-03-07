@@ -85,8 +85,8 @@ provider:
             - sqs:GetQueueAttributes
           Resource:
             - !GetAtt SQSUserNotificatons.Arn
-              !GetAtt PipefyCardMoveQueue.Arn
-              !GetAtt PipefyFieldUpdateQueue.Arn
+            - !GetAtt PipefyCardMoveQueue.Arn
+            - !GetAtt PipefyFieldUpdateQueue.Arn
         - Effect: Allow
           Action:
             - events:PutEvents
