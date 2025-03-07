@@ -138,11 +138,10 @@ resources:
     S3RefinedProfileDataIA: ${file(./src/resources/brightdata/serverless.yml):S3RefinedProfileDataIA}
     SQSUserNotificatons: ${file(./src/resources/brightdata/serverless.yml):SQSUserNotificatons}
     PipefyEventBus: ${file(./src/resources/pipefy/serverless.yml):PipefyEventBus}
-    PipefyCardMovePipe: ${file(./src/resources/pipefy/serverless.yml):PipefyCardMovePipe}
-    PipefyFieldUpdatePipe: ${file(./src/resources/pipefy/serverless.yml):PipefyFieldUpdatePipe}
+    PipefyCardMoveRule: ${file(./src/resources/pipefy/serverless.yml):PipefyCardMoveRule}
+    PipefyFieldUpdateRule: ${file(./src/resources/pipefy/serverless.yml):PipefyFieldUpdateRule}
     PipefyCardMoveQueue: ${file(./src/resources/pipefy/serverless.yml):PipefyCardMoveQueue}
     PipefyFieldUpdateQueue: ${file(./src/resources/pipefy/serverless.yml):PipefyFieldUpdateQueue}
-    PipefyPipesRole: ${file(./src/resources/pipefy/serverless.yml):PipefyPipesRole}
     serverlessApiGatewayCloudWatchRole:
       Type: AWS::IAM::Role
       Properties:
