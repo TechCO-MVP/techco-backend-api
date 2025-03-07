@@ -31,3 +31,6 @@ class HiringProcessRepository(IRepository[HiringProcessEntity]):
 
     def getByPositionId(self, params: dict):
         return self._adapter.getByPositionId(params)
+
+    def getByLinkedinNumId(self, params: dict):
+        return self._adapter.getByLinkedinNumId(params)
