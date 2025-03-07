@@ -6,7 +6,6 @@ provider:
   stage: ${opt:stage, 'dev'}
   region: us-east-1
 
-
 PipefyEventBus:
   Type: AWS::Events::EventBus
   Properties:
