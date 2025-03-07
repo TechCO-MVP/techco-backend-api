@@ -144,6 +144,7 @@ resources:
     PipefyFieldUpdateRule: ${file(./src/resources/pipefy/serverless.yml):PipefyFieldUpdateRule}
     PipefyCardMoveQueue: ${file(./src/resources/pipefy/serverless.yml):PipefyCardMoveQueue}
     PipefyFieldUpdateQueue: ${file(./src/resources/pipefy/serverless.yml):PipefyFieldUpdateQueue}
+    EventBridgeToSQSRole: ${file(./src/resources/pipefy/serverless.yml):EventBridgeToSQSRole}
     serverlessApiGatewayCloudWatchRole:
       Type: AWS::IAM::Role
       Properties:
