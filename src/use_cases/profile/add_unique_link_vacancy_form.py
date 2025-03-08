@@ -34,7 +34,7 @@ def encript_data(profile: ProfileBrightDataDTO, event: ProfileFilterProcessEntit
     payload = {
         "id": event.id,
         "business_id": event.props.business_id,
-        "linkedin_id": profile.linkedin_num_id,
+        "linkedin_num_id": profile.linkedin_num_id,
         "created_at": datetime.datetime.now().isoformat(),
         "exp": datetime.datetime.now() + datetime.timedelta(days=15)
     }

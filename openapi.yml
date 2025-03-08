@@ -547,6 +547,36 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Exception"
+  /position/token:
+    get:
+      summary: get data position by token JWT
+      description: get DATA vacancies asociated to a business and the hiring process and position.
+      parameters:
+        - name: token
+          in: query
+          required: true
+          description: The token of the especific hiring process asociated to the porfile.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Position found successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListPositionByTokenResponse"
+        "400":
+          description: Value error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListPositionByTokenValueError"
+        "500":
+          description: Exception response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exception"
   /profile/filter/start:
     post:
       summary: Start profile filter process
@@ -1012,6 +1042,94 @@ components:
                     enum: ["low", "medium", "high"]
                     example: "high"
     ListPositionValueError:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Validation error while get position.
+    ListPositionByTokenResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Position found successfully.
+        body:
+          type: object
+          properties:
+            data:
+              type: object
+              properties:
+                business_name:
+                  type: string
+                  example: "Techco"
+                business_id:
+                  type: string
+                  example: "679077da2d6626a2b007f8f9"
+                business_logo:
+                  type: string
+                  example: "logo.jpg"
+                business_description:
+                  type: string
+                  example: "business description large"
+                position_id:
+                  type: string
+                  example: "67c7639f1ad8328f2a3184aa"
+                position_role:
+                  type: string
+                  example: "developer frontend"
+                position_country:
+                  type: string
+                  example: "CO"
+                position_city:
+                  type: string
+                  example: "Bogota"
+                position_work_mode:
+                  type: string
+                  example: "Remote"
+                position_description:
+                  type: string
+                  example: "fromt end senior Bogota"
+                position_responsabilities:
+                  type: array
+                  items:
+                    type: string
+                  example: ["responsability_1", "responsability_2"]
+                position_skills:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: "django"
+                      requeired:
+                        type: boolean
+                        example: true
+                position_benefits:
+                  type: string
+                  example: "plan carrera"
+                position_salary_range:
+                  type: object
+                  properties:
+                    currency:
+                      type: string
+                      example: "COP"
+                    salary:
+                      type: string
+                      example: "10000000"
+                    salary_range:
+                      type: string
+                      example: "9000000 - 12000000"
+                hiring_id:
+                  type: string
+                  example: "67c930fe1ad8328f2a3184c2"
+                hiring_profile_name:
+                  type: string
+                  example: "fullname pepito perez"
+                hiring_card_id:
+                  type: string
+                  example: "1234568979"
+    ListPositionByTokenValueError:
       type: object
       properties:
         message:

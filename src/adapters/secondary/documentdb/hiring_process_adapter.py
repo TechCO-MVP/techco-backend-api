@@ -93,3 +93,15 @@ class HiringProcessDBAdapter(IRepository[HiringProcessEntity]):
                 from_dto_to_entity(HiringProcessEntity, hiring_process)
             )
         return hiring_processes_entities
+
+    def getByLinkedinNumId(self, params: dict) -> HiringProcessEntity| None:
+        collection = self._client[self._collection_name]
+        hiring_process_data = collection.find_one(params)
+
+        if not hiring_process_data:
+            return None
+
+        hiring_process_data["_id"] = str(hiring_process_data["_id"])
+        hiring_processes_entities = from_dto_to_entity(HiringProcessEntity, hiring_process_data)
+        
+        return hiring_processes_entities

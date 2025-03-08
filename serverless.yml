@@ -392,6 +392,23 @@ functions:
                 business_id: true
                 user_id: true
 
+  get_position_by_token:
+    handler: src/adapters/primary/position/get_position_token/index.handler
+    events:
+      - http:
+          path: /position/token
+          method: get
+          cors: true
+          private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          request:
+            parameters:
+              querystrings:
+                token: true
+
   start_profile_filter_process:
     handler: src/adapters/primary/profile/filter/start.lambda_handler
     events:
