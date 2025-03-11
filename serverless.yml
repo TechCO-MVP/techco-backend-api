@@ -400,10 +400,6 @@ functions:
           method: get
           cors: true
           private: true
-          authorizer:
-            type: COGNITO_USER_POOLS
-            authorizerId:
-              Ref: ApiGatewayAuthorizer
           request:
             parameters:
               querystrings:
