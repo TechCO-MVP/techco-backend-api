@@ -577,6 +577,36 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Exception"
+  /hiring_process/id:
+    get:
+      summary: get data hiring_process by id
+      description: get DATA hiring process asociated to a position and user permissions.
+      parameters:
+        - name: hiring_process_id
+          in: query
+          required: true
+          description: The id of the especific hiring process.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Hiring process found successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HiringProcessByIdResponse"
+        "400":
+          description: Value error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HiringProcessByIdValueError"
+        "500":
+          description: Exception response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exception"
   /profile/filter/start:
     post:
       summary: Start profile filter process
@@ -946,7 +976,6 @@ components:
         message:
           type: string
           example: User updated successfully.
-
     UpdateUserData:
       type: object
       properties:
@@ -1102,7 +1131,7 @@ components:
                       name:
                         type: string
                         example: "django"
-                      requeired:
+                      required:
                         type: boolean
                         example: true
                 position_benefits:
@@ -1135,6 +1164,59 @@ components:
         message:
           type: string
           example: Validation error while get position.
+    HiringProcessByIdResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Hiring process found successfully.
+        body:
+          type: object
+          properties:
+            data:
+              type: object
+              properties:
+                position_country:
+                  type: string
+                  example: "CO"
+                position_city:
+                  type: string
+                  example: "Bogota"
+                position_status:
+                  type: string
+                  example: "ACTIVE"
+                recruiter_id:
+                  type: string
+                  example: "67c7639f1ad8328f2a3184aa"
+                recruiter_name:
+                  type: string
+                  example: "pepito perez"
+                owner_id:
+                  type: string
+                  example: "67c7639f1ad8328f2a3184fa"
+                owner_name:
+                  type: string
+                  example: "Juan perez"
+                stakeholders:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      stakeholder_id:
+                        type: string
+                        example: "67c7639f1ad8328f2a3184dd"
+                      stakeholder_name:
+                        type: string
+                        example: "Ana Bello"
+                      can_edit:
+                        type: boolean
+                        example: true
+    HiringProcessByIdValueError:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Validation error while get Hiring process.
     ProfileFilterStart:
       type: object
       properties:
