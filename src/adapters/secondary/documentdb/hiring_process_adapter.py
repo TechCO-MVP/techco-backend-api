@@ -50,6 +50,16 @@ class HiringProcessDBAdapter(IRepository[HiringProcessEntity]):
 
         return from_dto_to_entity(HiringProcessEntity, hiring_process)
 
+    def getByCardId(self, card_id: str) -> HiringProcessEntity:
+        collection = self._client[self._collection_name]
+        hiring_process = collection.find_one({"card_id": card_id})
+
+        if not hiring_process:
+            raise EntityNotFound("HiringProcess", card_id)
+
+        hiring_process["_id"] = str(hiring_process["_id"])
+        return from_dto_to_entity(HiringProcessEntity, hiring_process)
+
     def create(self, entity: HiringProcessEntity) -> HiringProcessEntity:
         logger.info("Creating hiring process entity")
         logger.info(entity.to_dto(flat=True))
@@ -63,7 +73,7 @@ class HiringProcessDBAdapter(IRepository[HiringProcessEntity]):
 
         return entity
 
-    def update(self, entity: HiringProcessEntity) -> HiringProcessEntity:
+    def update(self, id: str, entity: HiringProcessEntity) -> HiringProcessEntity:
         logger.info(f"Updating hiring process entity with id: {entity.id}")
         logger.info(entity.to_dto(flat=True))
 
@@ -73,7 +83,7 @@ class HiringProcessDBAdapter(IRepository[HiringProcessEntity]):
 
         collection = self._client[self._collection_name]
         collection.update_one(
-            {"_id": ObjectId(entity.id)}, {"$set": hiring_process_data}, session=self._session
+            {"_id": ObjectId(id)}, {"$set": hiring_process_data}, session=self._session
         )
 
         return entity
