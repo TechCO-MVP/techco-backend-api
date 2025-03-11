@@ -1,4 +1,8 @@
+import json
 from aws_lambda_powertools import Logger
+
+from src.models.pipefy.webhook import CardMoveEvent
+from src.use_cases.hiring_process.update_phase import update_phase
 
 logger = Logger("CardMoveEvent")
 
@@ -12,6 +16,12 @@ def lambda_handler(event, context):
 
     for record in event["Records"]:
         try:
-            logger.info(record)
+            body = json.loads(record["body"])
+            data = body["detail"]["data"]
+
+            data["from_"] = data.pop("from")
+            card_move_dto = CardMoveEvent(**data)
+            update_phase(card_move_dto)
+
         except Exception as e:
             logger.error(f"Error processing record: {e}")
