@@ -14,7 +14,7 @@ from src.use_cases.hiring_process.create_hiring_process import create_hiring_pro
 
 
 def create_hiring_proces_for_profile(
-    position_id: str, business_id: str, phase_id: str, profile: ProfileBrightDataDTO
+    position_id: str, business_id: str, phase_id: int, profile: ProfileBrightDataDTO
 ):
     hiring_process_dto = HiringProcessDTO(
         position_id=position_id,
