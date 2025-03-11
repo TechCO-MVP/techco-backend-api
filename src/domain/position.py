@@ -8,10 +8,10 @@ from src.domain.base_entity import BaseEntity
 
 
 class PROCESS_STATUS(str, Enum):
-    PENDING = "pending"
-    IN_PROGRESS = "in_progress"
-    COMPLETED = "completed"
-    FAILED = "failed"
+    CANCELED = "CANCELED"
+    ACTIVE = "ACTIVE"
+    FINISHED = "FINISHED"
+    INACTIVE = "INACTIVE"
 
 class LEVEL(str, Enum):
     HIGH = "high"
@@ -56,6 +56,7 @@ class PositionDTO(BaseModel):
     languages: List[Languages] = Field(..., min_length=1)
     hiring_priority: LEVEL
     work_mode: WORK_MODE
+    status: PROCESS_STATUS = PROCESS_STATUS.ACTIVE
     benefits: Optional[List[str]] = Field(default_factory=list)
     salary_range: Optional[Salary] = Field(default_factory=list)
 
