@@ -17,6 +17,9 @@ class HiringProcessRepository(IRepository[HiringProcessEntity]):
     def getById(self, id: str):
         return self._adapter.getById(id)
 
+    def getByCardId(self, card_id: str):
+        return self._adapter.getByCardId(card_id)
+
     def getByEmail(self, email: str):
         return self._adapter.getByEmail(email)
 

@@ -11,3 +11,14 @@ mutation createCard($input: CreateCardInput!) {
     }
 }
 """
+
+GET_CARD = """
+query getCard($id: ID!) {
+    card(id: $id) {
+        id
+        current_phase {
+            id
+        }
+    }
+}
+"""
