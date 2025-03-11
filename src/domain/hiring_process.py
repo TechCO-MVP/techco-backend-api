@@ -27,7 +27,7 @@ class HiringProcessPhase(BaseModel):
 
 
 class PhaseMove(BaseModel):
-    phase_id: str
+    phase_id: int
     name: str
 
 
