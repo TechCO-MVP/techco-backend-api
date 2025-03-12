@@ -2,7 +2,7 @@ from enum import Enum
 from typing import List, Optional
 
 from bson import ObjectId
-from pydantic import BaseModel, Field, field_validator, model_validator, ValidationError
+from pydantic import BaseModel, Field, model_validator, ValidationError
 
 from src.domain.base_entity import BaseEntity
 
@@ -113,6 +113,18 @@ class GetPositionQueryParams(BaseModel):
             return cls(**params)
         except ValidationError as e:
             raise ValueError(f"Invalid query parameters: {e}")
+
+class UpdatePositionStatusDTO(BaseModel):
+    position_id: str
+    user_id: str
+    position_status: PROCESS_STATUS = PROCESS_STATUS.ACTIVE
+
+    @classmethod
+    def validate_params(cls, params):
+        try:
+            return cls(**params)
+        except ValidationError as e:
+            raise ValueError(f"Invalid parameters: {e}")
 
 class PositionEntity(BaseEntity[PositionDTO]):
     pass
