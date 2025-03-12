@@ -5,7 +5,7 @@ from src.repositories.repository import IRepository
 
 class ScrapingProfileFilterProcessRepository(IRepository[ProfileFilterProcessEntity]):
 
-    _adapter: IRepository[ProfileFilterProcessEntity]
+    _adapter: ScrapingProfileFilterProcessAdapter
 
     def __init__(self):
         super().__init__()

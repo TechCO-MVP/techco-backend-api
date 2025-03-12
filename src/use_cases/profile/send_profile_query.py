@@ -1,5 +1,7 @@
 from src.domain.profile import ProfileFilterProcessEntity
-from src.repositories.scraping.scraping_profile_filter_process import ScrapingProfileFilterProcessRepository
+from src.repositories.scraping.scraping_profile_filter_process import (
+    ScrapingProfileFilterProcessRepository,
+)
 
 
 def send_profile_query_use_case(filters: ProfileFilterProcessEntity) -> ProfileFilterProcessEntity:
