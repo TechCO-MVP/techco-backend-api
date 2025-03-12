@@ -5,6 +5,7 @@ import boto3
 
 from src.domain.profile import (
     PROCESS_STATUS,
+    PROCESS_TYPE,
     ProfileFilterProcessDTO,
     ProfileFilterProcessEntity,
     ProfileFilterProcessQueryDTO,
@@ -18,6 +19,7 @@ from src.use_cases.user.get_user_by_mail import get_user_by_mail_use_case
 def start_filter_profile_use_case(
     profile_filter_process_query_dto: ProfileFilterProcessQueryDTO,
     user_email: str,
+    process_type: str = PROCESS_TYPE.PROFILES_SEARCH,
 ) -> dict:
     """Start filter profile use case."""
 
@@ -34,6 +36,7 @@ def start_filter_profile_use_case(
             profile_filter_process_entity = create_profile_filter_process_entity(
                 profile_filter_process_query_dto,
                 user.id,
+                process_type,
             )
 
             profile_filter_process_entity = save_profile_filter_process_entity(
@@ -61,10 +64,11 @@ def start_filter_profile_use_case(
 
 
 def create_profile_filter_process_entity(
-    profile_filter_process_query_dto: ProfileFilterProcessQueryDTO, user_id: str
+    profile_filter_process_query_dto: ProfileFilterProcessQueryDTO, user_id: str, process_type: str
 ) -> ProfileFilterProcessEntity:
     profile_filter_process_dto = ProfileFilterProcessDTO(
         status=PROCESS_STATUS.IN_PROGRESS,
+        type=process_type,
         user_id=user_id,
         position_id=profile_filter_process_query_dto.position_id,
         business_id=profile_filter_process_query_dto.business_id,
