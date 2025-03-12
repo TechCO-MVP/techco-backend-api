@@ -9,15 +9,15 @@ from aws_lambda_powertools import Logger
 from src.adapters.secondary.scraping.constants import (
     TRADUCTION_FILTERS_BRIGHTDATA,
     RECORDS_LIMIT,
-    TOKEN_BRIGHTDATA,
     BASE_URL_BRIGHTDATA,
 )
 from src.domain.base_entity import from_dto_to_entity
 from src.domain.profile import ProfileFilterProcessEntity
 from src.repositories.repository import IRepository
+from src.utils.secrets import get_secret_by_name
 
 logger = Logger("ProfileFilterProcessDocumentDBAdapter")
-
+TOKEN_BRIGHTDATA = get_secret_by_name("TOKEN_BRIGHTDATA")
 
 class ScrapingProfileFilterProcessAdapter(IRepository[ProfileFilterProcessEntity]):
 

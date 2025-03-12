@@ -35,6 +35,10 @@ def test_start_auth_success(mocker, event, lambda_context):
 
     mocker.patch("src.adapters.primary.auth.start_auth.REGION_NAME", "fake-region")
     mocker.patch("src.adapters.primary.auth.start_auth.CLIENT_ID", "fake-client-id")
+    mock_user = mocker.patch("src.adapters.primary.auth.start_auth.get_user_by_mail_use_case")
+
+    mock_user = MagicMock()
+    mock_user.props.status = "enabled"
 
     mock_cognito_client = mocker.patch("src.adapters.primary.auth.start_auth.cognito_client")
     mock_cognito_client.initiate_auth.return_value = {"Session": "fake-session-token"}
@@ -51,7 +55,10 @@ def test_start_auth_success(mocker, event, lambda_context):
 def test_lambda_handler_client_error(mocker, event, lambda_context):
     """Test start_auth client error."""
     from src.adapters.primary.auth.start_auth import lambda_handler
+    mock_user = mocker.patch("src.adapters.primary.auth.start_auth.get_user_by_mail_use_case")
 
+    mock_user = MagicMock()
+    mock_user.props.status = "enabled"
     mocker.patch("src.adapters.primary.auth.start_auth.REGION_NAME", "fake-region")
     mocker.patch("src.adapters.primary.auth.start_auth.CLIENT_ID", "fake-client-id")
 
@@ -78,7 +85,10 @@ def test_lambda_handler_client_error(mocker, event, lambda_context):
 def test_lambda_handler_unexpected_error(mocker, event, lambda_context):
     """Test start_auth unexpected error."""
     from src.adapters.primary.auth.start_auth import lambda_handler
+    mock_user = mocker.patch("src.adapters.primary.auth.start_auth.get_user_by_mail_use_case")
 
+    mock_user = MagicMock()
+    mock_user.props.status = "enabled"
     mocker.patch("src.adapters.primary.auth.start_auth.REGION_NAME", "fake-region")
     mocker.patch("src.adapters.primary.auth.start_auth.CLIENT_ID", "fake-client-id")
 
@@ -90,3 +100,20 @@ def test_lambda_handler_unexpected_error(mocker, event, lambda_context):
     assert response["statusCode"] == 500
     body = json.loads(response["body"])
     assert "Unexpected error" in body["error"]
+
+def test_lambda_handler_user_disabled(mocker, event, lambda_context):
+    """Test start_auth user_disabled."""
+    from src.adapters.primary.auth.start_auth import lambda_handler
+
+    mock_user = MagicMock()
+    mock_user.props.status = "disabled"
+
+    mocker.patch("src.adapters.primary.auth.start_auth.get_user_by_mail_use_case", return_value = mock_user)
+    mocker.patch("src.adapters.primary.auth.start_auth.REGION_NAME", "fake-region")
+    mocker.patch("src.adapters.primary.auth.start_auth.CLIENT_ID", "fake-client-id")
+
+    response = lambda_handler(event, lambda_context)
+
+    assert response["statusCode"] == 400
+    body = json.loads(response["body"])
+    assert "User is not enabled" in body["message"]
