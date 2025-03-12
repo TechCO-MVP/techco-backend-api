@@ -28,7 +28,9 @@ def lambda_handler(event, context: LambdaContext) -> dict:
             "seniority": "Senior",
             "country_code": "USA",
             "city": "San Francisco",
-            "description": "Experienced software engineer with expertise in Python and cloud technologies.",
+            "description": (
+                "Experienced software engineer with expertise in Python and cloud technologies."
+            ),
             "responsabilities": [
             "Design and develop scalable and maintainable software solutions.",
             "Collaborate with cross-functional teams to deliver high-quality products.",
@@ -71,11 +73,8 @@ def lambda_handler(event, context: LambdaContext) -> dict:
 
         profile_process_entity = from_dto_to_entity(ProfileFilterProcessEntity, event)
         event_with_snapshot = send_profile_query_use_case(profile_process_entity)
-        
+
         return event_with_snapshot
     except Exception as e:
         logger.exception(e)
-        return {
-            "status": "Error",
-            "errorInfo": e.args[0]
-        }
+        return {"status": "Error", "errorInfo": e.args[0]}

@@ -6,20 +6,23 @@ from pydantic import ValidationError
 
 from src.domain.profile import ProfileFilterProcessQueryDTO
 from src.errors.entity_not_found import EntityNotFound
-from src.use_cases.profile.start_filter_profile_use_case import start_filter_profile_use_case
+from src.use_cases.profile.start_filter_profile_url_use_case import (
+    start_filter_profile_url_use_case,
+)
+
 
 logger = Logger()
 app = APIGatewayRestResolver()
 
 
-@app.post("/profile/filter/start")
-def start_filter_profile():
+@app.post("/profile/filter/start/url")
+def start_profile_search_by_url():
     try:
-        logger.info("Starting filter profile")
+        logger.info("Starting filter profile by url")
         user = app.current_event.request_context.authorizer["claims"]
         user_email = user["email"]
 
-        body = app.current_event.json_body
+        body: dict = app.current_event.json_body
 
         # parse body
         if not body:
@@ -28,7 +31,7 @@ def start_filter_profile():
         profile_process_dto = ProfileFilterProcessQueryDTO(**body)
 
         # call use case to start filter profile
-        result = start_filter_profile_use_case(profile_process_dto, user_email)
+        result = start_filter_profile_url_use_case(profile_process_dto, user_email)
 
         return Response(
             status_code=200,
@@ -78,6 +81,7 @@ def lambda_handler(event: dict, context: LambdaContext) -> dict:
                 "description": "....",
                 "responsabilities": ["...."],
                 "skills": ["python", "django", "aws"],
+                "url_profiles": ["https://www.linkedin.com/in/username"]
             }
         }
     }

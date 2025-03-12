@@ -449,6 +449,19 @@ functions:
             authorizerId:
               Ref: ApiGatewayAuthorizer
 
+  start_profile_filter_process_url:
+    handler: src/adapters/primary/profile/filter/start_url.lambda_handler
+    events:
+      - http:
+          path: /profile/filter/start/url
+          method: post
+          cors: true
+          private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+
   error_processing_profile_filter_process:
     handler: src/adapters/primary/profile/error_profile_filter_process.lambda_handler
     events:
@@ -457,6 +470,10 @@ functions:
 
   profile_query_brightdata:
     handler: src/adapters/primary/profile/query_brightdata/index.lambda_handler
+    timeout: 310
+
+  url_profiles_query_brightdata:
+    handler: src/adapters/primary/profile/query_brightdata/url_profiles_query.lambda_handler
     timeout: 310
 
   check_snapshot_status_brightdata:

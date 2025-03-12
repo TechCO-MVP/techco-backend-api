@@ -79,13 +79,30 @@ stateMachines:
     name: ProfileFilterProcess-${self:provider.stage}
     definition:
       Comment: "A simple AWS Step Functions state machine that filters profiles"
-      StartAt: FilterProfiles
+      StartAt: ChooseStartingState
       States:
+        ChooseStartingState:
+          Type: Choice
+          Choices:
+            - Variable: "$.type"
+              StringEquals: "profiles_search"
+              Next: FilterProfiles
+            - Variable: "$.type"
+              StringEquals: "profiles_url_search"
+              Next: FilterProfilesURL
+          Default: Fail
         FilterProfiles:
           Type: Task
           Resource:
             Fn::GetAtt:
               - profile_query_brightdata
+              - Arn
+          Next: CheckSnapshotStatus
+        FilterProfilesURL:
+          Type: Task
+          Resource:
+            Fn::GetAtt:
+              - url_profiles_query_brightdata
               - Arn
           Next: CheckSnapshotStatus
         CheckSnapshotStatus:

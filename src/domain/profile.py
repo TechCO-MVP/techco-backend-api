@@ -15,6 +15,11 @@ class PROCESS_STATUS(str, Enum):
     FAILED = "failed"
 
 
+class PROCESS_TYPE(str, Enum):
+    PROFILES_SEARCH = "profiles_search"
+    PROFILES_URL_SEARCH = "profiles_url_search"
+
+
 class Skill(BaseModel):
     name: str
     required: bool
@@ -31,10 +36,12 @@ class ProfileFilterProcessQueryDTO(BaseModel):
     business_id: str = Field(default="", alias="business_id")
     position_id: str = Field(default="", alias="position_id")
     snapshot_id: Optional[str] = ""
+    url_profiles: Optional[List[str]] = []
 
 
 class ProfileFilterProcessDTO(BaseModel):
     status: PROCESS_STATUS = PROCESS_STATUS.PENDING
+    type: PROCESS_TYPE = PROCESS_TYPE.PROFILES_SEARCH
     execution_arn: Optional[str] = None
     user_id: str
     position_id: str = Field(default="", alias="position_id")

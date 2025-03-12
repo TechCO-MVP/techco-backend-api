@@ -1,4 +1,5 @@
 import json
+
 from aws_lambda_powertools import Logger
 from aws_lambda_powertools.utilities.typing import LambdaContext
 
@@ -28,7 +29,7 @@ def lambda_handler(event, context: LambdaContext) -> dict:
             "seniority": "Senior",
             "country_code": "USA",
             "city": "San Francisco",
-            "description": "Experienced software engineer with expertise in Python and cloud technologies.",
+            "description": "Experienced software engineer with expertise in Python and cloud.",
             "responsabilities": [
             "Design and develop scalable and maintainable software solutions.",
             "Collaborate with cross-functional teams to deliver high-quality products.",
@@ -79,9 +80,5 @@ def lambda_handler(event, context: LambdaContext) -> dict:
         e.args[0]["event"] = process_dto
         e.args[0]["process_id"] = process_dto.get("_id")
         logger.error(e)
-        
-        return {
-            "status": "Error",
-            "errorInfo": e.args[0]
-        }
-    
+
+        return {"status": "Error", "errorInfo": e.args[0]}
