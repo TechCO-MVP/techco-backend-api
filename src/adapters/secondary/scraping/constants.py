@@ -14,6 +14,4 @@ BASE_URL_BRIGHTDATA = "https://api.brightdata.com/datasets"
 
 URL_BRIGHTDATA = "https://api.brightdata.com/datasets/filter"
 
-TOKEN_BRIGHTDATA = "394d9748-a353-471c-8b4d-36b96c011662"
-
 RECORDS_LIMIT = 100
