@@ -39,7 +39,7 @@ provider:
     PIPE_TEMPLATE_ID: "305713420"
     API_URL: "https://zcich4tlm3.execute-api.us-east-1.amazonaws.com/dev"
     API_GATEWAY_API_KEY_SECRET_NAME: api-key-apigtw-dev
-    TOKEN_SERVICE_BRIGHTDATA: TOKEN_BRIGHTDATA
+    TOKEN_SERVICE_BRIGHTDATA: TOKEN_BRIGHTDATA_V2
 
   logs:
     restApi: true
