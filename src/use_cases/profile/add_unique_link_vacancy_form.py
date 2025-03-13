@@ -38,7 +38,7 @@ def encript_data(profile: ProfileBrightDataDTO, event: ProfileFilterProcessEntit
     """encript data with JWT """
 
     payload = {
-        "id": event.id,
+        "id": event.props.position_id,
         "business_id": event.props.business_id,
         "linkedin_num_id": profile.linkedin_num_id,
         "created_at": datetime.datetime.now().isoformat(),

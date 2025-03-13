@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import List, Optional
+from typing import List, Optional, Union
 
 from bson import ObjectId
 from pydantic import BaseModel, Field, ValidationError, model_validator
@@ -64,7 +64,7 @@ class PositionDTO(BaseModel):
     work_mode: WORK_MODE
     status: PROCESS_STATUS = PROCESS_STATUS.ACTIVE
     benefits: Optional[List[str]] = Field(default_factory=list)
-    salary_range: Optional[Salary] = Field(default_factory=list)
+    salary_range: Optional[Union[Salary, List]] = Field(default_factory=list)
 
     @model_validator(mode="before")
     def validate_and_convert_fields(cls, values):
