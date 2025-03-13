@@ -8,6 +8,7 @@ provider:
   stage: dev
   region: us-east-1
   timeout: 30
+  versionFunctions: false
   vpc:
     securityGroupIds:
       - !Ref LambdaSecurityGroup
@@ -533,6 +534,19 @@ functions:
       - sqs:
           arn: !GetAtt PipefyFieldUpdateQueue.Arn
     timeout: 60
+
+  get_profile_search:
+    handler: src/adapters/primary/profile/get_profile_search.lambda_handler
+    events:
+      - http:
+          path: /profile/filter
+          method: get
+          cors: true
+          private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
 
 stepFunctions:
   stateMachines: ${file(./src/resources/brightdata/serverless.yml):stateMachines}
