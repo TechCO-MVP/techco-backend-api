@@ -93,6 +93,10 @@ provider:
             - events:PutEvents
           Resource:
             - !GetAtt PipefyEventBus.Arn
+        - Effect: Allow
+          Action:
+            - secretsmanager:GetSecretValue
+          Resource: "*"
 
 custom:
   userPoolName: ${self:provider.stage}-passwordless-user-pool
