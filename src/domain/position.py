@@ -2,7 +2,7 @@ from enum import Enum
 from typing import List, Optional
 
 from bson import ObjectId
-from pydantic import BaseModel, Field, model_validator, ValidationError
+from pydantic import BaseModel, Field, ValidationError, model_validator
 
 from src.domain.base_entity import BaseEntity
 
@@ -13,6 +13,7 @@ class PROCESS_STATUS(str, Enum):
     FINISHED = "FINISHED"
     INACTIVE = "INACTIVE"
 
+
 class LEVEL(str, Enum):
     HIGH = "high"
     MEDIUM = "medium"
@@ -21,25 +22,30 @@ class LEVEL(str, Enum):
 
 class WORK_MODE(str, Enum):
     REMOTE = "Remote"
-    HYBRID  = "Hybrid "
+    HYBRID = "Hybrid "
     ON_SITE = "On-site"
+
 
 class Skill(BaseModel):
     name: str
     required: bool
 
+
 class Languages(BaseModel):
     name: str
     level: str
+
 
 class Salary(BaseModel):
     currency: str
     salary: str
     salara_range: str
 
+
 class PositionStakeholders(BaseModel):
     user_id: str
     can_edit: bool
+
 
 class PositionDTO(BaseModel):
     business_id: str = Field(default="", alias="business_id")
@@ -60,7 +66,6 @@ class PositionDTO(BaseModel):
     benefits: Optional[List[str]] = Field(default_factory=list)
     salary_range: Optional[Salary] = Field(default_factory=list)
 
-
     @model_validator(mode="before")
     def validate_and_convert_fields(cls, values):
         fields_to_validate = ["business_id", "owner_position_user_id", "recruiter_user_id"]
@@ -77,7 +82,9 @@ class PositionDTO(BaseModel):
                 if isinstance(stakeholder.user_id, ObjectId):
                     stakeholder.user_id = str(stakeholder.user_id)
                 elif not isinstance(stakeholder.user_id, str):
-                    raise ValueError("Invalid user_id format in responsible_users_ids. Must be a string or ObjectId.")
+                    raise ValueError(
+                        "Invalid user_id format in responsible_users_ids. Must be a string or ObjectId."
+                    )
 
         return values
 
@@ -93,18 +100,18 @@ class GetPositionQueryParams(BaseModel):
         if not values.get("id") and not values.get("all"):
             raise ValueError("Either 'id' or 'all' query parameter is required")
         return values
-    
+
     @model_validator(mode="before")
     def validate_and_convert_fields(cls, values):
         fields_to_validate = ["business_id", "user_id"]
-        
+
         for field in fields_to_validate:
             if field in values:
                 if isinstance(values[field], ObjectId):
                     values[field] = str(values[field])
                 elif not isinstance(values[field], str):
                     raise ValueError(f"Invalid {field} format. Must be a string or ObjectId.")
-        
+
         return values
 
     @classmethod
@@ -113,6 +120,7 @@ class GetPositionQueryParams(BaseModel):
             return cls(**params)
         except ValidationError as e:
             raise ValueError(f"Invalid query parameters: {e}")
+
 
 class UpdatePositionStatusDTO(BaseModel):
     position_id: str
@@ -125,6 +133,7 @@ class UpdatePositionStatusDTO(BaseModel):
             return cls(**params)
         except ValidationError as e:
             raise ValueError(f"Invalid parameters: {e}")
+
 
 class PositionEntity(BaseEntity[PositionDTO]):
     pass
