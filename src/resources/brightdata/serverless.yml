@@ -139,7 +139,17 @@ stateMachines:
             Fn::GetAtt:
               - query_and_build_openai_data
               - Arn
-          Next: CreatePipeConfigurationForOpenPosition
+          Next: ChooseProfileTypeFlow
+        ChooseProfileTypeFlow:
+          Type: Choice
+          Choices:
+            - Variable: "$.type"
+              StringEquals: "profiles_search"
+              Next: CreatePipeConfigurationForOpenPosition
+            - Variable: "$.type"
+              StringEquals: "profiles_url_search"
+              Next: NotifyCompletion
+          Default: Fail
         CreatePipeConfigurationForOpenPosition:
           Type: Task
           Resource:

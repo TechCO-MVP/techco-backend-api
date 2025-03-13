@@ -30,6 +30,9 @@ def start_profile_search_by_url():
 
         profile_process_dto = ProfileFilterProcessQueryDTO(**body)
 
+        if not profile_process_dto.url_profiles:
+            raise ValueError("URL profiles is required")
+
         # call use case to start filter profile
         result = start_filter_profile_url_use_case(profile_process_dto, user_email)
 

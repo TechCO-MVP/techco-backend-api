@@ -1,3 +1,4 @@
+import re
 from enum import Enum
 from typing import List, Optional
 
@@ -37,6 +38,16 @@ class ProfileFilterProcessQueryDTO(BaseModel):
     position_id: str = Field(default="", alias="position_id")
     snapshot_id: Optional[str] = ""
     url_profiles: Optional[List[str]] = []
+
+    @field_validator("url_profiles", mode="before")
+    def validate_url_profiles(cls, v):
+        if not v:
+            return v
+        for url in v:
+            pattern = re.compile(r"^https://www\.linkedin\.com/in/.*$")
+            if not pattern.match(url):
+                raise ValueError(f"Invalid URL format: {url}")
+        return v
 
 
 class ProfileFilterProcessDTO(BaseModel):
