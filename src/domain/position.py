@@ -12,6 +12,7 @@ class PROCESS_STATUS(str, Enum):
     ACTIVE = "ACTIVE"
     FINISHED = "FINISHED"
     INACTIVE = "INACTIVE"
+    DRAFT = "DRAFT"
 
 
 class LEVEL(str, Enum):
@@ -62,7 +63,7 @@ class PositionDTO(BaseModel):
     languages: List[Languages] = Field(..., min_length=1)
     hiring_priority: LEVEL
     work_mode: WORK_MODE
-    status: PROCESS_STATUS = PROCESS_STATUS.ACTIVE
+    status: PROCESS_STATUS = PROCESS_STATUS.DRAFT
     benefits: Optional[List[str]] = Field(default_factory=list)
     salary_range: Optional[Union[Salary, List]] = Field(default_factory=list)
 
