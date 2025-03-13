@@ -7,7 +7,7 @@ from src.repositories.repository import IRepository
 
 class ProfileFilterProcessRepository(IRepository[ProfileFilterProcessEntity]):
 
-    _adapter: IRepository[ProfileFilterProcessEntity]
+    _adapter: ProfileFilterProcessDocumentDBAdapter
 
     def __init__(self):
         super().__init__()
