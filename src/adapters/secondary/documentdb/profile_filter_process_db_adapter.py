@@ -1,3 +1,4 @@
+from typing import List
 from datetime import datetime
 
 from aws_lambda_powertools import Logger
@@ -28,7 +29,10 @@ class ProfileFilterProcessDocumentDBAdapter(IRepository[ProfileFilterProcessEnti
         if self._collection_name not in self._client.list_collection_names():
             self._client.create_collection(self._collection_name)
 
-    def getAll(self, filter_params: dict = None):
+    def getAll(self, filter_params: dict = None) -> List[ProfileFilterProcessEntity]:
+        """
+        Get all profile filter process entities from the database.
+        """
         collection = self._client[self._collection_name]
         filter_params = filter_params or {}
 
