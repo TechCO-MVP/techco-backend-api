@@ -3,6 +3,7 @@
 import json
 import requests
 import time
+import os
 
 from aws_lambda_powertools import Logger
 
@@ -17,7 +18,7 @@ from src.repositories.repository import IRepository
 from src.utils.secrets import get_secret_by_name
 
 logger = Logger("ProfileFilterProcessDocumentDBAdapter")
-TOKEN_BRIGHTDATA = get_secret_by_name("TOKEN_BRIGHTDATA")
+TOKEN_BRIGHTDATA = get_secret_by_name(os.getenv("TOKEN_SERVICE_BRIGHTDATA"))
 
 class ScrapingProfileFilterProcessAdapter(IRepository[ProfileFilterProcessEntity]):
 
