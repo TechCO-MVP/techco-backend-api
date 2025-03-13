@@ -42,13 +42,18 @@ def set_env(monkeypatch):
     monkeypatch.setenv("CLIENT_ID", "fake-client-id")
 
 
-def test_create_user_value_error(event, lambda_context):
+def test_create_user_value_error(mocker, event, lambda_context):
     """Test create user value error."""
     from src.adapters.primary.user.create_user.index import handler
+    
+    mocker.patch(
+        "src.adapters.primary.user.create_user.index.role_required",
+        return_value=lambda func: func  # Devuelve una función que simplemente devuelve la función original
+    )
 
     event["body"] = json.dumps(
         {
-            "roles": "business_admin",
+            "roles": "admindeveloper",
             "business_id": "12354",
         }
     )
