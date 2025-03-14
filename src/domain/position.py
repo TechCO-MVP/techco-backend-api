@@ -40,7 +40,7 @@ class Languages(BaseModel):
 class Salary(BaseModel):
     currency: str
     salary: str
-    salara_range: str
+    salary_range: str
 
 
 class PositionStakeholders(BaseModel):
