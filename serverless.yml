@@ -79,6 +79,10 @@ provider:
           Resource:
             - arn:aws:s3:::dev-raw-profile-data-infrequent-access
             - arn:aws:s3:::dev-raw-profile-data-infrequent-access/*
+            - arn:aws:s3:::dev-depurated-profile-data-infrequent-access
+            - arn:aws:s3:::dev-depurated-profile-data-infrequent-access/*
+            - arn:aws:s3:::dev-refined-profile-data-infrequent-access
+            - arn:aws:s3:::dev-refined-profile-data-infrequent-access/*
         - Effect: Allow
           Action:
             - sqs:SendMessage

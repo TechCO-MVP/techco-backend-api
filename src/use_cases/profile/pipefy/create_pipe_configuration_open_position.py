@@ -2,7 +2,8 @@ import time
 
 from src.constants.index import API_URL, DEFAULT_PIPE_TEMPLATE_ID
 from src.domain.hiring_process import HiringProcessDTO
-from src.domain.profile import ProfileBrightDataDTO
+from src.domain.profile_brightdata import ProfileBrightDataDTO
+from src.domain.profile import PROCESS_STATUS
 from src.errors.entity_not_found import EntityNotFound
 from src.repositories.document_db.profile_filter_process import ProfileFilterProcessRepository
 from src.repositories.pipefy.card_repository import CardRepository
@@ -85,5 +86,7 @@ def create_pipe_configuration_open_position(
     webhook_repository.create_webhook(pipe_id, f"{API_URL}/pipefy/webhook", webhook_name, actions)
 
     # update profile
+    profile_filter_process.props.pipe_id = pipe_id
+    profile_filter_process.props.status = PROCESS_STATUS.COMPLETED
     profile_filter_process.props.profiles = updated_profiles
     profile_filter_process_repository.update(profile_filter_process_id, profile_filter_process)

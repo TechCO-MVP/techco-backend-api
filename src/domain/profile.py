@@ -55,6 +55,7 @@ class ProfileFilterProcessDTO(BaseModel):
     type: PROCESS_TYPE = PROCESS_TYPE.PROFILES_SEARCH
     execution_arn: Optional[str] = None
     user_id: str
+    pipe_id: Optional[str] = None
     position_id: str = Field(default="", alias="position_id")
     business_id: str = Field(default="", alias="business_id")
     process_filters: ProfileFilterProcessQueryDTO
