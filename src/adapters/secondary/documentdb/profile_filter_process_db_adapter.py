@@ -85,9 +85,16 @@ class ProfileFilterProcessDocumentDBAdapter(IRepository[ProfileFilterProcessEnti
         profile_filter_process_data["updated_at"] = datetime.now().isoformat()
 
         collection = self._client[self._collection_name]
-        collection.update_one(
+        result = collection.update_one(
             {"_id": ObjectId(id)}, {"$set": profile_filter_process_data}, session=self._session
         )
+
+        if result.matched_count == 0:
+            logger.warning(f"No document found with id: {id}")
+        elif result.modified_count == 0:
+            logger.warning(f"Document with id: {id} was not modified")
+        else:
+            logger.info(f"Document with id: {id} was successfully updated")
 
         return entity
 
