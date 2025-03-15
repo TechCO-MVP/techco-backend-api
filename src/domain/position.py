@@ -44,8 +44,8 @@ class Range(BaseModel):
 
 class Salary(BaseModel):
     currency: str
-    salary: Optional[str]
-    salary_range: Optional[Range]
+    salary: Optional[str] = None
+    salary_range: Optional[Range] = None
 
 
 class PositionStakeholders(BaseModel):
@@ -70,7 +70,7 @@ class PositionDTO(BaseModel):
     work_mode: WORK_MODE
     status: PROCESS_STATUS = PROCESS_STATUS.DRAFT
     benefits: Optional[List[str]] = Field(default_factory=list)
-    salary: Optional[Salary]
+    salary: Optional[Salary] = None
 
     @model_validator(mode="before")
     def validate_and_convert_fields(cls, values):
