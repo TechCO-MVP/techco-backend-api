@@ -63,6 +63,8 @@ def create_pipe_configuration_open_position(
             else:
                 raise e  # Raise the exception if max retries reached
 
+    time.sleep(20)  # wait for the pipe to be created
+
     # create cards
     updated_profiles = []
     card_repository = CardRepository(graphql_client)
