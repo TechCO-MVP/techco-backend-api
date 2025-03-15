@@ -154,35 +154,39 @@ class ScrapingProfileFilterProcessAdapter(IRepository[ProfileFilterProcessEntity
     def get_data(self, id: str):
         logger.info(f"Getting profile filter process data from brigthdata - snapshoot_id: {id}")
 
+        params = {"format": "json"}
         headers = {"Authorization": f"Bearer {TOKEN_BRIGHTDATA}"}
 
         response = requests.request(
-            "GET", f"{BASE_URL_BRIGHTDATA}/snapshots/{id}/download", headers=headers, timeout=310
+            "GET",
+            f"{BASE_URL_BRIGHTDATA}/snapshots/{id}/download",
+            headers=headers,
+            params=params,
+            timeout=310
         )
 
         logger.info(f"response brightdata: {response}")
 
         if response.status_code == 200:
-            return json.dumps(response.text)
+            return json.loads(response.text)
         elif response.status_code == 202:
-            time.sleep(5)
-            response_second_request = requests.request(
-                "GET", f"{BASE_URL_BRIGHTDATA}/snapshots/{id}/download", headers=headers
-            )
+            time.sleep(30)
 
             response_second_request = requests.request(
                 "GET",
                 f"{BASE_URL_BRIGHTDATA}/snapshots/{id}/download",
                 headers=headers,
+                params=params,
                 timeout=310,
             )
 
             logger.info(f"response brightdata second request: {response}")
             if response_second_request.status_code == 200:
-                return json.dumps(response.text)
+                return json.loads(response_second_request.text)
         else:
+            final_response = response if response.status_code != 202 else response_second_request
             error = {
-                "message": f"Failed to daowload snapshoot_id: {response.status_code} - {response.text}",
+                "message": f"Failed to daowload snapshoot_id: {final_response.status_code} - {final_response.text}",
                 "snapshoot_id": id,
             }
             logger.error(error["message"])
