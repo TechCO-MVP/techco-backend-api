@@ -156,6 +156,13 @@ stateMachines:
             Fn::GetAtt:
               - create_pipe_configuration_open_position
               - Arn
+          Next: AddLinkPostionForm
+        AddLinkPostionForm:
+          Type: Task
+          Resource:
+            Fn::GetAtt:
+              - add_link_vacancy_form
+              - Arn
           Next: NotifyCompletion
         NotifyCompletion:
           Type: Task

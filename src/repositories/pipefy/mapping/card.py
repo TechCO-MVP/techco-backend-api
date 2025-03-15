@@ -25,7 +25,7 @@ def get_current_position(data: ProfileBrightDataDTO) -> ExperienceProfile:
 
 def get_prop_from_current_position(data: ProfileBrightDataDTO, prop: str) -> Any:
     current_experience = get_current_position(data)
-    return current_experience.model_json_schema().get(prop, "") if current_experience else ""
+    return getattr(current_experience, prop) if current_experience else ""
 
 
 def is_currently_employed(data: ProfileBrightDataDTO) -> str:
