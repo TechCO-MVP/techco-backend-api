@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import List, Optional
+from typing import List, Optional, Union
 
 from bson import ObjectId
 from pydantic import BaseModel, Field, ValidationError, model_validator
@@ -12,6 +12,7 @@ class PROCESS_STATUS(str, Enum):
     ACTIVE = "ACTIVE"
     FINISHED = "FINISHED"
     INACTIVE = "INACTIVE"
+    DRAFT = "DRAFT"
 
 
 class LEVEL(str, Enum):
@@ -36,10 +37,15 @@ class Languages(BaseModel):
     level: str
 
 
+class Range(BaseModel):
+    min: str
+    max: str
+
+
 class Salary(BaseModel):
     currency: str
     salary: str
-    salara_range: str
+    salary_range: Range
 
 
 class PositionStakeholders(BaseModel):
@@ -62,9 +68,9 @@ class PositionDTO(BaseModel):
     languages: List[Languages] = Field(..., min_length=1)
     hiring_priority: LEVEL
     work_mode: WORK_MODE
-    status: PROCESS_STATUS = PROCESS_STATUS.ACTIVE
+    status: PROCESS_STATUS = PROCESS_STATUS.DRAFT
     benefits: Optional[List[str]] = Field(default_factory=list)
-    salary_range: Optional[Salary] = Field(default_factory=list)
+    salary_range: Optional[Union[Salary, List]] = Field(default_factory=list)
 
     @model_validator(mode="before")
     def validate_and_convert_fields(cls, values):
