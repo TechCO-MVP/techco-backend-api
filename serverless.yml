@@ -1,108 +1,558 @@
 service: backend-proposal-v2
-
-# You can pin your service to only deploy with a specific Serverless version
-# Check out our docs for more details
-frameworkVersion: '3'
+frameworkVersion: "3"
+configValidationMode: error
 
 provider:
   name: aws
-  runtime: python3.12
-  # you can overwrite defaults here
+  runtime: python3.11
   stage: dev
   region: us-east-1
+  timeout: 30
+  versionFunctions: false
+  vpc:
+    securityGroupIds:
+      - !Ref LambdaSecurityGroup
+    subnetIds:
+      - !Ref PrivateSubnet1
+      - !Ref PrivateSubnet2
+  layers:
+    - arn:aws:lambda:${aws:region}:017000801446:layer:AWSLambdaPowertoolsPythonV3-python311-x86_64:3
+    - arn:aws:lambda:us-east-1:770693421928:layer:Klayers-p311-pymongo:11
+  environment:
+    ENV: ${self:provider.stage}
+    REGION_NAME: ${self:provider.region}
+    COGNITO_USER_POOL_ID: !Ref CognitoUserPool
+    COGNITO_USER_POOL_CLIENT_ID: !Ref CognitoPasswordlessUserPoolClient
+    DOCUMENTDB_SECRET_NAME: ${self:resources.Resources.DocumentDBSecretPassword.Properties.Name}
+    DOCUMENTDB_ENDPOINT: !GetAtt DocumentDBCluster.Endpoint
+    DOCUMENTDB_PORT: 27017
+    DOCUMENTDB_DATABASE: techco
+    UI_URI: "https://develop.dzkuw34ypddf5.amplifyapp.com"
+    PROFILE_FILTER_PROCESS_ARN: arn:aws:states:${self:provider.region}:#{AWS::AccountId}:stateMachine:ProfileFilterProcess-${self:provider.stage}
+    S3_RAW_PROFILE_DATA_IA_BUCKET_NAME: !Ref S3RawProfileDataIA
+    S3_DEPURATED_PROFILE_DATA_IA_BUCKET_NAME: !Ref S3DepuratedProfileDataIA
+    S3_REFINED_PROFILE_DATA_IA_BUCKET_NAME: !Ref S3RefinedProfileDataIA
+    OPEN_AI_API_KEY_SECRET_NAME: openai_api_key_dev
+    OPEN_AI_ASSISTANT_ID: asst_XKxSpnp03caySq26J2e80VPJ
+    SQS_USER_NOTIFICATIONS_NAME: !Ref SQSUserNotificatons
+    PIPEFY_API_KEY_SECRET_NAME: pipefy_api_key
+    PIPEFY_ORGANIZATION_ID: "301603037"
+    PIPE_TEMPLATE_ID: "305713420"
+    API_URL: "https://zcich4tlm3.execute-api.us-east-1.amazonaws.com/dev"
+    API_GATEWAY_API_KEY_SECRET_NAME: api-key-apigtw-dev
+    TOKEN_SERVICE_BRIGHTDATA: TOKEN_BRIGHTDATA_V2
 
-# you can add statements to the Lambda function's IAM Role here
-#  iam:
-#    role:
-#      statements:
-#        - Effect: "Allow"
-#          Action:
-#            - "s3:ListBucket"
-#          Resource: { "Fn::Join" : ["", ["arn:aws:s3:::", { "Ref" : "ServerlessDeploymentBucket" } ] ]  }
-#        - Effect: "Allow"
-#          Action:
-#            - "s3:PutObject"
-#          Resource:
-#            Fn::Join:
-#              - ""
-#              - - "arn:aws:s3:::"
-#                - "Ref" : "ServerlessDeploymentBucket"
-#                - "/*"
+  logs:
+    restApi: true
 
-# you can define service wide environment variables here
-#  environment:
-#    variable1: value1
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - cognito-idp:*
+          Resource: "*"
+        - Effect: Allow
+          Action:
+            - ses:sendEmail
+          Resource: "*"
+        - Effect: Allow
+          Action:
+            - secretsmanager:GetSecretValue
+          Resource:
+            - !Ref DocumentDBSecretPassword
+        - Effect: Allow
+          Action:
+            - rds-db:connect
+            - rds:DescribeDBInstances
+          Resource:
+            - arn:aws:rds:${self:provider.region}:#{AWS::AccountId}:db:documentdbinstance-xsleqy2jx1aq
+        - Effect: Allow
+          Action:
+            - states:StartExecution
+          Resource: ${self:provider.environment.PROFILE_FILTER_PROCESS_ARN}
+        - Effect: Allow
+          Action:
+            - s3:PutObject
+            - s3:GetObject
+            - s3:ListBucket
+          Resource:
+            - arn:aws:s3:::dev-raw-profile-data-infrequent-access
+            - arn:aws:s3:::dev-raw-profile-data-infrequent-access/*
+        - Effect: Allow
+          Action:
+            - sqs:SendMessage
+            - sqs:ReceiveMessage
+            - sqs:DeleteMessage
+            - sqs:GetQueueAttributes
+          Resource:
+            - !GetAtt SQSUserNotificatons.Arn
+            - !GetAtt PipefyCardMoveQueue.Arn
+            - !GetAtt PipefyFieldUpdateQueue.Arn
+        - Effect: Allow
+          Action:
+            - events:PutEvents
+          Resource:
+            - !GetAtt PipefyEventBus.Arn
+        - Effect: Allow
+          Action:
+            - secretsmanager:GetSecretValue
+          Resource: "*"
 
-# you can add packaging information here
-#package:
-#  patterns:
-#    - '!exclude-me.py'
-#    - '!exclude-me-dir/**'
-#    - include-me.py
-#    - include-me-dir/**
+custom:
+  userPoolName: ${self:provider.stage}-passwordless-user-pool
+  pythonRequirements:
+    dockerizePip: true
+    filename: requirements.txt
+    invalidateCaches: true
+
+resources:
+  Resources:
+    CognitoUserPool: ${file(./src/resources/auth/serverless.yml):CognitoUserPool}
+    CognitoPasswordlessUserPoolClient: ${file(./src/resources/auth/serverless.yml):CognitoPasswordlessUserPoolClient}
+    ApiGatewayAuthorizer: ${file(./src/resources/auth/serverless.yml):ApiGatewayAuthorizer}
+    VPC: ${file(./src/resources/db/serverless.yml):VPC}
+    InternetGateway: ${file(./src/resources/db/serverless.yml):InternetGateway}
+    VPCGatewayAttachment: ${file(./src/resources/db/serverless.yml):VPCGatewayAttachment}
+    PublicSubnet1: ${file(./src/resources/db/serverless.yml):PublicSubnet1}
+    PublicSubnet2: ${file(./src/resources/db/serverless.yml):PublicSubnet2}
+    PublicRouteTable: ${file(./src/resources/db/serverless.yml):PublicRouteTable}
+    PublicRoute: ${file(./src/resources/db/serverless.yml):PublicRoute}
+    PublicSubnetRouteTableAssociation1: ${file(./src/resources/db/serverless.yml):PublicSubnetRouteTableAssociation1}
+    PublicSubnetRouteTableAssociation2: ${file(./src/resources/db/serverless.yml):PublicSubnetRouteTableAssociation2}
+    PrivateSubnet1: ${file(./src/resources/db/serverless.yml):PrivateSubnet1}
+    PrivateSubnet2: ${file(./src/resources/db/serverless.yml):PrivateSubnet2}
+    NATGateway1: ${file(./src/resources/db/serverless.yml):NATGateway1}
+    EIP1: ${file(./src/resources/db/serverless.yml):EIP1}
+    NATGateway2: ${file(./src/resources/db/serverless.yml):NATGateway2}
+    EIP2: ${file(./src/resources/db/serverless.yml):EIP2}
+    PrivateRouteTable1: ${file(./src/resources/db/serverless.yml):PrivateRouteTable1}
+    PrivateRoute1: ${file(./src/resources/db/serverless.yml):PrivateRoute1}
+    PrivateRouteTableAssociation1: ${file(./src/resources/db/serverless.yml):PrivateRouteTableAssociation1}
+    PrivateRouteTable2: ${file(./src/resources/db/serverless.yml):PrivateRouteTable2}
+    PrivateRoute2: ${file(./src/resources/db/serverless.yml):PrivateRoute2}
+    PrivateRouteTableAssociation2: ${file(./src/resources/db/serverless.yml):PrivateRouteTableAssociation2}
+    LambdaSecurityGroup: ${file(./src/resources/db/serverless.yml):LambdaSecurityGroup}
+    EC2SecurityGroup: ${file(./src/resources/db/serverless.yml):EC2SecurityGroup}
+    DocumentDBSecurityGroup: ${file(./src/resources/db/serverless.yml):DocumentDBSecurityGroup}
+    DocumentDBSubnetGroup: ${file(./src/resources/db/serverless.yml):DocumentDBSubnetGroup}
+    DocumentDBSecretPassword: ${file(./src/resources/db/serverless.yml):DocumentDBSecretPassword}
+    DocumentDBCluster: ${file(./src/resources/db/serverless.yml):DocumentDBCluster}
+    DocumentDBInstance: ${file(./src/resources/db/serverless.yml):DocumentDBInstance}
+    EC2KeyPair: ${file(./src/resources/db/serverless.yml):EC2KeyPair}
+    EC2Instance: ${file(./src/resources/db/serverless.yml):EC2Instance}
+    S3RawProfileDataIA: ${file(./src/resources/brightdata/serverless.yml):S3RawProfileDataIA}
+    S3DepuratedProfileDataIA: ${file(./src/resources/brightdata/serverless.yml):S3DepuratedProfileDataIA}
+    S3RefinedProfileDataIA: ${file(./src/resources/brightdata/serverless.yml):S3RefinedProfileDataIA}
+    SQSUserNotificatons: ${file(./src/resources/brightdata/serverless.yml):SQSUserNotificatons}
+    PipefyEventBus: ${file(./src/resources/pipefy/serverless.yml):PipefyEventBus}
+    PipefyCardMoveRule: ${file(./src/resources/pipefy/serverless.yml):PipefyCardMoveRule}
+    PipefyFieldUpdateRule: ${file(./src/resources/pipefy/serverless.yml):PipefyFieldUpdateRule}
+    PipefyCardMoveQueue: ${file(./src/resources/pipefy/serverless.yml):PipefyCardMoveQueue}
+    PipefyFieldUpdateQueue: ${file(./src/resources/pipefy/serverless.yml):PipefyFieldUpdateQueue}
+    EventBridgeToSQSRole: ${file(./src/resources/pipefy/serverless.yml):EventBridgeToSQSRole}
+    serverlessApiGatewayCloudWatchRole:
+      Type: AWS::IAM::Role
+      Properties:
+        RoleName: serverlessApiGatewayCloudWatchRole
+        AssumeRolePolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service: apigateway.amazonaws.com
+              Action: sts:AssumeRole
+        Policies:
+          - PolicyName: ApiGatewayCloudWatchLogsPolicy
+            PolicyDocument:
+              Version: "2012-10-17"
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - logs:CreateLogGroup
+                    - logs:CreateLogStream
+                    - logs:DescribeLogGroups
+                    - logs:DescribeLogStreams
+                    - logs:PutLogEvents
+                  Resource: "*"
 
 functions:
-  create_organization:
-    handler: src/adapters/primary/create_organization/index.handler
+  define_auth_challenge:
+    handler: src/adapters/primary/auth/define_auth_challenge.handler
     events:
-      - httpApi:
-          path: /organizations/create
+      - cognitoUserPool:
+          pool: ${self:resources.Resources.CognitoUserPool.Properties.UserPoolName}
+          trigger: DefineAuthChallenge
+          existing: true
+
+  create_auth_challenge:
+    handler: src/adapters/primary/auth/create_auth_challenge.handler
+    events:
+      - cognitoUserPool:
+          pool: ${self:resources.Resources.CognitoUserPool.Properties.UserPoolName}
+          trigger: CreateAuthChallenge
+          existing: true
+
+  verify_auth_challenge:
+    handler: src/adapters/primary/auth/verify_auth_challenge.handler
+    events:
+      - cognitoUserPool:
+          pool: ${self:resources.Resources.CognitoUserPool.Properties.UserPoolName}
+          trigger: VerifyAuthChallengeResponse
+          existing: true
+
+  pre_signup:
+    handler: src/adapters/primary/auth/pre_signup.handler
+    events:
+      - cognitoUserPool:
+          pool: ${self:resources.Resources.CognitoUserPool.Properties.UserPoolName}
+          trigger: PreSignUp
+          existing: true
+
+  sign_up:
+    handler: src/adapters/primary/auth/sign_up.handler
+    events:
+      - http:
+          path: /auth/signup
           method: post
+          cors: true
+          private: true
+
+  start_auth:
+    handler: src/adapters/primary/auth/start_auth.lambda_handler
+    events:
+      - http:
+          path: /auth/start_auth
+          method: post
+          cors: true
+          private: true
+
+  verify_auth_otp_code_signup:
+    handler: src/adapters/primary/auth/verify_auth_otp_code_signup.handler
+    events:
+      - http:
+          path: /auth/verify_auth_otp_code_signup
+          method: post
+          cors: true
+          private: true
+
+  verify_auth_otp_code:
+    handler: src/adapters/primary/auth/verify_auth_otp_code.lambda_handler
+    events:
+      - http:
+          path: /auth/verify_auth_otp_code
+          method: post
+          cors: true
+          private: true
+
+  sign_out:
+    handler: src/adapters/primary/auth/sign_out.lambda_handler
+    events:
+      - http:
+          path: /auth/sign_out
+          method: post
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          cors: true
+          private: true
+
+  refresh_tokens:
+    handler: src/adapters/primary/auth/post_refresh_token.lambda_handler
+    events:
+      - http:
+          path: /auth/refresh_tokens
+          method: post
+          cors: true
+          private: true
+
+  create_business:
+    handler: src/adapters/primary/business/create_business/index.handler
+    events:
+      - http:
+          path: /business/create
+          method: post
+          cors: true
+          private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
     environment:
       ENV: ${self:provider.stage}
 
+  update_business:
+    handler: src/adapters/primary/business/update_business/index.handler
+    events:
+      - http:
+          path: /business/update/{id}
+          method: put
+          cors: true
+          private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+
+  get_business:
+    handler: src/adapters/primary/business/get_business_by_id/index.handler
+    events:
+      - http:
+          path: /business/{id}
+          method: get
+          cors: true
+          private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+
+  list_business:
+    handler: src/adapters/primary/business/list_businesses/index.handler
+    events:
+      - http:
+          path: /business/list
+          method: get
+          cors: true
+          private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+
+  create_user:
+    handler: src/adapters/primary/user/create_user/index.handler
+    events:
+      - http:
+          path: /user/create
+          method: post
+          cors: true
+          private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+
+  get_users:
+    handler: src/adapters/primary/user/get_user/index.handler
+    events:
+      - http:
+          path: /user/list
+          method: get
+          cors: true
+          private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          request:
+            parameters:
+              querystrings:
+                business_id: true
+
+  update_user_status:
+    handler: src/adapters/primary/user/update_user_status/index.handler
+    events:
+      - http:
+          path: /user/status
+          method: put
+          cors: true
+          private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+
+  update_user_data:
+    handler: src/adapters/primary/user/update_user_status/index.handler
+    events:
+      - http:
+          path: /user/data
+          method: put
+          cors: true
+          private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+
+    environment:
+      ENV: ${self:provider.stage}
+
+  get_position_list:
+    handler: src/adapters/primary/position/get_position/index.handler
+    events:
+      - http:
+          path: /position/list
+          method: get
+          cors: true
+          private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          request:
+            parameters:
+              querystrings:
+                business_id: true
+                user_id: true
+
+  get_position_by_token:
+    handler: src/adapters/primary/position/get_position_token/index.handler
+    events:
+      - http:
+          path: /position/token
+          method: get
+          cors: true
+          private: true
+          request:
+            parameters:
+              querystrings:
+                token: true
+
+  put_position_status:
+    handler: src/adapters/primary/position/put_position_status/index.handler
+    events:
+      - http:
+          path: /position/status
+          method: put
+          cors: true
+          private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+
+  get_hiring_process_by_id:
+    handler: src/adapters/primary/hiring_process/get_hiring_process/index.handler
+    events:
+      - http:
+          path: /hiring_process/id
+          method: get
+          cors: true
+          private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+          request:
+            parameters:
+              querystrings:
+                hiring_process_id: true
+
+  start_profile_filter_process:
+    handler: src/adapters/primary/profile/filter/start.lambda_handler
+    events:
+      - http:
+          path: /profile/filter/start
+          method: post
+          cors: true
+          private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+
+  start_profile_filter_process_url:
+    handler: src/adapters/primary/profile/filter/start_url.lambda_handler
+    events:
+      - http:
+          path: /profile/filter/start/url
+          method: post
+          cors: true
+          private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+
+  error_processing_profile_filter_process:
+    handler: src/adapters/primary/profile/error_profile_filter_process.lambda_handler
+    events:
+      - sqs:
+          arn: !GetAtt SQSUserNotificatons.Arn
+
+  profile_query_brightdata:
+    handler: src/adapters/primary/profile/query_brightdata/index.lambda_handler
+    timeout: 310
+
+  url_profiles_query_brightdata:
+    handler: src/adapters/primary/profile/query_brightdata/url_profiles_query.lambda_handler
+    timeout: 310
+
+  check_snapshot_status_brightdata:
+    handler: src/adapters/primary/profile/query_brightdata/check_snaphot_status.lambda_handler
+
+  get_snapshot_data_brightdata:
+    handler: src/adapters/primary/profile/query_brightdata/get_snapshot_data.lambda_handler
+    timeout: 310
+
+  transform_and_refine_brightdata:
+    handler: src/adapters/primary/profile/query_brightdata/transform_and_refine.lambda_handler
+
+  query_and_build_openai_data:
+    handler: src/adapters/primary/profile/openai/query_and_build_openai_data.lambda_handler
+    timeout: 310
+
+  add_link_vacancy_form:
+    handler: src/adapters/primary/profile/filter/add_link_vacancy_form.lambda_handler
+
+  notify_completion_profile_filter_process:
+    handler: src/adapters/primary/profile/filter/notify_completion.lambda_handler
+
+  notify_failure_profile_filter_process:
+    handler: src/adapters/primary/profile/filter/notify_failure.lambda_handler
+
+  handler_sqs_user_notifications:
+    handler: src/adapters/primary/notifications/index.lambda_handler
+    events:
+      - sqs:
+          arn: !GetAtt SQSUserNotificatons.Arn
+
+  create_pipe_configuration_open_position:
+    handler: src/adapters/primary/pipefy/create_pipe_configuration_for_open_position.lambda_handler
+
+  pipefy_webhook:
+    handler: src/adapters/primary/pipefy/webhook.lambda_handler
+    events:
+      - http:
+          path: /pipefy/webhook
+          method: post
+          private: true
+
+  pipefy_card_move:
+    handler: src/adapters/primary/pipefy/card_move.lambda_handler
+    events:
+      - sqs:
+          arn: !GetAtt PipefyCardMoveQueue.Arn
+    timeout: 60
+
+  pipefy_field_update:
+    handler: src/adapters/primary/pipefy/field_update.lambda_handler
+    events:
+      - sqs:
+          arn: !GetAtt PipefyFieldUpdateQueue.Arn
+    timeout: 60
+
+  get_profile_search:
+    handler: src/adapters/primary/profile/get_profile_search.lambda_handler
+    events:
+      - http:
+          path: /profile/filter
+          method: get
+          cors: true
+          private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+
+stepFunctions:
+  stateMachines: ${file(./src/resources/brightdata/serverless.yml):stateMachines}
+
 plugins:
   - serverless-offline
-
-
-#    The following are a few example events you can configure
-#    NOTE: Please make sure to change your handler code to work with those events
-#    Check the event documentation for details
-#    events:
-#      - httpApi:
-#          path: /users/create
-#          method: get
-#      - websocket: $connect
-#      - s3: ${env:BUCKET}
-#      - schedule: rate(10 minutes)
-#      - sns: greeter-topic
-#      - stream: arn:aws:dynamodb:region:XXXXXX:table/foo/stream/1970-01-01T00:00:00.000
-#      - alexaSkill: amzn1.ask.skill.xx-xx-xx-xx
-#      - alexaSmartHome: amzn1.ask.skill.xx-xx-xx-xx
-#      - iot:
-#          sql: "SELECT * FROM 'some_topic'"
-#      - cloudwatchEvent:
-#          event:
-#            source:
-#              - "aws.ec2"
-#            detail-type:
-#              - "EC2 Instance State-change Notification"
-#            detail:
-#              state:
-#                - pending
-#      - cloudwatchLog: '/aws/lambda/hello'
-#      - cognitoUserPool:
-#          pool: MyUserPool
-#          trigger: PreSignUp
-#      - alb:
-#          listenerArn: arn:aws:elasticloadbalancing:us-east-1:XXXXXX:listener/app/my-load-balancer/50dc6c495c0c9188/
-#          priority: 1
-#          conditions:
-#            host: example.com
-#            path: /hello
-
-#    Define function environment variables here
-#    environment:
-#      variable2: value2
-
-# you can add CloudFormation resource templates here
-#resources:
-#  Resources:
-#    NewResource:
-#      Type: AWS::S3::Bucket
-#      Properties:
-#        BucketName: my-new-bucket
-#  Outputs:
-#     NewOutput:
-#       Description: "Description for the output"
-#       Value: "Some output value"
+  - serverless-python-requirements
+  - serverless-step-functions
+  - serverless-pseudo-parameters

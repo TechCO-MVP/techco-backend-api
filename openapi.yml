@@ -1,0 +1,1462 @@
+openapi: 3.1.0
+
+info:
+  title: TechCo Backend API
+  description: API documentation for the TechCo backend services.
+  version: 1.0.0
+
+servers:
+  - url: https://api.techco.com/v1
+    description: Production server
+  - url: https://staging-api.techco.com/v1
+    description: Staging server
+
+paths:
+  /sign_up:
+    post:
+      summary: Register a new user/company
+      description: Register a new user and their company.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        "201":
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /auth/signup:
+    post:
+      summary: Sign up a new user
+      description: Sign up a new user using Cognito.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        "200":
+          description: User signed up
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /business/create:
+    post:
+      summary: Create a new business
+      description: Create a new business entity.
+      parameters:
+        - name: Authorizer
+          in: header
+          required: true
+          description: The ID token of the user.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Business"
+      responses:
+        "200":
+          description: Business created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  body:
+                    $ref: "#/components/schemas/Business"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /business/update/{id}:
+    put:
+      summary: Update a business
+      description: Update an existing business entity.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the business to update.
+          schema:
+            type: string
+        - name: Authorizer
+          in: header
+          required: true
+          description: The ID token of the user.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Business"
+      responses:
+        "200":
+          description: Business updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  body:
+                    $ref: "#/components/schemas/Business"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /business/{id}:
+    get:
+      summary: Get a business
+      description: Get an existing business entity if it exists and is related to the user.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the business to retrieve.
+          schema:
+            type: string
+        - name: Authorizer
+          in: header
+          required: true
+          description: The ID token of the user.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Business retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Business"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /business/list:
+    get:
+      summary: Get all businesses
+      description: Get all businesses related to the user.
+      parameters:
+        - name: Authorizer
+          in: header
+          required: true
+          description: The ID token of the user.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Businesses retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Business"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /auth/start_auth:
+    post:
+      summary: Start authentication
+      description: Start the authentication process.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AuthStart"
+      responses:
+        "200":
+          description: Authentication started
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthStartResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exception"
+  /auth/verify_auth_otp_code_sign_up:
+    post:
+      summary: Verify OTP code
+      description: Verify the OTP code for authentication.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VerifyOTPSignUp"
+      responses:
+        "200":
+          description: OTP verified
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VerifyOTPResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exception"
+  /auth/refresh_tokens:
+    post:
+      summary: refresh tokens cognito
+      description: Service to refresh accessToken and IdToken from cognito.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/refreshTokens"
+      responses:
+        "200":
+          description: tokens refreshed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/refreshTokensResponse"
+        "500":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exception"
+  /auth/verify_auth_otp_code:
+    post:
+      summary: Verify OTP code
+      description: Verify the OTP code for authentication.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VerifyOTP"
+      responses:
+        "200":
+          description: OTP verified
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VerifyOTPResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exception"
+  /auth/sign_out:
+    post:
+      summary: Sign out
+      description: Sign out the authenticated user.
+      parameters:
+        - name: Authorizer
+          in: header
+          required: true
+          description: The ID token of the user.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignOut"
+      responses:
+        "200":
+          description: User signed out
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SignOutResponse"
+        "401":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SignOutError"
+        "500":
+          description: Exception response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exception"
+  /user/create:
+    post:
+      summary: Create user
+      description: Saves the data of a user in DocumentDB in the user collection, the email is a unique field that should not be repeated for any user.
+      parameters:
+        - name: Authorizer
+          in: header
+          required: true
+          description: The ID token of the user.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUser"
+      responses:
+        "200":
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateUserResponse"
+        "400":
+          description: Value error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateUserValueError"
+        "422":
+          description: Validation error request data and/or type data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateUserValidationError"
+        "500":
+          description: Exception response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exception"
+  /user/list:
+    get:
+      summary: List users
+      description: get user data for all user asociated to a business, or one user searched by id.
+      parameters:
+        - name: business_id
+          in: query
+          required: true
+          description: The ID of the business.
+          schema:
+            type: string
+        - name: id
+          in: query
+          required: false
+          description: The ID of the user.
+          schema:
+            type: string
+        - name: all
+          in: query
+          required: false
+          description: Flag to indicate if all users should be retrieved.
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: User found successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListUserResponse"
+        "400":
+          description: Value error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListUserValueError"
+        "500":
+          description: Exception response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exception"
+  /user/status:
+    put:
+      summary: Update users status
+      description: Update user status, if new ststus is disabled, signout session for user.
+      parameters:
+        - name: email
+          in: query
+          required: true
+          description: in the user's email that the update is being made.
+          schema:
+            type: string
+        - name: Authorizer
+          in: header
+          required: true
+          description: The ID token of the user.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserStatus"
+      responses:
+        "200":
+          description: User updated successfully / User disabled successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UpdateUserStatusResponse"
+        "400":
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Exception response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exception"
+  /user/data:
+    put:
+      summary: Update users general data
+      description: Update user general data, full_name or role.
+      parameters:
+        - name: Authorizer
+          in: header
+          required: true
+          description: The ID token of the user.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserData"
+      responses:
+        "200":
+          description: User updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UpdateUserDataResponse"
+        "400":
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Exception response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exception"
+  /position/list:
+    get:
+      summary: List positions
+      description: get vacancies data asociated to a business and the user, or an especific position_id.
+      parameters:
+        - name: business_id
+          in: query
+          required: true
+          description: The ID of the business.
+          schema:
+            type: string
+        - name: user_id
+          in: query
+          required: true
+          description: The ID of the user.
+          schema:
+            type: string
+        - name: id
+          in: query
+          required: false
+          description: The ID of the position.
+          schema:
+            type: string
+        - name: all
+          in: query
+          required: false
+          description: Flag to indicate if all users should be retrieved.
+          schema:
+            type: boolean
+        - name: Authorizer
+          in: header
+          required: true
+          description: The ID token of the user.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Position found successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListPositionResponse"
+        "400":
+          description: Value error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListPositionValueError"
+        "500":
+          description: Exception response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exception"
+  /position/token:
+    get:
+      summary: get data position by token JWT
+      description: get DATA vacancies asociated to a business and the hiring process and position.
+      parameters:
+        - name: token
+          in: query
+          required: true
+          description: The token of the especific hiring process asociated to the porfile.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Position found successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListPositionByTokenResponse"
+        "400":
+          description: Value error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListPositionByTokenValueError"
+        "500":
+          description: Exception response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exception"
+  /position/status:
+    put:
+      summary: upadte position status by position_id
+      description: update vacancies status asociated to a position id.
+      parameters:
+        - name: Authorizer
+          in: header
+          required: true
+          description: The ID token of the user.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdatePositionStatus"
+      responses:
+        "200":
+          description: Position updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UpdatePositionStatusResponse"
+        "400":
+          description: Value error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UpdatePositionStatusValueError"
+        "500":
+          description: Exception response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exception"
+  /hiring_process/id:
+    get:
+      summary: get data hiring_process by id
+      description: get DATA hiring process asociated to a position and user permissions.
+      parameters:
+        - name: hiring_process_id
+          in: query
+          required: true
+          description: The id of the especific hiring process.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Hiring process found successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HiringProcessByIdResponse"
+        "400":
+          description: Value error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HiringProcessByIdValueError"
+        "500":
+          description: Exception response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exception"
+  /profile/filter/start:
+    post:
+      summary: Start profile filter process
+      description: Start the profile filter process.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProfileFilterStart"
+      responses:
+        "200":
+          description: Profile filter process started
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProfileFilterStartResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Exception response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exception"
+
+components:
+  schemas:
+    Role:
+      type: string
+      enum:
+        - super_admin
+        - business_admin
+        - position_owner
+        - recruiter
+    BusinessRole:
+      type: object
+      properties:
+        business_id:
+          type: string
+          format: uuid
+        role:
+          type: string
+          $ref: "#/components/schemas/Role"
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        full_name:
+          type: string
+        email:
+          type: string
+          format: email
+        company_position:
+          type: string
+        roles:
+          type: array
+          minItems: 1
+          items:
+            $ref: "#/components/schemas/BusinessRole"
+        business:
+          type: object
+          properties:
+            name:
+              type: string
+            address:
+              type: string
+      required:
+        - full_name
+        - email
+        - company_position
+        - business
+    Business:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        country_code:
+          type: string
+        company_size:
+          type: string
+        logo:
+          type: string
+        description:
+          type: string
+        url:
+          type: string
+          format: uri
+        linkedin_url:
+          type: string
+          format: uri
+        segment:
+          type: string
+        industry:
+          type: string
+        parent_business_id:
+          type: string
+      required:
+        - name
+        - country_code
+        - company_size
+    AuthStart:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+    AuthStartResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: OTP sent successfully.
+        body:
+          type: object
+          properties:
+            session:
+              example: example_session_string
+    VerifyOTPSignUp:
+      type: object
+      properties:
+        session:
+          type: string
+          example: example_session_string
+        otp:
+          type: string
+          example: 1234
+        email:
+          type: string
+          example: mail.@mail.co
+        company_name:
+          type: string
+          example: Pepsico
+        company_position:
+          type: string
+          example: recruiter
+        country_code:
+          type: string
+          example: CO
+        company_size:
+          type: string
+          example: A
+          description: Should follow next pattern [A,B,C,D] https://learn.microsoft.com/en-us/linkedin/shared/references/reference-tables/company-size-codes
+    VerifyOTP:
+      type: object
+      properties:
+        email:
+          type: string
+          example: mail@mail.co.
+        session:
+          type: string
+          example: example_session_string
+        otp:
+          type: string
+          example: 123456
+    VerifyOTPResponseSignUp:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Successfully authenticated.
+        body:
+          type: object
+          properties:
+            idToken:
+              type: string
+              example: fake_id_token.
+            accessToken:
+              type: string
+              example: fake access token.
+            refreshToken:
+              type: string
+              example: fale refresh token.
+            user:
+              type: object
+              $ref: "#/components/schemas/User"
+            business:
+              type: object
+              $ref: "#/components/schemas/Business"
+    VerifyOTPResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Successfully authenticated.
+        idToken:
+          type: string
+          example: fake_id_token.
+        accessToken:
+          type: string
+          example: fake access token.
+        refreshToken:
+          type: string
+          example: fale refresh token.
+    refreshTokens:
+      type: object
+      properties:
+        refresh_token:
+          type: string
+          example: fake-refresh-token
+    refreshTokensResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Tokens refreshed successfully.
+        body:
+          type: object
+          properties:
+            idToken:
+              type: string
+              example: fake_id_token.
+            accessToken:
+              type: string
+              example: fake access token.
+            expires_in:
+              type: string
+              example: 36000
+    SignOut:
+      type: object
+      properties:
+        access_token:
+          type: string
+          example: fake access token.
+    SignOutResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: User successfully signed out.
+    SignOutError:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Unauthorized Invalid or expired token.
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+    Exception:
+      type: object
+      properties:
+        error:
+          type: string
+          example: Unexpected error
+    CreateUser:
+      type: object
+      properties:
+        business_id:
+          type: string
+          example: id_123456kjhsad_3124987_sdak
+        full_name:
+          type: string
+          example: name completed user
+        email:
+          type: string
+          example: fake@mail.co
+        company_position:
+          type: string
+          example: auxiliar rrhh
+        role:
+          type: string
+          $ref: "#/components/schemas/Role"
+          example: recruiter
+      required:
+        - business_id
+        - full_name
+        - email
+        - company_position
+        - role
+    CreateUserResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: User created successfully.
+        body:
+          type: object
+          properties:
+            user:
+              type: object
+              properties:
+                _id:
+                  type: string
+                  example: id_123456kjhsad_3124987_sdak
+    CreateUserValueError:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Validation error while saving user.
+    CreateUserValidationError:
+      type: object
+      properties:
+        message:
+          type: string
+          example: 1 validation error for UserDTO\nfull_name\n  Field required...
+    ListUserResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: User found successfully.
+        body:
+          type: object
+          properties:
+            data:
+              type: object
+              properties:
+                _id:
+                  type: string
+                  example: id_123456kjhsad_3124987_sdak
+                full_name:
+                  type: string
+                  example: name_1 name_2 last_name
+                email:
+                  type: string
+                  example: ecxample@email.com
+                company_position:
+                  type: string
+                  example: recluter rrhh
+                rol:
+                  type: string
+                  example: id_123456kjhsad_3124987_sdak
+                business_id:
+                  type: string
+                  example: id_123456kjhsad_3124987_sdak
+                status:
+                  type: string
+                  example: active
+    ListUserValueError:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Validation error while saving user.
+    UpdateUserStatus:
+      type: object
+      properties:
+        user_id:
+          type: string
+          example: id_123456kjhsad_3124987_sdak
+        user_status:
+          type: string
+          example: enabled
+        user_email:
+          type: string
+          example: fake@mail.co
+      required:
+        - user_id
+        - user_status
+        - user_email
+    UpdateUserStatusResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: User updated successfully.
+    UpdateUserData:
+      type: object
+      properties:
+        user_id:
+          type: string
+          example: id_123456kjhsad_3124987_sdak
+        user_full_name:
+          type: string
+          example: pepito perez
+        user_role:
+          type: string
+          example: recruiter
+        user_email:
+          type: string
+          example: fake@mail.co
+        business_id:
+          type: string
+          example: id_123456kjhsad_3124987_sdak
+      required:
+        - user_id
+        - user_email
+    UpdateUserDataResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: User updated successfully.
+    ListPositionResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Position found successfully.
+        body:
+          type: object
+          properties:
+            data:
+              type: array
+              items:
+                type: object
+                properties:
+                  hiring_processes:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        card_id:
+                          type: string
+                          example: "1234568979"
+                        status:
+                          type: string
+                          example: "STARTED"
+                        id:
+                          type: string
+                          example: "67c930fe1ad8328f2a3184c2"
+                  owner_position_user:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: "mario zamora"
+                      id:
+                        type: string
+                        example: "6777862efe77308365432a36"
+                  recruiter_user:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: "johan parra"
+                      id:
+                        type: string
+                        example: "679077da2d6626a2b007f8fa"
+                  responsible_users:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          example: "johan parra"
+                        id:
+                          type: string
+                          example: "679077da2d6626a2b007f8fa"
+                        can_edit:
+                          type: boolean
+                          example: true
+                  role:
+                    type: string
+                    example: "developer"
+                  hiring_priority:
+                    type: string
+                    enum: ["low", "medium", "high"]
+                    example: "high"
+    ListPositionValueError:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Validation error while get position.
+    UpdatePositionStatus:
+      type: object
+      properties:
+        user_id:
+          type: string
+          example: id_123456kjhsad_3124987_sdak
+        position_status:
+          type: string
+          example: INACTIVE
+        position_id:
+          type: string
+          example: id_123456kjhsad_3124987_sdak
+      required:
+        - user_id
+        - position_status
+        - position_id
+    UpdatePositionStatusResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Position updated successfully.
+        body:
+          type: object
+          properties:
+            data:
+              type: object
+              properties:
+                id:
+                  type: string
+                  example: "679077da2d6626a2b007f8f9"
+                created_at:
+                  type: string
+                  example: "2025-01-03T01:34:59.063000"
+                updated_at:
+                  type: string
+                  example: "2025-01-03T01:34:59.063000"
+                deleted_at:
+                  type: string
+                  nullable: true
+                  example: null
+                props:
+                  type: object
+                  properties:
+                    business_id:
+                      type: string
+                      example: "679077da2d6626a2b007f8f9"
+                    owner_position_user_id:
+                      type: string
+                      example: "679077da2d6626a2b007f8f9"
+                    recruiter_user_id:
+                      type: string
+                      example: "679077da2d6626a2b007f8f9"
+                    responsible_users:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          user_id:
+                            type: string
+                            example: "679077da2d6626a2b007f8f9"
+                          can_edit:
+                            type: boolean
+                            example: true
+                    role:
+                      type: string
+                      example: "developer"
+                    hiring_priority:
+                      type: string
+                      example: "high"
+                    seniority:
+                      type: string
+                      example: "junior"
+                    country:
+                      type: string
+                      example: "CO"
+                    city:
+                      type: string
+                      example: "Bogota"
+                    description:
+                      type: string
+                      example: "description"
+                    responsabilities:
+                      type: array
+                      items:
+                        type: string
+                      example: ["responsability_1", "responsability_2"]
+                    skills:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            example: "django"
+                          required:
+                            type: boolean
+                            example: true
+                    benefits:
+                      type: string
+                      example: "plan carrera"
+                    salary_range:
+                      type: object
+                      properties:
+                        currency:
+                          type: string
+                          example: "COP"
+                        salary:
+                          type: string
+                          example: "10000000"
+                        salary_range:
+                          type: string
+                          example: "9000000 - 12000000"
+                    languages:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            example: "ingles"
+                          level:
+                            type: string
+                            example: high
+                    work_mode:
+                      type: string
+                      example: "Remote"
+                    status:
+                      type: string
+                      example: "ACTIVE"
+    UpdatePositionStatusValueError:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Validation error while get position.
+    ListPositionByTokenResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Position found successfully.
+        body:
+          type: object
+          properties:
+            data:
+              type: object
+              properties:
+                business_name:
+                  type: string
+                  example: "Techco"
+                business_id:
+                  type: string
+                  example: "679077da2d6626a2b007f8f9"
+                business_logo:
+                  type: string
+                  example: "logo.jpg"
+                business_description:
+                  type: string
+                  example: "business description large"
+                position_id:
+                  type: string
+                  example: "67c7639f1ad8328f2a3184aa"
+                position_role:
+                  type: string
+                  example: "developer frontend"
+                position_country:
+                  type: string
+                  example: "CO"
+                position_city:
+                  type: string
+                  example: "Bogota"
+                position_work_mode:
+                  type: string
+                  example: "Remote"
+                position_description:
+                  type: string
+                  example: "fromt end senior Bogota"
+                position_responsabilities:
+                  type: array
+                  items:
+                    type: string
+                  example: ["responsability_1", "responsability_2"]
+                position_skills:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: "django"
+                      required:
+                        type: boolean
+                        example: true
+                position_benefits:
+                  type: string
+                  example: "plan carrera"
+                position_salary_range:
+                  type: object
+                  properties:
+                    currency:
+                      type: string
+                      example: "COP"
+                    salary:
+                      type: string
+                      example: "10000000"
+                    salary_range:
+                      type: string
+                      example: "9000000 - 12000000"
+                hiring_id:
+                  type: string
+                  example: "67c930fe1ad8328f2a3184c2"
+                hiring_profile_name:
+                  type: string
+                  example: "fullname pepito perez"
+                hiring_card_id:
+                  type: string
+                  example: "1234568979"
+    ListPositionByTokenValueError:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Validation error while get position.
+    HiringProcessByIdResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Hiring process found successfully.
+        body:
+          type: object
+          properties:
+            data:
+              type: object
+              properties:
+                position_country:
+                  type: string
+                  example: "CO"
+                position_city:
+                  type: string
+                  example: "Bogota"
+                position_status:
+                  type: string
+                  example: "ACTIVE"
+                recruiter_id:
+                  type: string
+                  example: "67c7639f1ad8328f2a3184aa"
+                recruiter_name:
+                  type: string
+                  example: "pepito perez"
+                owner_id:
+                  type: string
+                  example: "67c7639f1ad8328f2a3184fa"
+                owner_name:
+                  type: string
+                  example: "Juan perez"
+                stakeholders:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      stakeholder_id:
+                        type: string
+                        example: "67c7639f1ad8328f2a3184dd"
+                      stakeholder_name:
+                        type: string
+                        example: "Ana Bello"
+                      can_edit:
+                        type: boolean
+                        example: true
+    HiringProcessByIdValueError:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Validation error while get Hiring process.
+    ProfileFilterStart:
+      type: object
+      properties:
+        business_id:
+          type: string
+          example: id_123456kjhsad_3124987_sdak
+        position_id:
+          type: string
+          example: id_123456kjhsad_3124987_sdak
+        role:
+          type: string
+          example: recruiter
+        seniority:
+          type: string
+          example: junior
+        country_code:
+          type: string
+          example: CO
+        city:
+          type: string
+          example: Bogota
+        description:
+          type: string
+          example: description
+        responsabilities:
+          type: array
+          items:
+            type: string
+          example: [responsability_1, responsability_2]
+        skills:
+          type: array
+          items:
+            type: string
+          example: [django, python]
+      required:
+        - business_id
+        - position_id
+        - role
+        - seniority
+        - country_code
+        - city
+        - description
+        - responsabilities
+        - skills
+
+    ProfileFilterStartResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Profile filter process started.
+        body:
+          type: object
+          properties:
+            id:
+              type: string
+              example: id_123456kjhsad_3124987_sdak
+            position_id:
+              type: string
+              example: id_123456kjhsad_3124987_sdak
+            business_id:
+              type: string
+              example: id_123456kjhsad_3124987_sdak
+            process_filters:
+              $ref: "#/components/schemas/ProfileFilterStart"

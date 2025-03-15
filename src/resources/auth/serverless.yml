@@ -1,0 +1,53 @@
+service: passwordless-auth
+frameworkVersion: '3'
+
+provider:
+  name: aws
+
+CognitoUserPool:
+  Type: AWS::Cognito::UserPool
+  Properties:
+    UserPoolName: ${self:provider.stage}-passwordless-user-pool
+    Policies:
+      PasswordPolicy:
+        MinimumLength: 8
+        RequireLowercase: false
+        RequireUppercase: false
+        RequireNumbers: false
+        RequireSymbols: false
+    AutoVerifiedAttributes:
+      - email
+    UsernameAttributes:
+      - email
+    Schema:
+      - Name: email
+        Required: true
+        Mutable: false
+      - Name: name
+        Required: true
+        Mutable: true
+
+CognitoPasswordlessUserPoolClient:
+  Type: AWS::Cognito::UserPoolClient
+  Properties:
+    ClientName: ${self:provider.stage}-passwordless-user-pool-client
+    UserPoolId:
+      Ref: CognitoUserPool
+    GenerateSecret: false
+    ExplicitAuthFlows:
+      - CUSTOM_AUTH_FLOW_ONLY
+    SupportedIdentityProviders:
+      - COGNITO
+
+
+ApiGatewayAuthorizer:
+  Type: AWS::ApiGateway::Authorizer
+  Properties:
+    AuthorizerResultTtlInSeconds: 300
+    IdentitySource: method.request.header.Authorization
+    Name: CustomCognitoAuthorizer
+    RestApiId:
+      Ref: ApiGatewayRestApi
+    Type: COGNITO_USER_POOLS
+    ProviderARNs:
+      - !GetAtt CognitoUserPool.Arn

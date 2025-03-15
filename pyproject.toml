@@ -8,6 +8,14 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.11"
 boto3 = "^1.35.71"
+aws-lambda-powertools = "^3.3.0"
+pydantic = "^2.10.4"
+pymongo = "^4.10.1"
+email-validator = "^2.2.0"
+openai = "^1.61.1"
+requests = "^2.31.0"
+PyJWT = "^2.10.1"
+
 
 [tool.poetry.group.dev.dependencies]
 black = "^24.10.0"
@@ -16,8 +24,15 @@ isort = "^5.13.2"
 pytest = "^8.3.3"
 pre-commit = "^4.0.1"
 mypy = "^1.13.0"
+pytest-cov = "^6.0.0"
+pytest-mock = "^3.14.0"
+moto = "^5.0.23"
+python-dotenv = "^1.0.1"
+
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
+[tool.pytest.ini_options]
+addopts = "-v -s --cov=src --cov-report=html --cov-fail-under=80 --cov-report=term-missing"

@@ -1,0 +1,112 @@
+service: backend-proposal-v2
+
+provider:
+  name: aws
+  architecture: x86_64
+  stage: ${opt:stage, 'dev'}
+  region: us-east-1
+
+PipefyEventBus:
+  Type: AWS::Events::EventBus
+  Properties:
+    Name: ${self:provider.stage}-pipefy-event-bus
+    Tags:
+      - Key: Environment
+        Value: ${self:provider.stage}
+      - Key: Name
+        Value: ${self:provider.stage}-pipefy-event-bus
+
+PipefyCardMoveRule:
+  Type: AWS::Events::Rule
+  Properties:
+    Name: ${self:provider.stage}-pipefy-card-move-rule
+    Description: Rule to trigger the card move event
+    EventBusName: !Ref PipefyEventBus
+    EventPattern:
+      source:
+        - pipefy
+      detail-type:
+        - "card.move"
+    State: ENABLED
+    Targets:
+      - Id: PipefyCardMoveQueue
+        Arn: !GetAtt PipefyCardMoveQueue.Arn
+        SqsParameters:
+          MessageGroupId: "$.detail.data.card.id"
+
+PipefyFieldUpdateRule:
+  Type: AWS::Events::Rule
+  Properties:
+    Name: ${self:provider.stage}-pipefy-field-update-rule
+    Description: Rule to trigger the field update event
+    EventBusName: !Ref PipefyEventBus
+    EventPattern:
+      source:
+        - pipefy
+      detail-type:
+        - "card.field_update"
+    State: ENABLED
+    Targets:
+      - Id: PipefyFieldUpdateQueue
+        Arn: !GetAtt PipefyFieldUpdateQueue.Arn
+        SqsParameters:
+          MessageGroupId: "$.detail.data.card.id"
+
+PipefyCardMoveQueue:
+  Type: AWS::SQS::Queue
+  Properties:
+    QueueName: ${self:provider.stage}-pipefy-card-move-queue.fifo
+    FifoQueue: true
+    ContentBasedDeduplication: true
+    DeduplicationScope: messageGroup
+    VisibilityTimeout: 120
+    DelaySeconds: 120
+    ReceiveMessageWaitTimeSeconds: 20
+    Tags:
+      - Key: Environment
+        Value: ${self:provider.stage}
+      - Key: Name
+        Value: ${self:provider.stage}-pipefy-card-move-queue
+
+PipefyFieldUpdateQueue:
+  Type: AWS::SQS::Queue
+  Properties:
+    QueueName: ${self:provider.stage}-pipefy-field-update-queue.fifo
+    FifoQueue: true
+    ContentBasedDeduplication: true
+    DeduplicationScope: messageGroup
+    VisibilityTimeout: 120
+    DelaySeconds: 0
+    ReceiveMessageWaitTimeSeconds: 20
+    Tags:
+      - Key: Environment
+        Value: ${self:provider.stage}
+      - Key: Name
+        Value: ${self:provider.stage}-pipefy-field-update-queue
+
+EventBridgeToSQSRole:
+  Type: AWS::IAM::Role
+  Properties:
+    RoleName: ${self:provider.stage}-eventbridge-to-sqs-role
+    AssumeRolePolicyDocument:
+      Version: "2012-10-17"
+      Statement:
+        - Effect: Allow
+          Principal:
+            Service: events.amazonaws.com
+          Action: sts:AssumeRole
+    Policies:
+      - PolicyName: AllowEventBridgeToSQS
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Action:
+                - sqs:SendMessage
+                - sqs:SendMessageBatch
+                - sqs:ReceiveMessage
+                - sqs:DeleteMessage
+                - sqs:GetQueueAttributes
+              Resource:
+                - !GetAtt PipefyCardMoveQueue.Arn
+                - !GetAtt PipefyFieldUpdateQueue.Arn
