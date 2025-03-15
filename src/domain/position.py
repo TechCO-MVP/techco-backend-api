@@ -37,10 +37,15 @@ class Languages(BaseModel):
     level: str
 
 
+class Range(BaseModel):
+    min: str
+    max: str
+
+
 class Salary(BaseModel):
     currency: str
     salary: str
-    salary_range: str
+    salary_range: Range
 
 
 class PositionStakeholders(BaseModel):
