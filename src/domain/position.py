@@ -22,9 +22,9 @@ class LEVEL(str, Enum):
 
 
 class WORK_MODE(str, Enum):
-    REMOTE = "Remote"
-    HYBRID = "Hybrid "
-    ON_SITE = "On-site"
+    REMOTE = "REMOTE"
+    HYBRID = "HYBRYD"
+    ON_SITE = "ON_SITE"
 
 
 class Skill(BaseModel):
