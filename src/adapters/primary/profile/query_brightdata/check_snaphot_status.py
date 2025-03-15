@@ -4,7 +4,9 @@ from aws_lambda_powertools.utilities.typing import LambdaContext
 
 from src.domain.base_entity import from_dto_to_entity
 from src.domain.profile import ProfileFilterProcessEntity
-from src.use_cases.profile.validate_status_profile_query import validate_status_profile_query_use_case
+from src.use_cases.profile.validate_status_profile_query import (
+    validate_status_profile_query_use_case,
+)
 
 logger = Logger()
 
@@ -74,7 +76,6 @@ def lambda_handler(event, context: LambdaContext) -> dict:
         validate_status_profile_query_use_case(profile_process_entity)
 
         return profile_process_entity.to_dto(flat=True)
-
 
     except Exception as e:
         process_dto = profile_process_entity.to_dto(flat=True)

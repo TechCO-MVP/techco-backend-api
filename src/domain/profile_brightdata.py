@@ -116,7 +116,7 @@ class SimilarProfile(BaseModel):
 
 
 class ProfileBrightDataDTO(BaseModel):
-    timestamp: str
+    timestamp: Optional[str] = None
     linkedin_num_id: str
     name: Optional[str] = None
     country_code: Optional[str] = None
@@ -143,7 +143,7 @@ class ProfileBrightDataDTO(BaseModel):
     current_company_name: Optional[str] = None
     publications: Optional[str] = None
     patents: Optional[str] = None
-    projects: Optional[str] = None
+    projects: Optional[List] = None
     organizations: Optional[List[Organization]] = None
     input_url: Optional[str] = None
     linkedin_id: Optional[str] = None

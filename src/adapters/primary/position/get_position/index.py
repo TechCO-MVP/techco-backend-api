@@ -17,7 +17,7 @@ def get_position():
 
         query_params = app.current_event.query_string_parameters
         GetPositionQueryParams.validate_params(query_params)
-        
+
         response = get_position_use_case(query_params)
 
         message = "Position found successfully" if response else "Position not found"
