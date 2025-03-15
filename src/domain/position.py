@@ -22,9 +22,9 @@ class LEVEL(str, Enum):
 
 
 class WORK_MODE(str, Enum):
-    REMOTE = "Remote"
-    HYBRID = "Hybrid "
-    ON_SITE = "On-site"
+    REMOTE = "REMOTE"
+    HYBRID = "HYBRYD"
+    ON_SITE = "ON_SITE"
 
 
 class Skill(BaseModel):
@@ -44,8 +44,8 @@ class Range(BaseModel):
 
 class Salary(BaseModel):
     currency: str
-    salary: str
-    salary_range: Range
+    salary: Optional[str] = None
+    salary_range: Optional[Range] = None
 
 
 class PositionStakeholders(BaseModel):
@@ -70,7 +70,7 @@ class PositionDTO(BaseModel):
     work_mode: WORK_MODE
     status: PROCESS_STATUS = PROCESS_STATUS.DRAFT
     benefits: Optional[List[str]] = Field(default_factory=list)
-    salary_range: Optional[Union[Salary, List]] = Field(default_factory=list)
+    salary: Optional[Salary] = None
 
     @model_validator(mode="before")
     def validate_and_convert_fields(cls, values):
