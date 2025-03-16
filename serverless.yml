@@ -400,7 +400,6 @@ functions:
             parameters:
               querystrings:
                 business_id: true
-                user_id: true
 
   get_position_by_token:
     handler: src/adapters/primary/position/get_position_token/index.handler

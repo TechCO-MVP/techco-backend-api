@@ -11,6 +11,13 @@ def event():
         "path": "/position/list",
         "httpMethod": "GET",
         "headers": {"Authorization": "fake-access-token"},
+        "requestContext": {
+            "authorizer": {
+                "claims": {
+                    "email": "mario_1@mail.com"
+                }
+            }
+        },
         "queryStringParameters": {
             "business_id": "6778c3fa49a61649b054659d",
             "user_id": "6778c3fa49a61649b05465us",
@@ -44,7 +51,7 @@ def test_get_position_value_error(event, lambda_context):
 
     event["queryStringParameters"] = {}
     response = handler(event, lambda_context)
-
+    
     assert response["statusCode"] == 400
     assert "Invalid query parameters" in json.loads(response["body"])["message"]
 

@@ -111,7 +111,7 @@ def build_response(business: BusinessEntity, position: PositionEntity, hiring: H
         "position_responsabilities": position.props.responsabilities,
         "position_skills": [{'name': skill.name, 'required': skill.required} for skill in position.props.skills],
         "position_benefits": position.props.benefits or None,
-        "position_salary_range": position.props.salary_range or None,
+        "position_salary_range": position.props.salary or None,
         "hiring_id": hiring.id,
         "hiring_profile_name": hiring.props.profile.name,
         "hiring_card_id": hiring.props.card_id

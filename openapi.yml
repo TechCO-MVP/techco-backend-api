@@ -1050,68 +1050,130 @@ components:
       properties:
         message:
           type: string
-          example: Position found successfully.
+          example: Position updated successfully.
         body:
           type: object
           properties:
             data:
-              type: array
-              items:
-                type: object
-                properties:
-                  hiring_processes:
-                    type: array
-                    items:
+              type: object
+              properties:
+                id:
+                  type: string
+                  example: "679077da2d6626a2b007f8f9"
+                created_at:
+                  type: string
+                  example: "2025-01-03T01:34:59.063000"
+                updated_at:
+                  type: string
+                  example: "2025-01-03T01:34:59.063000"
+                deleted_at:
+                  type: string
+                  nullable: true
+                  example: null
+                props:
+                  type: object
+                  properties:
+                    business_id:
+                      type: string
+                      example: "679077da2d6626a2b007f8f9"
+                    owner_position_user_id:
+                      type: string
+                      example: "679077da2d6626a2b007f8f9"
+                    owner_position_user_name:
+                      type: string
+                      example: "pepito owner position"
+                    recruiter_user_id:
+                      type: string
+                      example: "679077da2d6626a2b007f8f9"
+                    recruiter_user_name:
+                      type: string
+                      example: "pablo user recruiter"
+                    responsible_users:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          user_id:
+                            type: string
+                            example: "679077da2d6626a2b007f8f9"
+                          can_edit:
+                            type: boolean
+                            example: true
+                    role:
+                      type: string
+                      example: "developer"
+                    hiring_priority:
+                      type: string
+                      example: "high"
+                    seniority:
+                      type: string
+                      example: "junior"
+                    country:
+                      type: string
+                      example: "CO"
+                    city:
+                      type: string
+                      example: "Bogota"
+                    description:
+                      type: string
+                      example: "description"
+                    responsabilities:
+                      type: array
+                      items:
+                        type: string
+                      example: ["responsability_1", "responsability_2"]
+                    skills:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            example: "django"
+                          required:
+                            type: boolean
+                            example: true
+                    benefits:
+                      type: string
+                      example: "plan carrera"
+                    salary_range:
                       type: object
                       properties:
-                        card_id:
+                        currency:
                           type: string
-                          example: "1234568979"
-                        status:
+                          example: "COP"
+                        salary:
                           type: string
-                          example: "STARTED"
-                        id:
-                          type: string
-                          example: "67c930fe1ad8328f2a3184c2"
-                  owner_position_user:
-                    type: object
-                    properties:
-                      name:
-                        type: string
-                        example: "mario zamora"
-                      id:
-                        type: string
-                        example: "6777862efe77308365432a36"
-                  recruiter_user:
-                    type: object
-                    properties:
-                      name:
-                        type: string
-                        example: "johan parra"
-                      id:
-                        type: string
-                        example: "679077da2d6626a2b007f8fa"
-                  responsible_users:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        name:
-                          type: string
-                          example: "johan parra"
-                        id:
-                          type: string
-                          example: "679077da2d6626a2b007f8fa"
-                        can_edit:
-                          type: boolean
-                          example: true
-                  role:
-                    type: string
-                    example: "developer"
-                  hiring_priority:
-                    type: string
-                    enum: ["low", "medium", "high"]
-                    example: "high"
+                          nullable: true
+                          example: "10000000"
+                        salary_range:
+                          type: object
+                          nullable: true
+                          properties:
+                            min:
+                              type: string
+                              example: "9000000"
+                            max:
+                              type: string
+                              example: "12000000"
+                    languages:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            example: "ingles"
+                          level:
+                            type: string
+                            example: high
+                    work_mode:
+                      type: string
+                      example: "Remote"
+                    status:
+                      type: string
+                      example: "ACTIVE"
+                    
     ListPositionValueError:
       type: object
       properties:
@@ -1227,10 +1289,18 @@ components:
                           example: "COP"
                         salary:
                           type: string
+                          nullable: true
                           example: "10000000"
                         salary_range:
-                          type: string
-                          example: "9000000 - 12000000"
+                          type: object
+                          nullable: true
+                          properties:
+                            min:
+                              type: string
+                              example: "9000000"
+                            max:
+                              type: string
+                              example: "12000000"
                     languages:
                       type: array
                       items:
@@ -1325,8 +1395,15 @@ components:
                       type: string
                       example: "10000000"
                     salary_range:
-                      type: string
-                      example: "9000000 - 12000000"
+                      type: object
+                      nullable: true
+                      properties:
+                        min:
+                          type: string
+                          example: "9000000"
+                        max:
+                          type: string
+                          example: "12000000"
                 hiring_id:
                   type: string
                   example: "67c930fe1ad8328f2a3184c2"

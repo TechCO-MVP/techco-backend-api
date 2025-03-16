@@ -97,7 +97,6 @@ class PositionDTO(BaseModel):
 
 class GetPositionQueryParams(BaseModel):
     business_id: str
-    user_id: str
     id: Optional[str] = None
     all: Optional[bool] = None
 
