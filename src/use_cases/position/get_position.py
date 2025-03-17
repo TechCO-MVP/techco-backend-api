@@ -42,7 +42,9 @@ def build_response(positions: List[PositionEntity], hiring_repository: HiringPro
 
     for position in positions:
         data = position.to_dto(flat=True)
-        data["total_hiring_processes"] = len(hiring_repository.getByPositionId({"position_id": position.id}))
+        hiring_processes = hiring_repository.getByPositionId({"position_id": position.id})
+        data["hiring_processes"] = [hiring_process.to_dto(flat=True) for hiring_process in hiring_processes]
+        data["total_hiring_processes"] = len(hiring_processes)
         data["owner_position_user_name"] = user_repository.getById(data["owner_position_user_id"]).props.full_name
         data["recruiter_user_name"] = user_repository.getById(data["recruiter_user_id"]).props.full_name
         
