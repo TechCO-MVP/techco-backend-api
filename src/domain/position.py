@@ -71,6 +71,7 @@ class PositionDTO(BaseModel):
     status: PROCESS_STATUS = PROCESS_STATUS.DRAFT
     benefits: Optional[List[str]] = Field(default_factory=list)
     salary: Optional[Salary] = None
+    pipe_id: Optional[str] = None
 
     @model_validator(mode="before")
     def validate_and_convert_fields(cls, values):
