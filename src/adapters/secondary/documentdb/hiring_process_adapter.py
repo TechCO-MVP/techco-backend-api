@@ -4,10 +4,10 @@ from pymongo.database import Database
 
 from src.db.constants import HIRING_PROCESS_COLLECTION_NAME
 from src.domain.base_entity import from_dto_to_entity
-from src.repositories.repository import IRepository
 from src.domain.hiring_process import HiringProcessEntity
-from src.repositories.document_db.client import DocumentDBClient
 from src.errors.entity_not_found import EntityNotFound
+from src.repositories.document_db.client import DocumentDBClient
+from src.repositories.repository import IRepository
 
 logger = Logger("HiringProcessDBAdapter")
 
@@ -104,7 +104,7 @@ class HiringProcessDBAdapter(IRepository[HiringProcessEntity]):
             )
         return hiring_processes_entities
 
-    def getByLinkedinNumId(self, params: dict) -> HiringProcessEntity| None:
+    def getByLinkedinNumId(self, params: dict) -> HiringProcessEntity | None:
         collection = self._client[self._collection_name]
         hiring_process_data = collection.find_one(params)
 
@@ -113,5 +113,5 @@ class HiringProcessDBAdapter(IRepository[HiringProcessEntity]):
 
         hiring_process_data["_id"] = str(hiring_process_data["_id"])
         hiring_processes_entities = from_dto_to_entity(HiringProcessEntity, hiring_process_data)
-        
+
         return hiring_processes_entities

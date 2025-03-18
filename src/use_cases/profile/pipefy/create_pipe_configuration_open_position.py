@@ -92,7 +92,7 @@ def create_pipe_configuration_open_position(
     profile_filter_process.props.status = PROCESS_STATUS.COMPLETED
     profile_filter_process.props.profiles = updated_profiles
 
-    profile_filter_process_repository.update(profile_filter_process_id, profile_filter_process)
+    profile_filter_process_repository.update(profile_filter_process.id, profile_filter_process)
 
     # update position
     position_repository = PositionRepository()
@@ -101,3 +101,5 @@ def create_pipe_configuration_open_position(
     position.props.status = POSITION_STATUS.ACTIVE
 
     position_repository.update(position_id, position)
+
+    return profile_filter_process.to_dto(flat=True)
