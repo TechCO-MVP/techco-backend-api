@@ -81,10 +81,12 @@ class PositionDBAdapter(IRepository[PositionEntity]):
         position["updated_at"] = datetime.now().isoformat()
 
         collection = self._client[self._collection_name]
-        collection.update_one(
+        result = collection.update_one(
             {"_id": ObjectId(id)}, {"$set": position}, session=self._session
         )
 
+        logger.info(f"Entity updated with id: {id}")
+        logger.info(result)
         return entity
 
     def delete(self, id: str):

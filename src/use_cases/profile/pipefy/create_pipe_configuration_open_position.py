@@ -4,12 +4,14 @@ from src.constants.index import API_URL, DEFAULT_PIPE_TEMPLATE_ID
 from src.domain.hiring_process import HiringProcessDTO
 from src.domain.profile_brightdata import ProfileBrightDataDTO
 from src.domain.profile import PROCESS_STATUS
+from src.domain.position import POSITION_STATUS
 from src.errors.entity_not_found import EntityNotFound
 from src.repositories.document_db.profile_filter_process import ProfileFilterProcessRepository
 from src.repositories.pipefy.card_repository import CardRepository
 from src.repositories.pipefy.mapping.index import map_profile_bright_data_fields
 from src.repositories.pipefy.pipe_repository import PipeRepository
 from src.repositories.pipefy.webhook_repository import WebhookRepository
+from src.repositories.document_db.position_repository import PositionRepository
 from src.services.graphql.graphql_service import get_client
 from src.use_cases.hiring_process.create_hiring_process import create_hiring_process_use_case
 
@@ -85,10 +87,17 @@ def create_pipe_configuration_open_position(
     actions = ["card.field_update", "card.move"]
     webhook_repository.create_webhook(pipe_id, f"{API_URL}/pipefy/webhook", webhook_name, actions)
 
-    # TODO: update position with pipe_id
-
     # update profile
     profile_filter_process.props.pipe_id = pipe_id
     profile_filter_process.props.status = PROCESS_STATUS.COMPLETED
     profile_filter_process.props.profiles = updated_profiles
+
     profile_filter_process_repository.update(profile_filter_process_id, profile_filter_process)
+
+    # update position
+    position_repository = PositionRepository()
+    position = position_repository.getById(position_id)
+    position.props.pipe_id = pipe_id
+    position.props.status = POSITION_STATUS.ACTIVE
+
+    position_repository.update(position_id, position)

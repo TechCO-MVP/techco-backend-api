@@ -89,6 +89,7 @@ class ProfileFilterProcessDocumentDBAdapter(IRepository[ProfileFilterProcessEnti
             {"_id": ObjectId(id)}, {"$set": profile_filter_process_data}, session=self._session
         )
 
+        logger.info(f"Update result: {result}")
         if result.matched_count == 0:
             logger.warning(f"No document found with id: {id}")
         elif result.modified_count == 0:
