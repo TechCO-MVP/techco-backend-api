@@ -1050,68 +1050,352 @@ components:
       properties:
         message:
           type: string
-          example: Position found successfully.
+          example: Position updated successfully.
         body:
           type: object
           properties:
             data:
-              type: array
-              items:
-                type: object
-                properties:
-                  hiring_processes:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        card_id:
-                          type: string
-                          example: "1234568979"
-                        status:
-                          type: string
-                          example: "STARTED"
-                        id:
-                          type: string
-                          example: "67c930fe1ad8328f2a3184c2"
-                  owner_position_user:
+              type: object
+              properties:
+                id:
+                  type: string
+                  example: "679077da2d6626a2b007f8f9"
+                created_at:
+                  type: string
+                  example: "2025-01-03T01:34:59.063000"
+                updated_at:
+                  type: string
+                  example: "2025-01-03T01:34:59.063000"
+                deleted_at:
+                  type: string
+                  nullable: true
+                  example: null
+                business_id:
+                  type: string
+                  example: "679077da2d6626a2b007f8f9"
+                owner_position_user_id:
+                  type: string
+                  example: "679077da2d6626a2b007f8f9"
+                owner_position_user_name:
+                  type: string
+                  example: "pepito owner position"
+                recruiter_user_id:
+                  type: string
+                  example: "679077da2d6626a2b007f8f9"
+                recruiter_user_name:
+                  type: string
+                  example: "pablo user recruiter"
+                responsible_users:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      user_id:
+                        type: string
+                        example: "679077da2d6626a2b007f8f9"
+                      can_edit:
+                        type: boolean
+                        example: true
+                role:
+                  type: string
+                  example: "developer"
+                hiring_priority:
+                  type: string
+                  example: "high"
+                seniority:
+                  type: string
+                  example: "junior"
+                country:
+                  type: string
+                  example: "CO"
+                city:
+                  type: string
+                  example: "Bogota"
+                description:
+                  type: string
+                  example: "description"
+                responsabilities:
+                  type: array
+                  items:
+                    type: string
+                  example: ["responsability_1", "responsability_2"]
+                skills:
+                  type: array
+                  items:
                     type: object
                     properties:
                       name:
                         type: string
-                        example: "mario zamora"
-                      id:
-                        type: string
-                        example: "6777862efe77308365432a36"
-                  recruiter_user:
+                        example: "django"
+                      required:
+                        type: boolean
+                        example: true
+                benefits:
+                  type: string
+                  example: "plan carrera"
+                salary_range:
+                  type: object
+                  properties:
+                    currency:
+                      type: string
+                      example: "COP"
+                    salary:
+                      type: string
+                      nullable: true
+                      example: "10000000"
+                    salary_range:
+                      type: object
+                      nullable: true
+                      properties:
+                        min:
+                          type: string
+                          example: "9000000"
+                        max:
+                          type: string
+                          example: "12000000"
+                languages:
+                  type: array
+                  items:
                     type: object
                     properties:
                       name:
                         type: string
-                        example: "johan parra"
-                      id:
+                        example: "ingles"
+                      level:
                         type: string
-                        example: "679077da2d6626a2b007f8fa"
-                  responsible_users:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        name:
-                          type: string
-                          example: "johan parra"
-                        id:
-                          type: string
-                          example: "679077da2d6626a2b007f8fa"
-                        can_edit:
-                          type: boolean
-                          example: true
-                  role:
-                    type: string
-                    example: "developer"
-                  hiring_priority:
-                    type: string
-                    enum: ["low", "medium", "high"]
-                    example: "high"
+                        example: high
+                work_mode:
+                  type: string
+                  example: "Remote"
+                status:
+                  type: string
+                  example: "ACTIVE"
+                hiring_processes:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      _id:
+                        type: string
+                        example: "679077da2d6626a2b007f8f9"
+                      created_at:
+                        type: string
+                        example: "2025-01-03T01:34:59.063000"
+                      updated_at:
+                        type: string
+                        example: "2025-01-03T01:34:59.063000"
+                      deleted_at:
+                        type: string
+                        nullable: true
+                        example: null
+                      position_id:
+                        type: string
+                        example: "67c7639f1ad8328f2a3184aa"
+                      business_id:
+                        type: string
+                        example: "67ab6e79c1839d2a5caecefb"
+                      card_id:
+                        type: integer
+                        example: 1234568979
+                      phase_id:
+                        type: integer
+                        example: 123456
+                      status:
+                        type: string
+                        example: "STARTED"
+                      profile:
+                        type: object
+                        properties:
+                          timestamp:
+                            type: string
+                            example: "Mon Mar 03 2025 10:00:00 GMT-0500 (hora estándar de Colombia)"
+                          linkedin_num_id:
+                            type: string
+                            example: "277819915"
+                          name:
+                            type: string
+                            nullable: true
+                            example: null
+                          country_code:
+                            type: string
+                            nullable: true
+                            example: null
+                          position:
+                            type: string
+                            nullable: true
+                            example: null
+                          city:
+                            type: string
+                            nullable: true
+                            example: null
+                          current_company:
+                            type: string
+                            nullable: true
+                            example: null
+                          about:
+                            type: string
+                            nullable: true
+                            example: null
+                          posts:
+                            type: string
+                            nullable: true
+                            example: null
+                          experience:
+                            type: string
+                            nullable: true
+                            example: null
+                          url:
+                            type: string
+                            nullable: true
+                            example: null
+                          people_also_viewed:
+                            type: string
+                            nullable: true
+                            example: null
+                          educations_details:
+                            type: string
+                            nullable: true
+                            example: null
+                          education:
+                            type: string
+                            nullable: true
+                            example: null
+                          recommendations_count:
+                            type: string
+                            nullable: true
+                            example: null
+                          avatar:
+                            type: string
+                            nullable: true
+                            example: null
+                          languages:
+                            type: string
+                            nullable: true
+                            example: null
+                          certifications:
+                            type: string
+                            nullable: true
+                            example: null
+                          recommendations:
+                            type: string
+                            nullable: true
+                            example: null
+                          volunteer_experience:
+                            type: string
+                            nullable: true
+                            example: null
+                          courses:
+                            type: string
+                            nullable: true
+                            example: null
+                          followers:
+                            type: string
+                            nullable: true
+                            example: null
+                          connections:
+                            type: string
+                            nullable: true
+                            example: null
+                          current_company_company_id:
+                            type: string
+                            nullable: true
+                            example: null
+                          current_company_name:
+                            type: string
+                            nullable: true
+                            example: null
+                          publications:
+                            type: string
+                            nullable: true
+                            example: null
+                          patents:
+                            type: string
+                            nullable: true
+                            example: null
+                          projects:
+                            type: string
+                            nullable: true
+                            example: null
+                          organizations:
+                            type: string
+                            nullable: true
+                            example: null
+                          input_url:
+                            type: string
+                            nullable: true
+                            example: null
+                          linkedin_id:
+                            type: string
+                            nullable: true
+                            example: null
+                          activity:
+                            type: string
+                            nullable: true
+                            example: null
+                          banner_image:
+                            type: string
+                            nullable: true
+                            example: null
+                          honors_and_awards:
+                            type: string
+                            nullable: true
+                            example: null
+                          similar_profiles:
+                            type: string
+                            nullable: true
+                            example: null
+                          default_avatar:
+                            type: string
+                            nullable: true
+                            example: null
+                          memorialized_account:
+                            type: string
+                            nullable: true
+                            example: null
+                          profile_evaluation:
+                            type: string
+                            nullable: true
+                            example: null
+                          link_vacancy_form:
+                            type: string
+                            nullable: true
+                            example: null
+                          card_id:
+                            type: string
+                            nullable: true
+                            example: null
+                      phase_history:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            from_phase:
+                              type: object
+                              properties:
+                                phase_id:
+                                  type: integer
+                                  example: 123654
+                                name:
+                                  type: string
+                                  example: "ASÑDLKAS"
+                            to_phase:
+                              type: object
+                              properties:
+                                phase_id:
+                                  type: integer
+                                  example: 123654
+                                name:
+                                  type: string
+                                  example: "ASÑDLKAS"
+                            date:
+                              type: string
+                              format: date-time
+                              example: "2025-03-03T15:00:00"
+                      phases:
+                        type: object
+                        # additionalProperties:
+                        #   type: object
+                
     ListPositionValueError:
       type: object
       properties:
@@ -1227,10 +1511,18 @@ components:
                           example: "COP"
                         salary:
                           type: string
+                          nullable: true
                           example: "10000000"
                         salary_range:
-                          type: string
-                          example: "9000000 - 12000000"
+                          type: object
+                          nullable: true
+                          properties:
+                            min:
+                              type: string
+                              example: "9000000"
+                            max:
+                              type: string
+                              example: "12000000"
                     languages:
                       type: array
                       items:
@@ -1325,8 +1617,15 @@ components:
                       type: string
                       example: "10000000"
                     salary_range:
-                      type: string
-                      example: "9000000 - 12000000"
+                      type: object
+                      nullable: true
+                      properties:
+                        min:
+                          type: string
+                          example: "9000000"
+                        max:
+                          type: string
+                          example: "12000000"
                 hiring_id:
                   type: string
                   example: "67c930fe1ad8328f2a3184c2"
