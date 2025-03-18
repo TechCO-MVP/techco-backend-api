@@ -45,8 +45,6 @@ def create_pipe_configuration_open_position(
     pipes = pipe_repository.clone_pipe(pipe_template_id)
     pipe_id = pipes["clonePipes"]["pipes"][0]["id"]
 
-    # TODO: update position with pipe_id
-
     max_retries = 5
     delay = 3  # initial delay in seconds
 
@@ -86,6 +84,8 @@ def create_pipe_configuration_open_position(
     webhook_name = "Webhook"
     actions = ["card.field_update", "card.move"]
     webhook_repository.create_webhook(pipe_id, f"{API_URL}/pipefy/webhook", webhook_name, actions)
+
+    # TODO: update position with pipe_id
 
     # update profile
     profile_filter_process.props.pipe_id = pipe_id
