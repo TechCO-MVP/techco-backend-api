@@ -32,7 +32,8 @@ def lambda_handler(event: dict, _):
     except Exception as e:
         logger.error(f"Error creating pipe configuration for open position: {e}")
         return {
-            "status": "ERROR",
-            "errorInfo": "Error creating pipe configuration for open position",
-            "errorDetails": f"{e} - {traceback.format_exc()}",
+            "Type": "Fail",
+            "Status": "ERROR",
+            "ErrorInfo": "Error creating pipe configuration for open position",
+            "ErrorDetails": f"{e} - {traceback.format_exc()}",
         }

@@ -27,6 +27,7 @@ class OpenAIAdapter(LLMService):
         file_path: str = None,
     ) -> str:
         file_id = self.upload_file(file_path)
+        sleep(60)  # Wait for the file to be indexed
         thread_run = self.create_and_run_thread(messages, file_id)
         self.wait_for_completion(thread_run)
         self.delete_file(file_id)

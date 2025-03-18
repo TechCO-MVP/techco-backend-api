@@ -40,8 +40,8 @@ class HiringProcessPhaseHistory(BaseModel):
 class HiringProcessDTO(BaseModel):
     position_id: str = Field(..., alias="position_id")
     business_id: str = Field(..., alias="business_id")
-    card_id: int = Field(...)
-    phase_id: int = Field(...)
+    card_id: str = Field(...)
+    phase_id: str = Field(...)
     status: HIRING_PROCESS_STATUS = HIRING_PROCESS_STATUS.STARTED
     profile: ProfileBrightDataDTO = Field(...)
     phases: dict[str, HiringProcessPhase] = {}
