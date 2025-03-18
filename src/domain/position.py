@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import List, Optional, Union
+from typing import List, Optional
 
 from bson import ObjectId
 from pydantic import BaseModel, Field, ValidationError, model_validator
@@ -7,7 +7,7 @@ from pydantic import BaseModel, Field, ValidationError, model_validator
 from src.domain.base_entity import BaseEntity
 
 
-class PROCESS_STATUS(str, Enum):
+class POSITION_STATUS(str, Enum):
     CANCELED = "CANCELED"
     ACTIVE = "ACTIVE"
     FINISHED = "FINISHED"
@@ -68,7 +68,7 @@ class PositionDTO(BaseModel):
     languages: List[Languages] = Field(..., min_length=1)
     hiring_priority: LEVEL
     work_mode: WORK_MODE
-    status: PROCESS_STATUS = PROCESS_STATUS.DRAFT
+    status: POSITION_STATUS = POSITION_STATUS.DRAFT
     benefits: Optional[List[str]] = Field(default_factory=list)
     salary: Optional[Salary] = None
     pipe_id: Optional[str] = None
@@ -90,7 +90,8 @@ class PositionDTO(BaseModel):
                     stakeholder.user_id = str(stakeholder.user_id)
                 elif not isinstance(stakeholder.user_id, str):
                     raise ValueError(
-                        "Invalid user_id format in responsible_users_ids. Must be a string or ObjectId."
+                        "Invalid user_id format in responsible_users_ids. "
+                        "Must be a string or ObjectId."
                     )
 
         return values
@@ -131,7 +132,7 @@ class GetPositionQueryParams(BaseModel):
 class UpdatePositionStatusDTO(BaseModel):
     position_id: str
     user_id: str
-    position_status: PROCESS_STATUS = PROCESS_STATUS.ACTIVE
+    position_status: POSITION_STATUS = POSITION_STATUS.ACTIVE
 
     @classmethod
     def validate_params(cls, params):
