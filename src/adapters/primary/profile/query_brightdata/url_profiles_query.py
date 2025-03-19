@@ -1,6 +1,10 @@
 from aws_lambda_powertools import Logger
 from aws_lambda_powertools.utilities.typing import LambdaContext
 
+from src.domain.base_entity import from_dto_to_entity
+from src.domain.profile import ProfileFilterProcessEntity
+from use_cases.profile.send_profile_url_query_use_case import send_profile_url_query_use_case
+
 logger = Logger()
 
 
@@ -34,7 +38,20 @@ def lambda_handler(event, context: LambdaContext) -> dict:
     }
     """
     logger.info("Starting filter profile by url")
-    logger.info(event)
-    logger.info(isinstance(event, dict))
 
-    return event
+    try:
+        profile_filter_process = from_dto_to_entity(
+            ProfileFilterProcessEntity,
+            event,
+        )
+
+        snapshot_id = send_profile_url_query_use_case(
+            profile_filter_process,
+        )
+
+        logger.info(f"Snapshot id: {snapshot_id}")
+        profile_filter_process.props.process_filters.snapshot_id = snapshot_id
+        return profile_filter_process.to_dto(flat=True)
+    except Exception as e:
+        logger.error(f"Error creating pipe configuration for open position: {e}")
+        raise

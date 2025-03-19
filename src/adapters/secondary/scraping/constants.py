@@ -15,3 +15,5 @@ BASE_URL_BRIGHTDATA = "https://api.brightdata.com/datasets"
 URL_BRIGHTDATA = "https://api.brightdata.com/datasets/filter"
 
 RECORDS_LIMIT = 100
+
+BRIGHT_DATA_DATASET_ID = "gd_l1viktl72bvl7bjuj0"

@@ -3,6 +3,7 @@ from datetime import datetime
 from typing import Generic, TypeVar, Union
 
 from pydantic import BaseModel, Field
+from typing import Type
 
 T = TypeVar("T", bound=BaseModel)
 
@@ -40,7 +41,7 @@ class BaseEntity(BaseModel, Generic[T]):
         return json.loads(self.props.model_dump_json())
 
 
-def from_dto_to_entity(entity: BaseEntity, dto: dict) -> BaseEntity:
+def from_dto_to_entity(entity_class: Type[T], dto: dict) -> T:
     """
     Convert a DTO to an entity.
     """
@@ -51,4 +52,4 @@ def from_dto_to_entity(entity: BaseEntity, dto: dict) -> BaseEntity:
         "deleted_at": dto.pop("deleted_at", None),
         "props": dto,
     }
-    return entity(**entity_data)
+    return entity_class(**entity_data)

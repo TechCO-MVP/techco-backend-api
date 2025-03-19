@@ -1,16 +1,16 @@
-# flake8: noqa: E501
-
 import json
 import requests
 import time
 import os
 
+from typing import List
 from aws_lambda_powertools import Logger
 
 from src.adapters.secondary.scraping.constants import (
     TRADUCTION_FILTERS_BRIGHTDATA,
     RECORDS_LIMIT,
     BASE_URL_BRIGHTDATA,
+    BRIGHT_DATA_DATASET_ID,
 )
 from src.domain.base_entity import from_dto_to_entity
 from src.domain.profile import ProfileFilterProcessEntity
@@ -19,6 +19,7 @@ from src.utils.secrets import get_secret_by_name
 
 logger = Logger("ProfileFilterProcessDocumentDBAdapter")
 TOKEN_BRIGHTDATA = get_secret_by_name(os.getenv("TOKEN_SERVICE_BRIGHTDATA"))
+
 
 class ScrapingProfileFilterProcessAdapter(IRepository[ProfileFilterProcessEntity]):
 
@@ -112,7 +113,10 @@ class ScrapingProfileFilterProcessAdapter(IRepository[ProfileFilterProcessEntity
             entity = from_dto_to_entity(ProfileFilterProcessEntity, entity_dto)
         else:
             error = {
-                "message": f"Failed to create profile filter process: {response.status_code} - {response.text}",
+                "message": (
+                    f"Failed to create profile filter process: {response.status_code} - "
+                    f"{response.text}"
+                ),
                 "event": entity_dto,
                 "process_id": entity_dto.get("_id"),
             }
@@ -121,6 +125,45 @@ class ScrapingProfileFilterProcessAdapter(IRepository[ProfileFilterProcessEntity
 
         logger.info(f"Entity: {entity}")
         return entity
+
+    def search_by_url(self, urls: List[str]) -> str:
+        """
+        Queires the brighdata API to get the profile filter process data by url
+        and returns the snapshot id.
+        """
+        logger.info(f"Searching profile filter process by url: {urls}")
+
+        payload = [{"url": url} for url in urls]
+        params = {"dataset_id": BRIGHT_DATA_DATASET_ID}
+        headers = {
+            "Authorization": f"Bearer {TOKEN_BRIGHTDATA}",
+            "Content-Type": "application/json",
+        }
+
+        response = requests.request(
+            "POST",
+            f"{BASE_URL_BRIGHTDATA}/v3/trigger",
+            json=payload,
+            headers=headers,
+            params=params,
+        )
+
+        logger.info(f"response brightdata: {response}")
+
+        if response.status_code != 200:
+            raise Exception(
+                f"Failed to create profile filter process: {response.status_code} - "
+                f"{response.text}"
+            )
+
+        data = response.json()
+        if "snapshot_id" not in data:
+            raise Exception(
+                f"Failed to create profile filter process: {response.status_code} - "
+                f"{response.text}"
+            )
+
+        return data["snapshot_id"]
 
     def update(self, id: str, entity):
         logger.info("Updating profile filter process entity")
@@ -145,7 +188,9 @@ class ScrapingProfileFilterProcessAdapter(IRepository[ProfileFilterProcessEntity
             return True
         else:
             error = {
-                "message": f"Failed to get status snapshoot: {response.status_code} - {response.text}",
+                "message": (
+                    f"Failed to get status snapshoot: {response.status_code} - " f"{response.text}"
+                ),
                 "snapshoot_id": id,
             }
             logger.error(error["message"])
@@ -162,7 +207,7 @@ class ScrapingProfileFilterProcessAdapter(IRepository[ProfileFilterProcessEntity
             f"{BASE_URL_BRIGHTDATA}/snapshots/{id}/download",
             headers=headers,
             params=params,
-            timeout=310
+            timeout=310,
         )
 
         logger.info(f"response brightdata: {response}")
@@ -186,7 +231,10 @@ class ScrapingProfileFilterProcessAdapter(IRepository[ProfileFilterProcessEntity
         else:
             final_response = response if response.status_code != 202 else response_second_request
             error = {
-                "message": f"Failed to daowload snapshoot_id: {final_response.status_code} - {final_response.text}",
+                "message": (
+                    f"Failed to daowload snapshoot_id: {final_response.status_code} - "
+                    f"{final_response.text}"
+                ),
                 "snapshoot_id": id,
             }
             logger.error(error["message"])
