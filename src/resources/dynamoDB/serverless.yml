@@ -1,0 +1,23 @@
+WebSocketConnections:
+  Type: AWS::DynamoDB::Table
+  Properties:
+    BillingMode: PAY_PER_REQUEST
+    KeySchema:
+      - AttributeName: user_id
+        KeyType: HASH
+    AttributeDefinitions:
+      - AttributeName: user_id
+        AttributeType: S
+      - AttributeName: connection_id
+        AttributeType: S
+    GlobalSecondaryIndexes:
+      - IndexName: user_id_index
+        KeySchema:
+          - AttributeName: user_id
+            KeyType: HASH
+        Projection:
+          ProjectionType: KEYS_ONLY
+    TableName: ${self:service}-${self:provider.stage}-websocket-connections
+    TimeToLiveSpecification:
+        AttributeName: "expires_at"
+        Enabled: true
