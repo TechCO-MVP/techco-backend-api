@@ -1,7 +1,5 @@
 from src.domain.profile import ProfileFilterProcessEntity
-from src.repositories.scraping.scraping_profile_filter_process import (
-    ScrapingProfileFilterProcessRepository,
-)
+from src.repositories.scraping.bright_data_dataset_repository import BrightDataDatasetRepository
 
 
 def send_profile_url_query_use_case(
@@ -18,7 +16,7 @@ def send_profile_url_query_use_case(
     """
     urls = profile_filter_entity.props.process_filters.url_profiles
 
-    scraping_profile_filter_process_repository = ScrapingProfileFilterProcessRepository()
-    snpshot_id = scraping_profile_filter_process_repository.search_by_url(urls)
+    bright_data_dataset_repository = BrightDataDatasetRepository()
+    snapshot_id = bright_data_dataset_repository.search_by_url(urls)
 
-    return snpshot_id
+    return snapshot_id

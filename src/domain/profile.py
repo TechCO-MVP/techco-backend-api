@@ -7,6 +7,7 @@ from pydantic import BaseModel, Field, field_validator
 
 from src.domain.base_entity import BaseEntity
 from src.domain.profile_brightdata import ProfileBrightDataDTO
+from src.domain.position import Skill
 
 
 class PROCESS_STATUS(str, Enum):
@@ -19,11 +20,6 @@ class PROCESS_STATUS(str, Enum):
 class PROCESS_TYPE(str, Enum):
     PROFILES_SEARCH = "profiles_search"
     PROFILES_URL_SEARCH = "profiles_url_search"
-
-
-class Skill(BaseModel):
-    name: str
-    required: bool
 
 
 class ProfileFilterProcessQueryDTO(BaseModel):
