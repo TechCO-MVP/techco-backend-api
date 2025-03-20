@@ -148,7 +148,7 @@ stateMachines:
               Next: CreatePipeConfigurationForOpenPosition
             - Variable: "$.type"
               StringEquals: "profiles_url_search"
-              Next: NotifyCompletion
+              Next: AddLinkPostionForm
           Default: Fail
         CreatePipeConfigurationForOpenPosition:
           Type: Task
