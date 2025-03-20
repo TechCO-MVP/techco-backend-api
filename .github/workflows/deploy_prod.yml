@@ -30,7 +30,7 @@ jobs:
           poetry install --no-root
 
       - name: Install serverless
-        run: npm install -g serverless@3.39.0 serverless-offline
+        run: npm install -g serverless@3.40.0 serverless-offline
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4

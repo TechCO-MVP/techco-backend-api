@@ -4,12 +4,10 @@ from aws_lambda_powertools.utilities.typing import LambdaContext
 from botocore.exceptions import ParamValidationError
 from pydantic import ValidationError
 
-from src.domain.profile import ProfileFilterProcessQueryDTO
 from src.errors.entity_not_found import EntityNotFound
 from src.use_cases.profile.start_filter_profile_url_use_case import (
     start_filter_profile_url_use_case,
 )
-
 
 logger = Logger()
 app = APIGatewayRestResolver()
@@ -24,17 +22,25 @@ def start_profile_search_by_url():
 
         body: dict = app.current_event.json_body
 
-        # parse body
         if not body:
             raise ValueError("Request body is empty")
 
-        profile_process_dto = ProfileFilterProcessQueryDTO(**body)
+        position_id = body.get("position_id")
+        if not position_id:
+            raise ValueError("Position ID is required")
 
-        if not profile_process_dto.url_profiles:
+        business_id = body.get("business_id")
+        if not business_id:
+            raise ValueError("Business ID is required")
+
+        url_profiles = body.get("url_profiles")
+        if not url_profiles or not isinstance(url_profiles, list):
             raise ValueError("URL profiles is required")
 
         # call use case to start filter profile
-        result = start_filter_profile_url_use_case(profile_process_dto, user_email)
+        result = start_filter_profile_url_use_case(
+            user_email, position_id, business_id, url_profiles
+        )
 
         return Response(
             status_code=200,
