@@ -103,7 +103,7 @@ class BrightDatasetAdapter:
             return json.loads(response.text)
 
         if response.status_code == 202:
-            time.sleep(30)
+            time.sleep(60)
 
             response = requests.get(
                 f"{self.base_url}/v3/snapshot/{snapshot_id}",
