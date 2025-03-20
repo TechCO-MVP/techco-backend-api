@@ -3,14 +3,12 @@ import requests
 import time
 import os
 
-from typing import List
 from aws_lambda_powertools import Logger
 
 from src.adapters.secondary.scraping.constants import (
     TRADUCTION_FILTERS_BRIGHTDATA,
     RECORDS_LIMIT,
     BASE_URL_BRIGHTDATA,
-    BRIGHT_DATA_DATASET_ID,
 )
 from src.domain.base_entity import from_dto_to_entity
 from src.domain.profile import ProfileFilterProcessEntity
@@ -125,45 +123,6 @@ class ScrapingProfileFilterProcessAdapter(IRepository[ProfileFilterProcessEntity
 
         logger.info(f"Entity: {entity}")
         return entity
-
-    def search_by_url(self, urls: List[str]) -> str:
-        """
-        Queires the brighdata API to get the profile filter process data by url
-        and returns the snapshot id.
-        """
-        logger.info(f"Searching profile filter process by url: {urls}")
-
-        payload = [{"url": url} for url in urls]
-        params = {"dataset_id": BRIGHT_DATA_DATASET_ID}
-        headers = {
-            "Authorization": f"Bearer {TOKEN_BRIGHTDATA}",
-            "Content-Type": "application/json",
-        }
-
-        response = requests.request(
-            "POST",
-            f"{BASE_URL_BRIGHTDATA}/v3/trigger",
-            json=payload,
-            headers=headers,
-            params=params,
-        )
-
-        logger.info(f"response brightdata: {response}")
-
-        if response.status_code != 200:
-            raise Exception(
-                f"Failed to create profile filter process: {response.status_code} - "
-                f"{response.text}"
-            )
-
-        data = response.json()
-        if "snapshot_id" not in data:
-            raise Exception(
-                f"Failed to create profile filter process: {response.status_code} - "
-                f"{response.text}"
-            )
-
-        return data["snapshot_id"]
 
     def update(self, id: str, entity):
         logger.info("Updating profile filter process entity")

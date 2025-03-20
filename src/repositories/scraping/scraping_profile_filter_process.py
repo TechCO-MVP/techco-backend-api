@@ -1,5 +1,3 @@
-from typing import List
-
 from src.adapters.secondary.scraping.brigthdata_adapter import ScrapingProfileFilterProcessAdapter
 from src.domain.profile import ProfileFilterProcessEntity
 from src.repositories.repository import IRepository
@@ -33,6 +31,3 @@ class ScrapingProfileFilterProcessRepository(IRepository[ProfileFilterProcessEnt
 
     def get_data(self, entity):
         return self._adapter.get_data(entity)
-
-    def search_by_url(self, urls: List[str]):
-        return self._adapter.search_by_url(urls)

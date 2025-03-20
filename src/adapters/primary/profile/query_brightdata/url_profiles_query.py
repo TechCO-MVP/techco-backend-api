@@ -3,7 +3,7 @@ from aws_lambda_powertools.utilities.typing import LambdaContext
 
 from src.domain.base_entity import from_dto_to_entity
 from src.domain.profile import ProfileFilterProcessEntity
-from use_cases.profile.send_profile_url_query_use_case import send_profile_url_query_use_case
+from src.use_cases.profile.send_profile_url_query_use_case import send_profile_url_query_use_case
 
 logger = Logger()
 

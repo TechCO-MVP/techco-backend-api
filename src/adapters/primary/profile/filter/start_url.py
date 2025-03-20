@@ -4,6 +4,7 @@ from aws_lambda_powertools.utilities.typing import LambdaContext
 from botocore.exceptions import ParamValidationError
 from pydantic import ValidationError
 
+from src.utils.errors import format_validation_error
 from src.errors.entity_not_found import EntityNotFound
 from src.use_cases.profile.start_filter_profile_url_use_case import (
     start_filter_profile_url_use_case,
@@ -55,7 +56,9 @@ def start_profile_search_by_url():
     except ValidationError as e:
         logger.error(str(e))
         return Response(
-            status_code=400, body={"message": str(e)}, content_type=content_types.APPLICATION_JSON
+            status_code=400,
+            body={"message": format_validation_error(e)},
+            content_type=content_types.APPLICATION_JSON,
         )
     except ValueError as e:
         logger.error(str(e))
