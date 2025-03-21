@@ -1,5 +1,3 @@
-# flake8: noqa: E501
-
 import json
 import requests
 import time
@@ -19,6 +17,7 @@ from src.utils.secrets import get_secret_by_name
 
 logger = Logger("ProfileFilterProcessDocumentDBAdapter")
 TOKEN_BRIGHTDATA = get_secret_by_name(os.getenv("TOKEN_SERVICE_BRIGHTDATA"))
+
 
 class ScrapingProfileFilterProcessAdapter(IRepository[ProfileFilterProcessEntity]):
 
@@ -112,7 +111,10 @@ class ScrapingProfileFilterProcessAdapter(IRepository[ProfileFilterProcessEntity
             entity = from_dto_to_entity(ProfileFilterProcessEntity, entity_dto)
         else:
             error = {
-                "message": f"Failed to create profile filter process: {response.status_code} - {response.text}",
+                "message": (
+                    f"Failed to create profile filter process: {response.status_code} - "
+                    f"{response.text}"
+                ),
                 "event": entity_dto,
                 "process_id": entity_dto.get("_id"),
             }
@@ -145,7 +147,9 @@ class ScrapingProfileFilterProcessAdapter(IRepository[ProfileFilterProcessEntity
             return True
         else:
             error = {
-                "message": f"Failed to get status snapshoot: {response.status_code} - {response.text}",
+                "message": (
+                    f"Failed to get status snapshoot: {response.status_code} - " f"{response.text}"
+                ),
                 "snapshoot_id": id,
             }
             logger.error(error["message"])
@@ -162,7 +166,7 @@ class ScrapingProfileFilterProcessAdapter(IRepository[ProfileFilterProcessEntity
             f"{BASE_URL_BRIGHTDATA}/snapshots/{id}/download",
             headers=headers,
             params=params,
-            timeout=310
+            timeout=310,
         )
 
         logger.info(f"response brightdata: {response}")
@@ -186,7 +190,10 @@ class ScrapingProfileFilterProcessAdapter(IRepository[ProfileFilterProcessEntity
         else:
             final_response = response if response.status_code != 202 else response_second_request
             error = {
-                "message": f"Failed to daowload snapshoot_id: {final_response.status_code} - {final_response.text}",
+                "message": (
+                    f"Failed to daowload snapshoot_id: {final_response.status_code} - "
+                    f"{final_response.text}"
+                ),
                 "snapshoot_id": id,
             }
             logger.error(error["message"])

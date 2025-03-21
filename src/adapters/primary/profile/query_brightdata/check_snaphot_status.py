@@ -30,7 +30,7 @@ def lambda_handler(event, context: LambdaContext) -> dict:
             "seniority": "Senior",
             "country_code": "USA",
             "city": "San Francisco",
-            "description": "Experienced software engineer with expertise in Python and cloud technologies.",
+            "description": "Experienced software engineer with expertise in Python and cloud.",
             "responsabilities": [
             "Design and develop scalable and maintainable software solutions.",
             "Collaborate with cross-functional teams to deliver high-quality products.",
@@ -76,7 +76,6 @@ def lambda_handler(event, context: LambdaContext) -> dict:
         validate_status_profile_query_use_case(profile_process_entity)
 
         return profile_process_entity.to_dto(flat=True)
-
     except Exception as e:
         process_dto = profile_process_entity.to_dto(flat=True)
         e.args[0]["event"] = process_dto
