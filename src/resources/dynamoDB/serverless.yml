@@ -17,7 +17,7 @@ WebSocketConnections:
             KeyType: HASH
         Projection:
           ProjectionType: KEYS_ONLY
-    TableName: ${self:service}-${self:provider.stage}-websocket-connections
+    TableName: ${self:provider.stage}-websocket-connections
     TimeToLiveSpecification:
         AttributeName: "expires_at"
         Enabled: true
