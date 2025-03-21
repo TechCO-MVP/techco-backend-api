@@ -139,8 +139,15 @@ stateMachines:
             Fn::GetAtt:
               - query_and_build_openai_data
               - Arn
-          Next: ChooseProfileTypeFlow
-        ChooseProfileTypeFlow:
+          Next: AddLinkPostionForm
+        AddLinkPostionForm:
+          Type: Task
+          Resource:
+            Fn::GetAtt:
+              - add_link_vacancy_form
+              - Arn
+          Next: ChooseCreationFlow
+        ChooseCreationFlow:
           Type: Choice
           Choices:
             - Variable: "$.type"
@@ -148,7 +155,7 @@ stateMachines:
               Next: CreatePipeConfigurationForOpenPosition
             - Variable: "$.type"
               StringEquals: "profiles_url_search"
-              Next: AddLinkPostionForm
+              Next: CreateCards
           Default: Fail
         CreatePipeConfigurationForOpenPosition:
           Type: Task
@@ -156,12 +163,12 @@ stateMachines:
             Fn::GetAtt:
               - create_pipe_configuration_open_position
               - Arn
-          Next: AddLinkPostionForm
-        AddLinkPostionForm:
+          Next: NotifyCompletion
+        CreateCards:
           Type: Task
           Resource:
             Fn::GetAtt:
-              - add_link_vacancy_form
+              - create_cards_for_profiles
               - Arn
           Next: NotifyCompletion
         NotifyCompletion:

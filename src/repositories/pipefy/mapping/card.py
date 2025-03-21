@@ -132,6 +132,10 @@ CARD_START_FORM_MAPPING = {
                 "field_id": "305713420_334105217_dateworkended",
                 "field_value": lambda data: get_experience_end_date(data),
             },
+            {
+                "field_id": "305713420_334105217_urloftheinvitationtotheprocess",
+                "field_value": lambda data: data.link_vacancy_form,
+            },
             {"field_id": "305713420_334105217_candidateemail", "field_value": ""},
             {"field_id": "305713420_334105217_candidatesource", "field_value": "Talent Connect"},
         ]
