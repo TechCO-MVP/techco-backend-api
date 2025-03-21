@@ -8,7 +8,7 @@ from src.use_cases.user.get_user_by_mail import get_user_by_mail_use_case
 cognito_client = boto3.client("cognito-idp", region_name=REGION_NAME)
 
 
-def lambda_handler(event, context):
+def handler(event, context):
     """Authorize connections to websockets API."""
     method_arn = event["methodArn"]
     token = event["queryStringParameters"]["token"]
