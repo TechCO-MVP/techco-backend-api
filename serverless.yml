@@ -102,6 +102,15 @@ provider:
           Action:
             - secretsmanager:GetSecretValue
           Resource: "*"
+        - Effect: Allow
+          Action:
+            - dynamodb:PutItem
+            - dynamodb:DeleteItem
+            - dynamodb:GetItem
+            - dynamodb:Query
+          Resource:
+            - !GetAtt WebSocketConnections.Arn
+            - !Sub "${WebSocketConnections.Arn}/index/user_id_index"
 
 custom:
   userPoolName: ${self:provider.stage}-passwordless-user-pool
@@ -155,6 +164,7 @@ resources:
     PipefyCardMoveQueue: ${file(./src/resources/pipefy/serverless.yml):PipefyCardMoveQueue}
     PipefyFieldUpdateQueue: ${file(./src/resources/pipefy/serverless.yml):PipefyFieldUpdateQueue}
     EventBridgeToSQSRole: ${file(./src/resources/pipefy/serverless.yml):EventBridgeToSQSRole}
+    WebSocketConnections: ${file(./src/resources/dynamoDB/serverless.yml):WebSocketConnections}
     serverlessApiGatewayCloudWatchRole:
       Type: AWS::IAM::Role
       Properties:
@@ -550,6 +560,25 @@ functions:
             type: COGNITO_USER_POOLS
             authorizerId:
               Ref: ApiGatewayAuthorizer
+
+  webSocketAuthorizer:
+    handler: src/adapters/primary/websocket/authorizer.handler
+
+  webSocketConnect:
+    handler: src/adapters/primary/websocket/connect.handler
+    events:
+      - websocket:
+          route: $connect
+          authorizer:
+            name: webSocketAuthorizer
+            identitySource:
+              - 'route.request.querystring.token'         
+
+  # webSocketDisconnect:
+  #   handler: src/adapters/primary/websocket/disconnect.handler
+  #   events:
+  #     - websocket:
+  #         route: $disconnect
 
 stepFunctions:
   stateMachines: ${file(./src/resources/brightdata/serverless.yml):stateMachines}
