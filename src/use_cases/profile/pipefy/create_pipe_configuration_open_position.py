@@ -1,4 +1,5 @@
 import time
+from typing import List
 
 from src.constants.index import API_URL, DEFAULT_PIPE_TEMPLATE_ID
 from src.domain.hiring_process import HiringProcessDTO
@@ -18,7 +19,7 @@ from src.use_cases.hiring_process.create_hiring_process import create_hiring_pro
 
 def create_hiring_proces_for_profile(
     position_id: str, business_id: str, phase_id: int, profile: ProfileBrightDataDTO
-):
+) -> None:
     hiring_process_dto = HiringProcessDTO(
         position_id=position_id,
         business_id=business_id,
@@ -27,12 +28,33 @@ def create_hiring_proces_for_profile(
         profile=profile,
     )
 
-    return create_hiring_process_use_case(hiring_process_dto)
+    create_hiring_process_use_case(hiring_process_dto)
+
+
+def create_cards_for_profiles(
+    profiles: List[ProfileBrightDataDTO], pipe_id: str, position_id: str, business_id: str
+) -> List[ProfileBrightDataDTO]:
+    graphql_client = get_client()
+    card_repository = CardRepository(graphql_client)
+    updated_profiles = []
+
+    for profile in profiles:
+        fields_attributes = map_profile_bright_data_fields(profile, DEFAULT_PIPE_TEMPLATE_ID)
+        response = card_repository.create_card(pipe_id, profile.name, fields_attributes)
+        card_id = response["createCard"]["card"]["id"]
+        phase_id = response["createCard"]["card"]["current_phase"]["id"]
+
+        profile.card_id = card_id
+        create_hiring_proces_for_profile(position_id, business_id, phase_id, profile)
+
+        updated_profiles.append(profile)
+
+    return updated_profiles
 
 
 def create_pipe_configuration_open_position(
     profile_filter_process_id: str, position_id: str, business_id: str
-):
+) -> dict:
     profile_filter_process_repository = ProfileFilterProcessRepository()
     profile_filter_process = profile_filter_process_repository.getById(profile_filter_process_id)
     if profile_filter_process is None:
@@ -66,23 +88,10 @@ def create_pipe_configuration_open_position(
     time.sleep(20)  # wait for the pipe to be created
 
     # create cards
-    updated_profiles = []
-    card_repository = CardRepository(graphql_client)
-    for _, profile in enumerate(profiles):
-        fields_attributes = map_profile_bright_data_fields(profile, DEFAULT_PIPE_TEMPLATE_ID)
-
-        response = card_repository.create_card(pipe_id, profile.name, fields_attributes)
-        card_id = response["createCard"]["card"]["id"]
-        phase_id = response["createCard"]["card"]["current_phase"]["id"]
-
-        profile.card_id = card_id
-        create_hiring_proces_for_profile(position_id, business_id, phase_id, profile)
-
-        updated_profiles.append(profile)
+    updated_profiles = create_cards_for_profiles(profiles, pipe_id, position_id, business_id)
 
     # create webhook
     webhook_repository = WebhookRepository(graphql_client)
-
     webhook_name = "Webhook"
     actions = ["card.field_update", "card.move"]
     webhook_repository.create_webhook(pipe_id, f"{API_URL}/pipefy/webhook", webhook_name, actions)

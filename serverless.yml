@@ -516,6 +516,9 @@ functions:
   create_pipe_configuration_open_position:
     handler: src/adapters/primary/pipefy/create_pipe_configuration_for_open_position.lambda_handler
 
+  create_cards_for_profiles:
+    handler: src/adapters/primary/pipefy/create_cards_for_profiles.lambda_handler
+
   pipefy_webhook:
     handler: src/adapters/primary/pipefy/webhook.lambda_handler
     events:
