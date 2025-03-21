@@ -576,11 +576,11 @@ functions:
             name: webSocketAuthorizer
             identitySource: route.request.querystring.token
 
-  # webSocketDisconnect:
-  #   handler: src/adapters/primary/websocket/disconnect.handler
-  #   events:
-  #     - websocket:
-  #         route: $disconnect
+  webSocketDisconnect:
+    handler: src/adapters/primary/websocket/disconnect.handler
+    events:
+      - websocket:
+          route: $disconnect
 
 stepFunctions:
   stateMachines: ${file(./src/resources/brightdata/serverless.yml):stateMachines}
