@@ -1,10 +1,12 @@
 """Function to authorize connections to websockets API"""
 
 import boto3
+from aws_lambda_powertools import Logger
 from botocore.exceptions import ClientError
 from src.constants.index import REGION_NAME
 from src.use_cases.user.get_user_by_mail import get_user_by_mail_use_case
 
+logger = Logger()
 cognito_client = boto3.client("cognito-idp", region_name=REGION_NAME)
 
 
@@ -20,13 +22,13 @@ def handler(event, context):
         user = get_user_by_mail_use_case(email)
 
         response = generate_policy("Allow", method_arn)
-        response["context"] = {"client_id": user.id, "email": user.props.email}
-        context.logger.info("Permission Allowed.")
+        response["context"] = {"user_id": user.id, "email": user.props.email}
+        logger.info("Permission Allowed.")
         return response
     except ClientError as e:
-        context.logger.error(e)
+        logger.error(e)
         if e.response["Error"]["Code"] == "NotAuthorizedException":
-            context.logger.info("Permission Denied.")
+            logger.info("Permission Denied.")
             return generate_policy("Deny", method_arn)
 
 

@@ -1,6 +1,6 @@
 import boto3
+import json
 from aws_lambda_powertools import Logger
-from aws_lambda_powertools.event_handler import Response, content_types
 from datetime import datetime, timedelta
 
 from src.constants.index import TABLE_WEBSOCKET_CONNECTIONS
@@ -26,19 +26,24 @@ def handler(event, context):
             }
         )
         logger.info(f"WebSocket connected: {connection_id}")
-        body = {
-            "message": "connected",
-            "body": {
-                "connection_id": connection_id,
-            },
-        }
-        return Response(status_code=200, body=body, content_type=content_types.APPLICATION_JSON)
+        body = json.dumps(
+            {
+                "message": "connected",
+                "body": {
+                    "connection_id": connection_id,
+                },
+            }
+        )
+        logger.info(f"response body: {body}")
+        return {"statusCode": 200, "body": body}
     except Exception as e:
-        body = {
-            "message": str(e),
-            "body": {
-                "data": "Connection error",
-            },
-        }
+        body = json.dumps(
+            {
+                "message": str(e),
+                "body": {
+                    "data": "Connection error",
+                },
+            }
+        )
         logger.error(f"Error handler WebSocket conection: {str(e)}")
-        return Response(status_code=500, body=body, content_type=content_types.APPLICATION_JSON)
+        return {"statusCode": 500, "body": body}
