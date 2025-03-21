@@ -18,7 +18,7 @@ def handler(event, context):
         dynamodb.delete_item(
             TableName=TABLE_WEBSOCKET_CONNECTIONS,
             Key={
-                "connectionId": {"S": connection_id}
+                "connection_id": {"S": connection_id}
             }
         )
         logger.info(f"WebSocket disconected: {connection_id}")
