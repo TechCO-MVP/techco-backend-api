@@ -1,12 +1,12 @@
 import boto3
-import os
 from aws_lambda_powertools import Logger
 from aws_lambda_powertools.event_handler import Response, content_types
 from datetime import datetime, timedelta
 
+from src.constants.index import TABLE_WEBSOCKET_CONNECTIONS
+
 logger = Logger()
 dynamodb = boto3.client("dynamodb")
-table_name = f"{os.getenv["STAGE"]}-websocket-connections"
 
 
 @logger.inject_lambda_context
@@ -18,7 +18,7 @@ def handler(event, context):
         user_id = event["requestContext"]["authorizer"]["user_id"]
 
         dynamodb.put_item(
-            TableName=table_name,
+            TableName=TABLE_WEBSOCKET_CONNECTIONS,
             Item={
                 "user_id": {"S": user_id},
                 "connection_id": {"S": connection_id},
@@ -29,7 +29,7 @@ def handler(event, context):
         body = {
             "message": "connected",
             "body": {
-                "data": "connected",
+                "connection_id": connection_id,
             },
         }
         return Response(status_code=200, body=body, content_type=content_types.APPLICATION_JSON)
