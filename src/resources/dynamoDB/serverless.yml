@@ -2,14 +2,14 @@ WebSocketConnections:
   Type: AWS::DynamoDB::Table
   Properties:
     BillingMode: PAY_PER_REQUEST
-    KeySchema:
-      - AttributeName: user_id
-        KeyType: HASH
     AttributeDefinitions:
       - AttributeName: user_id
         AttributeType: S
       - AttributeName: connection_id
         AttributeType: S
+    KeySchema:
+      - AttributeName: connection_id
+        KeyType: HASH
     GlobalSecondaryIndexes:
       - IndexName: user_id_index
         KeySchema:
