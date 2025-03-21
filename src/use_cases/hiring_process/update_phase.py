@@ -20,7 +20,7 @@ def update_phase(card_move_dto: CardMoveEvent):
     logger.info(f"To phase: {card_move_dto.to.id}")
 
     hiring_process_repository = HiringProcessRepository()
-    hiring_process = hiring_process_repository.getByCardId(card_move_dto.card.id)
+    hiring_process = hiring_process_repository.getByCardId(str(card_move_dto.card.id))
 
     if not hiring_process:
         logger.error(f"Hiring process not found for card {card_move_dto.card.id}")
