@@ -571,8 +571,7 @@ functions:
           route: $connect
           authorizer:
             name: webSocketAuthorizer
-            identitySource:
-              - 'route.request.querystring.token'         
+            identitySource: route.request.querystring.token
 
   # webSocketDisconnect:
   #   handler: src/adapters/primary/websocket/disconnect.handler
