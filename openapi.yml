@@ -1027,6 +1027,9 @@ components:
         user_full_name:
           type: string
           example: pepito perez
+        company_position:
+          type: string
+          example: expert recruiter
         user_role:
           type: string
           example: recruiter
