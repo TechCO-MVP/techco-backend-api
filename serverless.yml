@@ -379,7 +379,7 @@ functions:
               Ref: ApiGatewayAuthorizer
 
   update_user_data:
-    handler: src/adapters/primary/user/update_user_status/index.handler
+    handler: src/adapters/primary/user/update_user_data/index.handler
     events:
       - http:
           path: /user/data
