@@ -4,12 +4,12 @@ from aws_lambda_powertools import Logger
 from botocore.exceptions import ClientError
 
 from src.domain.notification import NotificationDTO
-from src.constants.index import TABLE_WEBSOCKET_CONNECTIONS, WEBSOCKET_API_URL, REGION_NAME, ENV, API_ID
+from src.constants.index import TABLE_WEBSOCKET_CONNECTIONS, REGION_NAME, ENV, API_ID
 
 logger = Logger()
 dynamodb = boto3.client("dynamodb")
 url = f"https://{API_ID}.execute-api.{REGION_NAME}.amazonaws.com/{ENV}"
-apigatewaymanagementapi = boto3.client("apigatewaymanagementapi", endpoint_url=WEBSOCKET_API_URL)
+apigatewaymanagementapi = boto3.client("apigatewaymanagementapi", endpoint_url=url)
 
 
 def send_message_by_websocket(notification: NotificationDTO):
