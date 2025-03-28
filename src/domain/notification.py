@@ -11,12 +11,22 @@ class NotificationStatus(str, Enum):
     UNREAD = "UNREAD"
 
 
+class NotificationType(str, Enum):
+    PHASE_CHANGE = "PHASE_CHANGE"
+    TAGGED_IN_COMMENT = "TAGGED_IN_COMMENT"
+    PROFILE_FILTER_PROCESS = "PROFILE_FILTER_PROCESS"
+
+
 class NotificationDTO(BaseModel):
     user_id: str = Field(default="", alias="user_id")
     business_id: str = Field(default="", alias="business_id")
-    process: Optional[str]
     message: str
+    notification_type: NotificationType
     status: NotificationStatus = NotificationStatus.UNREAD
+    process: Optional[str]
+    hiring_process_id: Optional[str] = Field(default="", alias="hiring_process_id")
+    read_at: Optional[str] = Field(default=None, alias="read_at")
+    phase_id: Optional[str] = Field(default="", alias="phase_id")
 
 
 class NotificationEntity(BaseEntity[NotificationDTO]):
