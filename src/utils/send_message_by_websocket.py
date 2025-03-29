@@ -47,14 +47,9 @@ def send_message_by_websocket(notification: NotificationDTO):
         )
 
         logger.info(f"Message sent to connection_id: {connection_id}")
-        return {
-            "statusCode": 200,
-            "body": json.dumps({"message": "Message sent successfully"}),
-        }
+        
+        return True
 
     except ClientError as e:
         logger.error(f"Error sending message: {str(e)}")
-        return {
-            "statusCode": 500,
-            "body": json.dumps({"message": "Failed to send message", "error": str(e)}),
-        }
+        return False
