@@ -1,15 +1,15 @@
-from src.adapters.secondary.documentdb.user_db_adapter import UserDocumentDBAdapter
+from src.adapters.secondary.documentdb.notification_db_adapter import NotificationDocumentDBAdapter
 from src.domain.notification import NotificationEntity
 from src.repositories.repository import IRepository
 
 
-class UserRepository(IRepository[NotificationEntity]):
+class NotificationRepository(IRepository[NotificationEntity]):
 
-    _adapter: UserDocumentDBAdapter
+    _adapter: NotificationDocumentDBAdapter
 
     def __init__(self):
         super().__init__()
-        self._adapter = UserDocumentDBAdapter()
+        self._adapter = NotificationDocumentDBAdapter()
 
     def getAll(self, params: dict):
         return self._adapter.getAll(params)

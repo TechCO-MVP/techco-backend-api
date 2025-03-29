@@ -10,10 +10,10 @@ from src.repositories.document_db.client import DocumentDBClient
 from src.repositories.repository import IRepository
 from src.errors.entity_not_found import EntityNotFound
 
-logger = Logger("UserDocumentDBAdapter")
+logger = Logger("NotificationDocumentDBAdapter")
 
 
-class UserDocumentDBAdapter(IRepository[NotificationEntity]):
+class NotificationDocumentDBAdapter(IRepository[NotificationEntity]):
 
     _client: Database
 
@@ -27,9 +27,6 @@ class UserDocumentDBAdapter(IRepository[NotificationEntity]):
         if self._collection_name not in self._client.list_collection_names():
             self._client.create_collection(self._collection_name)
 
-        indexes = self._client[self._collection_name].index_information()
-        if "email" not in indexes:
-            self._client[self._collection_name].create_index("email", unique=True)
 
     def getAll(self, params: dict) -> list[NotificationEntity] | None:
         collection = self._client[self._collection_name]
@@ -61,12 +58,7 @@ class UserDocumentDBAdapter(IRepository[NotificationEntity]):
             logger.info("Attempting to save notification for user: %s", notification_data["user_id"])
 
             collection = self._client[self._collection_name]
-            exists_notification = collection.find_one({"user_id": notification_data["user_id"]})
-
-            if exists_notification:
-                logger.warning("notification with user_id %s already exists.", notification_data["user_id"])
-                raise ValueError("A notification with this user_id already exists.")
-
+            
             result = collection.insert_one(notification_data, session=self._session)
             logger.info("notification successfully inserted with _id: %s", result.inserted_id)
 
