@@ -678,6 +678,35 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Exception"
+  /notifiaction/status:
+    put:
+      summary: Update notification status
+      description: Update notification status to READ.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateNotificationStatus"
+      responses:
+        "200":
+          description: Notification updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UpdateNotificationStatusResponse"
+        "400":
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Exception response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exception"
 
 components:
   schemas:
@@ -1762,3 +1791,17 @@ components:
               example: id_123456kjhsad_3124987_sdak
             process_filters:
               $ref: "#/components/schemas/ProfileFilterStart"
+    UpdateNotificationStatus:
+      type: object
+      properties:
+        notification_id:
+          type: string
+          example: id_123456kjhsad_3124987_sdak
+      required:
+        - notifiaction_id
+    UpdateNotificationStatusResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Notification updated successfully.
