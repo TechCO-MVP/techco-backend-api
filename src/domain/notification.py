@@ -29,5 +29,9 @@ class NotificationDTO(BaseModel):
     phase_id: Optional[str] = Field(default="", alias="phase_id")
 
 
+class UpdateNotificationStatusDTO(BaseModel):
+    notification_id: str
+
+
 class NotificationEntity(BaseEntity[NotificationDTO]):
     pass
