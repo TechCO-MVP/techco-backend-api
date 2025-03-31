@@ -437,6 +437,19 @@ functions:
             authorizerId:
               Ref: ApiGatewayAuthorizer
 
+  put_notification_status:
+    handler: src/adapters/primary/notifications/put_notification_status/index.handler
+    events:
+      - http:
+          path: /notification/status
+          method: put
+          cors: true
+          private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+
   get_hiring_process_by_id:
     handler: src/adapters/primary/hiring_process/get_hiring_process/index.handler
     events:

@@ -8,7 +8,6 @@ from src.domain.base_entity import from_dto_to_entity
 from src.domain.notification import NotificationEntity
 from src.repositories.document_db.client import DocumentDBClient
 from src.repositories.repository import IRepository
-from src.errors.entity_not_found import EntityNotFound
 
 logger = Logger("NotificationDocumentDBAdapter")
 
