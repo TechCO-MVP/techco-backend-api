@@ -29,11 +29,13 @@ class NotificationDocumentDBAdapter(IRepository[NotificationEntity]):
 
     def getAll(self, params: dict) -> list[NotificationEntity] | None:
         collection = self._client[self._collection_name]
-        notifications_data = collection.find({"user_id": params["user_id"]})
+        notifications_data = collection.find(params)
         notifications_entities = []
         for notification in notifications_data:
             notification["_id"] = str(notification["_id"])
             notification["user_id"] = str(notification["user_id"])
+            notification["business_id"] = str(notification["business_id"])
+            notification["hiring_process_id"] = str(notification["hiring_process_id"])
             notifications_entities.append(from_dto_to_entity(NotificationEntity, notification))
         return notifications_entities
 

@@ -678,6 +678,29 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Exception"
+  /notifiaction/list:
+    get:
+      summary: Get notifications list
+      description: Get notifications list.
+      responses:
+        "200":
+          description: Notification find successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetNotificationListResponse"
+        "400":
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Exception response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exception"
   /notifiaction/status:
     put:
       summary: Update notification status
@@ -1791,6 +1814,76 @@ components:
               example: id_123456kjhsad_3124987_sdak
             process_filters:
               $ref: "#/components/schemas/ProfileFilterStart"
+    GetNotificationListResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Notification found successfully.
+        body:
+          type: object
+          properties:
+            data:
+              type: object
+              properties:
+                _id:
+                  type: string
+                  example: id_123456kjhsad_3124987_sdak
+                created_at:
+                  type: string
+                  example: 2025-03-28T18:00:00.000Z
+                updated_at:
+                  type: string
+                  example: 2025-03-28T18:00:00.000Z
+                deleted_at:
+                  type: string
+                  nullable: true
+                  example: null
+                user_id:
+                  type: string
+                  example: id_123456kjhsad_3124987_sdak
+                business_id:
+                  type: string
+                  example: id_123456kjhsad_3124987_sdak
+                message:
+                  type: string
+                  example: "pepito cambio de fase"
+                notification_type:
+                  type: string
+                  example: "PHASE_CHANGE"
+                  enum:
+                    - PHASE_CHANGE
+                    - TAGGED_IN_COMMENT
+                    - PROFILE_FILTER_PROCESS
+                status:
+                  type: string
+                  example: "READ"
+                process:
+                  type: string
+                  nullable: true
+                  example: null
+                hiring_process_id:
+                  type: string
+                  example: id_123456kjhsad_3124987_sdak
+                read_at:
+                  type: string
+                  nullable: true
+                  example: null
+                phase_id:
+                  type: string
+                  example: id_123456kjhsad_3124987_sdak
+                card_id:
+                  type: string
+                  example: id_123456kjhsad_3124987_sdak
+                profile_name:
+                  type: string
+                  example: "pepito perez"
+                pipe_id:
+                  type: string
+                  example: id_123456kjhsad_3124987_sdak
+                position_name:
+                  type: string
+                  example: "developer"
     UpdateNotificationStatus:
       type: object
       properties:
@@ -1805,6 +1898,7 @@ components:
             - REVIEWED
       required:
         - notifiaction_id
+        - status
     UpdateNotificationStatusResponse:
       type: object
       properties:
