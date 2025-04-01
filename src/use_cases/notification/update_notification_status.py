@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from src.repositories.document_db.notification_repository import NotificationRepository
-from src.domain.notification import UpdateNotificationStatusDTO, NotificationStatus
+from src.domain.notification import UpdateNotificationStatusDTO
 
 
 def put_notificationr_status_use_case(notification_dto: UpdateNotificationStatusDTO) -> bool:
@@ -13,7 +13,7 @@ def put_notificationr_status_use_case(notification_dto: UpdateNotificationStatus
     if not notification:
         raise ValueError("Notification not found")
     
-    notification.props.status = NotificationStatus.READ
+    notification.props.status = notification_dto.status
     notification.props.read_at = datetime.now().isoformat()
     notification_repository.update(notification_dto.notification_id, notification)
     

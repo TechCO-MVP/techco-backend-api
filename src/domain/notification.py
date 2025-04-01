@@ -7,8 +7,9 @@ from src.domain.base_entity import BaseEntity
 
 
 class NotificationStatus(str, Enum):
+    NEW = "NEW"
     READ = "READ"
-    UNREAD = "UNREAD"
+    REVIEWED = "REVIEWED"
 
 
 class NotificationType(str, Enum):
@@ -22,7 +23,7 @@ class NotificationDTO(BaseModel):
     business_id: str = Field(default="", alias="business_id")
     message: str
     notification_type: NotificationType
-    status: NotificationStatus = NotificationStatus.UNREAD
+    status: NotificationStatus = NotificationStatus.NEW
     process: Optional[str]
     hiring_process_id: Optional[str] = Field(default="", alias="hiring_process_id")
     read_at: Optional[str] = Field(default=None, alias="read_at")
@@ -31,6 +32,7 @@ class NotificationDTO(BaseModel):
 
 class UpdateNotificationStatusDTO(BaseModel):
     notification_id: str
+    status: NotificationStatus
 
 
 class NotificationEntity(BaseEntity[NotificationDTO]):

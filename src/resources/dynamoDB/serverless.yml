@@ -21,24 +21,3 @@ WebSocketConnections:
     TimeToLiveSpecification:
         AttributeName: "expires_at"
         Enabled: true
-
-WebSocketApi:
-  Type: AWS::ApiGatewayV2::Api
-  Properties:
-    Name: ${self:service}-${self:provider.stage}-websocket
-    ProtocolType: WEBSOCKET
-    RouteSelectionExpression: $request.body.action
-    Description: WebSocket API for ${self:service} in ${self:provider.stage}
-
-WebSocketStage:
-  Type: AWS::ApiGatewayV2::Stage
-  Properties:
-    ApiId:
-      Ref: WebSocketApi
-    StageName: ${self:provider.stage}
-    AutoDeploy: true
-    DefaultRouteSettings:
-      ThrottlingBurstLimit: 5000
-      ThrottlingRateLimit: 10000
-    Description: WebSocket stage for ${self:service} in ${self:provider.stage}
-    IdleTimeoutInSeconds: 7200 # set Idle Timeout at 2 hours
