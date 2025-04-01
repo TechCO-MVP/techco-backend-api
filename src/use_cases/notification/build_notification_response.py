@@ -6,7 +6,6 @@ from src.domain.notification import NotificationEntity
 
 
 
-
 def build_notification_response_use_case(notifications: NotificationEntity) -> dict:
     """build notification response use case."""
     hiring_process_repository = HiringProcessDBAdapter()
@@ -22,12 +21,3 @@ def build_notification_response_use_case(notifications: NotificationEntity) -> d
         notification_response["position_name"] = position.props.role
 
     return notification_response
-    
-
-
-        
-
-
-
-    
-    
