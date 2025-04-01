@@ -165,6 +165,8 @@ resources:
     PipefyFieldUpdateQueue: ${file(./src/resources/pipefy/serverless.yml):PipefyFieldUpdateQueue}
     EventBridgeToSQSRole: ${file(./src/resources/pipefy/serverless.yml):EventBridgeToSQSRole}
     WebSocketConnections: ${file(./src/resources/dynamoDB/serverless.yml):WebSocketConnections}
+    WebSocketApi: ${file(./src/resources/dynamoDB/serverless.yml):WebSocketApi}
+    WebSocketStage: ${file(./src/resources/dynamoDB/serverless.yml):WebSocketStage}
     serverlessApiGatewayCloudWatchRole:
       Type: AWS::IAM::Role
       Properties:
