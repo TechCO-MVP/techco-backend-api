@@ -1797,6 +1797,12 @@ components:
         notification_id:
           type: string
           example: id_123456kjhsad_3124987_sdak
+        status:
+          type: string
+          example: READ
+          enum:
+            - READ
+            - REVIEWED
       required:
         - notifiaction_id
     UpdateNotificationStatusResponse:
