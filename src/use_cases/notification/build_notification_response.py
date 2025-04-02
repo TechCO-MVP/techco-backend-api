@@ -8,10 +8,10 @@ from src.domain.notification import NotificationEntity
 
 def build_notification_response_use_case(notifications: NotificationEntity) -> dict:
     """build notification response use case."""
-    hiring_process_repository = HiringProcessDBAdapter()
     notification_response = notifications.to_dto(flat=True)
 
     if notifications.props.hiring_process_id:
+        hiring_process_repository = HiringProcessDBAdapter()
         hiring_process: HiringProcessEntity = hiring_process_repository.getById(notifications.props.hiring_process_id)
         notification_response["card_id"] = hiring_process.props.card_id
         notification_response["profile_name"] = hiring_process.props.profile.name

@@ -3,8 +3,9 @@ import json
 from aws_lambda_powertools import Logger
 from botocore.exceptions import ClientError
 
-from src.domain.notification import NotificationDTO
+from src.domain.notification import NotificationDTO, NotificationEntity
 from src.use_cases.notification.save_notification import post_notification_use_case
+from src.use_cases.notification.build_notification_response import build_notification_response_use_case
 from src.constants.index import TABLE_WEBSOCKET_CONNECTIONS, REGION_NAME, ENV, API_ID
 
 logger = Logger()
@@ -19,6 +20,8 @@ def send_message_by_websocket(notification: NotificationDTO):
     logger.info(f"Message content: {notification.message}")
     logger.info(f"save notificstion domain")
     post_notification_use_case(notification)
+
+    notification_response = build_notification_response_use_case(NotificationEntity(props=notification))
     
     try:
         logger.info(f"getting connection_id from DynamoDB for user_id: {notification.user_id}")
@@ -43,7 +46,7 @@ def send_message_by_websocket(notification: NotificationDTO):
         logger.info("Sending message to connection_id")
         apigatewaymanagementapi.post_to_connection(
             ConnectionId=connection_id,
-            Data=json.dumps({"message": notification.message}),
+            Data=json.dumps({"message": notification_response}),
         )
 
         logger.info(f"Message sent to connection_id: {connection_id}")
