@@ -20,10 +20,14 @@ def post_notification():
 
         if not body:
             raise ValueError("Request body is empty")
+        
 
-        notification_dto = NotificationDTO(**body)
-
-        send_message_by_websocket(notification_dto)
+        notification_data = body.copy()
+        for user in body.get("user_id", []):
+            notification_data["user_id"] = user     
+            notification_dto = NotificationDTO(**notification_data)
+            
+            send_message_by_websocket(notification_dto)
 
         message = "Notification created successfully"
 
