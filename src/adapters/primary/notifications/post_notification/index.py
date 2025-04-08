@@ -22,8 +22,8 @@ def post_notification():
             raise ValueError("Request body is empty")
         
 
+        notification_data = body.copy()
         for user in body.get("user_id", []):
-            notification_data = body.copy()
             notification_data["user_id"] = user     
             notification_dto = NotificationDTO(**notification_data)
             
