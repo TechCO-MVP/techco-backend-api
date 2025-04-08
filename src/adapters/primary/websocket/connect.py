@@ -2,11 +2,14 @@ import boto3
 import json
 from aws_lambda_powertools import Logger
 from datetime import datetime, timedelta
+from botocore.exceptions import ClientError
 
-from src.constants.index import TABLE_WEBSOCKET_CONNECTIONS
+from src.constants.index import TABLE_WEBSOCKET_CONNECTIONS, API_ID, REGION_NAME, ENV
 
 logger = Logger()
 dynamodb = boto3.client("dynamodb")
+url = f"https://{API_ID}.execute-api.{REGION_NAME}.amazonaws.com/{ENV}"
+apigatewaymanagementapi = boto3.client("apigatewaymanagementapi", endpoint_url=url)
 
 
 @logger.inject_lambda_context
@@ -16,6 +19,8 @@ def handler(event, context):
     
     try:
         user_id = event["requestContext"]["authorizer"]["user_id"]
+
+        verify_connection(user_id)
 
         dynamodb.put_item(
             TableName=TABLE_WEBSOCKET_CONNECTIONS,
@@ -47,3 +52,31 @@ def handler(event, context):
         )
         logger.error(f"Error handler WebSocket conection: {str(e)}")
         return {"statusCode": 500, "body": body}
+    
+def verify_connection(user_id: str):
+    """Verify if exist an active connection."""
+    response = dynamodb.query(
+    TableName=TABLE_WEBSOCKET_CONNECTIONS,
+    IndexName="user_id_index",
+    KeyConditionExpression="user_id = :user_id",
+    ExpressionAttributeValues={":user_id": {"S": str(user_id)}},
+    )
+
+    if response.get("Items"):
+        existing_connection_id = response["Items"][0]["connection_id"]["S"]
+        logger.info(
+            f"Connection already exists for {user_id=}, deleting connection {existing_connection_id=}"
+        )
+
+        close_connection(existing_connection_id)
+
+def close_connection(connection_id: str):
+    """Close connection in websocket api."""
+    try:
+        apigatewaymanagementapi.delete_connection(ConnectionId=connection_id)
+    except ClientError as e:
+        if e.response["Error"]["Code"] == "GoneException":
+            logger.info(f"Existing connection {connection_id=} already closed")
+        else:
+            logger.error(f"Error closing connection {connection_id=}: {e}")
+            raise e
