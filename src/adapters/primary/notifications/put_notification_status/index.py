@@ -21,9 +21,13 @@ def put_notification_status():
         if not body:
             raise ValueError("Request body is empty")
 
-        notification_dto = UpdateNotificationStatusDTO(**body)
+        notification_data = body.copy()
 
-        put_notificationr_status_use_case(notification_dto)
+        for notification in body.get("notification_id", []):
+            notification_data["notification_id"] = notification     
+            notification_dto = UpdateNotificationStatusDTO(**body)
+
+            put_notificationr_status_use_case(notification_dto)
 
         message = "Notification status updated successfully"
 
