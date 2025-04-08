@@ -19,9 +19,10 @@ def send_message_by_websocket(notification: NotificationDTO):
     logger.info(f"Sending message to user_id: {notification.user_id} via WebSocket")
     logger.info(f"Message content: {notification.message}")
     logger.info(f"save notificstion domain")
-    post_notification_use_case(notification)
+    inserted_notification = post_notification_use_case(notification)
 
     notification_response = build_notification_response_use_case(NotificationEntity(props=notification))
+    notification_response["_id"] = inserted_notification["body"]["notification"]["_id"]
     
     try:
         logger.info(f"getting connection_id from DynamoDB for user_id: {notification.user_id}")
