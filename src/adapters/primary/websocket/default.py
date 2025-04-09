@@ -1,8 +1,6 @@
 import json
 from aws_lambda_powertools import Logger
 from src.use_cases.websocket.chat_message import chat_message_use_case
-# from src.use_cases.websocket.unknow_action import unknown_action_use_case
-# from src.handlers.notification_handler import handle_notification
 
 logger = Logger()
 
@@ -14,13 +12,23 @@ def handler(event, context):
         action = body.get("action")
         payload = body.get("payload", {})
         connection_id = event["requestContext"]["connectionId"]
+        user_id = event["requestContext"]["authorizer"]["user_id"]
+        user_email = event["requestContext"]["authorizer"]["email"]
 
         logger.info(f"Received action: {action}, payload: {payload}")
+        logger.info(f"message from user_id: {user_id}, email: {user_email}")
 
         if action == "chat_message":
             return chat_message_use_case(connection_id, payload)
-        # else:
-        #     return unknown_action_use_case(connection_id, action)
+        else:
+            return json.dumps(
+                {
+                    "action": "Unknown action",
+                    "payload": {
+                        "message": "Unknown action"
+                    },
+                }
+            )
 
     except Exception as e:
         logger.error(f"Error in @message handler: {str(e)}")

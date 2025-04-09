@@ -11,9 +11,8 @@ url = f"https://{API_ID}.execute-api.{REGION_NAME}.amazonaws.com/{ENV}"
 apigatewaymanagementapi = boto3.client("apigatewaymanagementapi", endpoint_url=url)
 
 
-def send_chat_message_by_websocket(user_id: str, connection_id: str, message: dict):
+def send_chat_message_by_websocket(connection_id: str, message: dict):
     """Send a chat message to a WebSocket connection if it exists in DynamoDB."""
-    logger.info(f"Rresponse message to user_id: {user_id} via WebSocket")
     logger.info(f"Message content: {message}")
     
     try:
