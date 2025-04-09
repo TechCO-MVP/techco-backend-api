@@ -47,7 +47,7 @@ def send_notification_by_websocket(notification: NotificationDTO):
         logger.info("Sending message to connection_id")
         apigatewaymanagementapi.post_to_connection(
             ConnectionId=connection_id,
-            Data=json.dumps({"action": "notification", "body": {"message": notification_response}}),
+            Data=json.dumps({"action": "notification", "payload": {"message": notification_response}}),
         )
 
         logger.info(f"Message sent to connection_id: {connection_id}")

@@ -20,7 +20,7 @@ def send_chat_message_by_websocket(user_id: str, connection_id: str, message: di
         logger.info("Sending message to connection_id")
         apigatewaymanagementapi.post_to_connection(
             ConnectionId=connection_id,
-            Data=json.dumps({"action": message["type"], "body": {"message": message["message"]}}),
+            Data=json.dumps({"action": message["type"], "payload": {"message": message["message"]}}),
         )
 
         logger.info(f"Message sent to connection_id: {connection_id}")
