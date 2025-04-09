@@ -621,6 +621,12 @@ functions:
       - websocket:
           route: $disconnect
 
+  defaultMessageHandler:
+    handler: src/adapters/primary/websocket/default.handler
+    events:
+      - websocket:
+          route: $default
+
 stepFunctions:
   stateMachines: ${file(./src/resources/brightdata/serverless.yml):stateMachines}
 
