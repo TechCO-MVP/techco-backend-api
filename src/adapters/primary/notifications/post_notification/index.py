@@ -4,7 +4,7 @@ from aws_lambda_powertools.utilities.typing import LambdaContext
 from pydantic import ValidationError
 
 from src.domain.notification import NotificationDTO
-from src.utils.send_message_by_websocket import send_message_by_websocket
+from src.utils.send_notification_by_websocket import send_notification_by_websocket
 
 
 logger = Logger()
@@ -27,7 +27,7 @@ def post_notification():
             notification_data["user_id"] = user     
             notification_dto = NotificationDTO(**notification_data)
             
-            send_message_by_websocket(notification_dto)
+            send_notification_by_websocket(notification_dto)
 
         message = "Notification created successfully"
 

@@ -14,7 +14,7 @@ url = f"https://{API_ID}.execute-api.{REGION_NAME}.amazonaws.com/{ENV}"
 apigatewaymanagementapi = boto3.client("apigatewaymanagementapi", endpoint_url=url)
 
 
-def send_message_by_websocket(notification: NotificationDTO):
+def send_notification_by_websocket(notification: NotificationDTO):
     """Send a message to a WebSocket connection if it exists in DynamoDB."""
     logger.info(f"Sending message to user_id: {notification.user_id} via WebSocket")
     logger.info(f"Message content: {notification.message}")
@@ -47,7 +47,7 @@ def send_message_by_websocket(notification: NotificationDTO):
         logger.info("Sending message to connection_id")
         apigatewaymanagementapi.post_to_connection(
             ConnectionId=connection_id,
-            Data=json.dumps({"message": notification_response}),
+            Data=json.dumps({"action": "notification", "payload": {"message": notification_response}}),
         )
 
         logger.info(f"Message sent to connection_id: {connection_id}")

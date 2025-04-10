@@ -36,7 +36,13 @@ class UserDocumentDBAdapter(IRepository[UserEntity]):
         logger.info(f"Getting all user entities with filter: {params}")
 
         collection = self._client[self._collection_name]
-        users_data = collection.find({"business_id": ObjectId(params["business_id"])})
+        users_data = collection.find({
+            "roles": {
+                "$elemMatch": {
+                    "business_id": params["business_id"]
+                }
+            }
+        })
         users_entities = []
         for user in users_data:
             user["_id"] = str(user["_id"])

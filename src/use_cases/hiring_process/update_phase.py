@@ -6,7 +6,7 @@ from src.repositories.document_db.hiring_process_repository import HiringProcess
 from src.repositories.document_db.position_repository import PositionRepository
 from src.domain.hiring_process import HiringProcessPhaseHistory, PhaseMove, HiringProcessEntity
 from src.domain.notification import NotificationDTO, NotificationType, NotificationStatus
-from src.utils.send_message_by_websocket import send_message_by_websocket
+from src.utils.send_notification_by_websocket import send_notification_by_websocket
 
 
 logger = Logger("CardMoveEvent")
@@ -66,4 +66,4 @@ def build_message_to_websocket(hiring_process: HiringProcessEntity):
             phase_id=hiring_process.props.phase_id,
         )
         
-        send_message_by_websocket(notification)
+        send_notification_by_websocket(notification)
