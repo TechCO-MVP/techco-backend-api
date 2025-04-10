@@ -33,6 +33,8 @@ class UserDocumentDBAdapter(IRepository[UserEntity]):
             self._client[self._collection_name].create_index("email", unique=True)
 
     def getAll(self, params: dict) -> list[UserEntity] | None:
+        logger.info(f"Getting all user entities with filter: {params}")
+
         collection = self._client[self._collection_name]
         users_data = collection.find({
             "roles": {
@@ -46,6 +48,19 @@ class UserDocumentDBAdapter(IRepository[UserEntity]):
             user["_id"] = str(user["_id"])
             user["business_id"] = str(user["business_id"])
             users_entities.append(from_dto_to_entity(UserEntity, user))
+        return users_entities
+
+    def search(self, params: dict) -> list[UserEntity] | None:
+        logger.info(f"Searching user entities with filter: {params}")
+
+        collection = self._client[self._collection_name]
+        users_data = collection.find(params)
+        users_entities = []
+        for user in users_data:
+            user["_id"] = str(user["_id"])
+            user["business_id"] = str(user["business_id"])
+            users_entities.append(from_dto_to_entity(UserEntity, user))
+
         return users_entities
 
     def getByEmail(self, email: str) -> UserEntity:

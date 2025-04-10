@@ -1,7 +1,7 @@
 import json
 import os
 from time import sleep
-from typing import List
+from typing import List, Dict, Any
 
 import boto3
 from aws_lambda_powertools import Logger
@@ -10,16 +10,19 @@ from openai.types.beta.threads.run import Run
 
 from src.models.openai.index import OpenAIMessage
 from src.services.llm.llm_service import LLMService
+from src.adapters.secondary.llm.open_ai_tools import OpenAITools
 
 logger = Logger()
 
 
 class OpenAIAdapter(LLMService):
 
-    def __init__(self):
+    def __init__(self, context: Dict[str, Any] = None):
         api_key = self.get_secret_api_key()
         self.client = OpenAI(api_key=api_key)
         self.assistant_id = os.getenv("OPEN_AI_ASSISTANT_ID", "")
+        self.tools = OpenAITools()
+        self.context = context or {}
 
     def generate_response(
         self,
@@ -59,17 +62,17 @@ class OpenAIAdapter(LLMService):
             },
         )
 
-    def wait_for_completion(self, thread_run: Run):
+    def wait_for_completion(self, thread_run: Run) -> Run:
         while True:
             run = self.client.beta.threads.runs.retrieve(
                 run_id=thread_run.id,
                 thread_id=thread_run.thread_id,
             )
 
-            if run.status == "completed":
-                break
+            if run.status in ["completed", "requires_action"]:
+                return run
 
-            if run.status in ["failed", "incomplete", "requires_action", "expired"]:
+            if run.status in ["failed", "incomplete", "expired"]:
                 raise Exception(f"Run failed: {run}")
 
             sleep(5)
@@ -77,6 +80,35 @@ class OpenAIAdapter(LLMService):
     def get_thread_response(self, thread_run: Run) -> str:
         messages_thread = self.client.beta.threads.messages.list(thread_id=thread_run.thread_id)
         return messages_thread.data[0].content[0].text.value
+
+    def complete_required_action(self, thread_run: Run):
+        if thread_run.status != "requires_action":
+            raise Exception("Thread run does not require action")
+
+        tool_outputs = []
+        tool_calls = thread_run.required_action.submit_tool_outputs.tool_calls
+
+        for tool_call in tool_calls:
+            tool_type = tool_call.type
+            if tool_type != "function":
+                raise Exception(f"Unsupported tool type: {tool_type}")
+
+            f_name = tool_call.function.name
+            f_args = tool_call.function.arguments
+
+            output = self.tools.execute(f_name, self.context, **json.loads(f_args))
+            tool_outputs.append(
+                {
+                    "tool_call_id": tool_call.id,
+                    "output": json.dumps(output),
+                }
+            )
+
+        self.client.beta.threads.runs.submit_tool_outputs(
+            thread_id=thread_run.thread_id,
+            run_id=thread_run.id,
+            tool_outputs=tool_outputs,
+        )
 
     def get_secret_api_key(self) -> str:
         try:

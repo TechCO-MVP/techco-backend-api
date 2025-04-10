@@ -14,10 +14,9 @@ app = APIGatewayRestResolver()
 def get_position():
     """Get position."""
     try:
-
         authorizer = app.current_event.request_context.authorizer["claims"]
         user_email = authorizer["email"]
-        
+
         query_params = app.current_event.query_string_parameters
         GetPositionQueryParams.validate_params(query_params)
 

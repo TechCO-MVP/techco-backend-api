@@ -53,6 +53,12 @@ class PositionStakeholders(BaseModel):
     can_edit: bool
 
 
+class COUNTRY_CODE(str, Enum):
+    CO = "CO"
+    PE = "PE"
+    MX = "MX"
+
+
 class PositionDTO(BaseModel):
     business_id: str = Field(default="", alias="business_id")
     owner_position_user_id: str
@@ -60,7 +66,7 @@ class PositionDTO(BaseModel):
     responsible_users: List[PositionStakeholders] = Field(default_factory=list)
     role: str
     seniority: str
-    country_code: str = Field(..., min_length=2, max_length=2)
+    country_code: COUNTRY_CODE
     city: str
     description: str
     responsabilities: List[str] = Field(..., min_length=1)
