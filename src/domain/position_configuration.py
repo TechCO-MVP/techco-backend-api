@@ -11,8 +11,7 @@ class STATUS(str, Enum):
     DRAFT = "DRAFT"
     IN_PROGRESS = "IN_PROGRESS"
     COMPLETED = "COMPLETED"
-    FINISHED = "FINISHED"
-    INACTIVE = "INACTIVE"
+
 
 class LEVEL(str, Enum):
     HIGH = "high"
