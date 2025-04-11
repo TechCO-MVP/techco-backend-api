@@ -13,43 +13,6 @@ class STATUS(str, Enum):
     COMPLETED = "COMPLETED"
 
 
-class LEVEL(str, Enum):
-    HIGH = "high"
-    MEDIUM = "medium"
-    LOW = "low"
-
-
-class WORK_MODE(str, Enum):
-    REMOTE = "REMOTE"
-    HYBRID = "HYBRYD"
-    ON_SITE = "ON_SITE"
-
-
-class Skill(BaseModel):
-    name: str
-    required: bool
-
-
-class Languages(BaseModel):
-    name: str
-    level: str
-
-
-class Range(BaseModel):
-    min: str
-    max: str
-
-
-class Salary(BaseModel):
-    currency: str
-    salary: Optional[str] = None
-    salary_range: Optional[Range] = None
-
-
-class Stakeholders(BaseModel):
-    user_id: str
-    can_edit: bool
-
 class Phase(BaseModel):
     name: str
     thread_id: str
