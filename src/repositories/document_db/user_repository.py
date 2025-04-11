@@ -14,6 +14,9 @@ class UserRepository(IRepository[UserEntity]):
     def getAll(self, params: dict):
         return self._adapter.getAll(params)
 
+    def search(self, params: dict):
+        return self._adapter.search(params)
+
     def getById(self, id: str):
         return self._adapter.getById(id)
 
