@@ -12,7 +12,7 @@ from src.models.openai.index import OpenAIMessage
 from src.services.llm.llm_service import LLMService
 from src.adapters.secondary.llm.open_ai_tools import OpenAITools
 
-logger = Logger()
+logger = Logger("OpenAIAdapter")
 
 
 class OpenAIAdapter(LLMService):
@@ -35,6 +35,46 @@ class OpenAIAdapter(LLMService):
         self.wait_for_completion(thread_run)
         self.delete_file(file_id)
         return self.get_thread_response(thread_run)
+
+    def initialize_assistant_thread(self, assistant_id: str) -> Run:
+        """
+        Initialize the assistant with the given ID.
+        the thread is initialized with a greeting message.
+        """
+        logger.info("Initializing assistant thread")
+
+        thread_run = self.client.beta.threads.create_and_run(
+            assistant_id=assistant_id,
+            thread={
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": "Hola!",
+                    }
+                ]
+            },
+        )
+
+        return thread_run
+
+    def create_message_thread(self, thread_run: Run, message: str, role: str = "user") -> Run:
+        """
+        Create a message thread with the given message and role.
+        """
+        logger.info("Creating message thread message")
+
+        self.client.beta.threads.messages.create(
+            thread_id=thread_run.thread_id,
+            role=role,
+            content=message,
+        )
+
+        thread_run = self.client.beta.threads.runs.create(
+            thread_id=thread_run.thread_id,
+            assistant_id=self.assistant_id,
+        )
+
+        return thread_run
 
     def upload_file(self, file_path: str) -> str:
         with open(file_path, "rb") as file:
@@ -76,6 +116,32 @@ class OpenAIAdapter(LLMService):
                 raise Exception(f"Run failed: {run}")
 
             sleep(5)
+
+    def run_and_process_thread(self, thread_run: Run) -> Any:
+        logger.info("Running and processing thread")
+        logger.info(thread_run.status)
+
+        thread_run = self.wait_for_completion(thread_run)
+        return self.handle_run_state(thread_run)
+
+    def handle_run_state(self, thread_run: Run) -> Any:
+        logger.info("Handling run state")
+        logger.info(thread_run.status)
+
+        state_handlers = {
+            "completed": self.get_thread_response,
+            "requires_action": self.handle_requires_action,
+        }
+
+        handler = state_handlers.get(thread_run.status)
+        if not handler:
+            raise Exception(f"Unsupported run state: {thread_run.status}")
+
+        return handler(thread_run)
+
+    def handle_requires_action(self, thread_run: Run) -> Any:
+        self.complete_required_action(thread_run)
+        return self.run_and_process_thread(thread_run)
 
     def get_thread_response(self, thread_run: Run) -> str:
         messages_thread = self.client.beta.threads.messages.list(thread_id=thread_run.thread_id)
