@@ -627,6 +627,32 @@ functions:
       - websocket:
           route: $default
 
+  get_position_configuration_list:
+    handler: src/adapters/primary/position_configuration/get_position_configuration/index.handler
+    events:
+      - http:
+          path: /position_configuration/list
+          method: get
+          cors: true
+          private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+
+  post_position_configuration:
+    handler: src/adapters/primary/position_configuration/create_position_configuration/index.handler
+    events:
+      - http:
+          path: /position_configuration/create
+          method: post
+          cors: true
+          private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+
 stepFunctions:
   stateMachines: ${file(./src/resources/brightdata/serverless.yml):stateMachines}
 

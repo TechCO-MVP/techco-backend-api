@@ -3,29 +3,38 @@ from aws_lambda_powertools.event_handler import APIGatewayRestResolver, Response
 from aws_lambda_powertools.utilities.typing import LambdaContext
 from pydantic import ValidationError
 
-from src.domain.position import UpdatePositionStatusDTO
-from src.use_cases.position.put_position_status import put_position_status_use_case
+from src.domain.position_configuration import PositionConfigurationDTO
+from src.use_cases.position_configuration.post_position_configuration import post_position_configuration_use_case
+from src.use_cases.user.get_user_by_mail import get_user_by_mail_use_case
 
 logger = Logger()
 app = APIGatewayRestResolver()
 
 
-@app.put("/position/status")
-def put_position_status():
-    """Put position status."""
+@app.post("/position_configuration/create")
+def post_position_configuration():
+    """Post position configuration."""
     try:
+        authorizer = app.current_event.request_context.authorizer["claims"]
+        user_email = authorizer["email"]
 
-        body = app.current_event.json_body
-        update_status_dto = UpdatePositionStatusDTO(**body)
+        user_entity = get_user_by_mail_use_case(user_email)
+        if not user_entity:
+            raise ValueError("User not found")
         
-        response = put_position_status_use_case(update_status_dto)
+        body = app.current_event.json_body
+        body["user_id"] = user_entity.id
+
+        update_status_dto = PositionConfigurationDTO(**body)
+        
+        response = post_position_configuration_use_case(update_status_dto)
 
         return Response(
             status_code=200,
             body={
-                "message": "Position updated successfully",
+                "message": "Position configuration created successfully",
                 "body": {
-                    "data": response,
+                    "data": response.to_dto(flat=True),
                 },
             },
             content_type=content_types.APPLICATION_JSON,
@@ -59,9 +68,18 @@ def handler(event: dict, context: LambdaContext) -> dict:
     request: The request object, described like:
     {
         "body": {
-            "position_id": "string",
-            "position_status": "string",
-            "user_id": "string"
+            "thread_id": string,
+            "status": string,
+            "phases": [
+                {
+                    "name": string,
+                    "thread_id": string,
+                    "status": string,
+                    "data": dict
+                    "type": string
+                }
+            ],
+            "type": string,
         }
     }
     """

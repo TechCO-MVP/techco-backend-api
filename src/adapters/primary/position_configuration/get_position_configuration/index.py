@@ -21,14 +21,19 @@ def get_position_configuration():
 
         response = get_position_configuration_use_case(query_params, user_email)
 
-        message = "Position configuration found successfully" if response else "Position configuration not found"
+        if response:
+            data = [position.to_dto(flat=True) for position in response]
+            message = "Position configuration found successfully" 
+        else:
+            data = []
+            message = "Position configuration not found"
 
         return Response(
             status_code=200,
             body={
                 "message": message,
                 "body": {
-                    "data": response,
+                    "data": data,
                 },
             },
             content_type=content_types.APPLICATION_JSON,

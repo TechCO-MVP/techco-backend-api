@@ -759,6 +759,71 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Exception"
+  /position_configuration/list:
+    get:
+      summary: Get position configuration list
+      description: Get position configuration list.
+      parameters:
+        - name: id
+          in: query
+          required: false
+          description: The ID of the position_configuration.
+          schema:
+            type: string
+        - name: all
+          in: query
+          required: false
+          description: Flag to indicate if all position configuration should be retrieved.
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: position configuration find successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetPositionConfigurationListResponse"
+        "400":
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Exception response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exception"
+  /position_configuration/create:
+    post:
+      summary: Create position configuration
+      description: Create position configuration as new.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PostPositionConfiguration"
+      responses:
+        "200":
+          description: position configuration created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PostPositionConfigurationResponse"
+        "400":
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Exception response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exception"
 
 components:
   schemas:
@@ -1968,3 +2033,189 @@ components:
         message:
           type: string
           example: Notification updated successfully.
+    GetPositionConfigurationListResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: position configuration found successfully.
+        body:
+          type: object
+          properties:
+            data:
+              type: object
+              properties:
+                _id:
+                  type: string
+                  example: id_123456kjhsad_3124987_sdak
+                created_at:
+                  type: string
+                  example: 2025-03-28T18:00:00.000Z
+                updated_at:
+                  type: string
+                  example: 2025-03-28T18:00:00.000Z
+                deleted_at:
+                  type: string
+                  nullable: true
+                  example: null
+                user_id:
+                  type: string
+                  example: id_123456kjhsad_3124987_sdak
+                thread_id:
+                  type: string
+                  example: id_123456kjhsad_3124987_sdak
+                status:
+                  type: string
+                  example: "COMPLETED"
+                  enum:
+                    - COMPLETED
+                    - IN_PROGRESS
+                    - DRAFT
+                type:
+                  type: string
+                  example: "AI_TEMPLATE"
+                  enum:
+                    - AI_TEMPLATE
+                    - CUSTOM
+                    - OTHER_POSITION_AS_TEMPLATE
+                phases:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: phase_1
+                      thread_id:
+                        type: string
+                        example: "id_123456"
+                      status:
+                        type: string
+                        example: "COMPLETED"
+                        enum:
+                          - COMPLETED
+                          - IN_PROGRESS
+                          - DRAFT
+                      type:
+                        type: string
+                        example: "DESCRIPTION"
+                        enum:
+                          - DESCRIPTION
+                          - READY_TO_PUBLISH
+                          - FINAL_INTERVIEW
+                          - TECHNICAL_TEST
+                          - SOFT_SKILLS
+                      data:
+                        type: object
+                        example: {}         
+    PostPositionConfiguration:
+      type: object
+      properties:
+        thread_id:
+          type: string
+          example: "6777862efe77308365432a36"
+        status:
+          type: string
+          example: "COMPLETED"
+          enum:
+            - COMPLETED
+            - IN_PROGRESS
+            - DRAFT
+        type:
+          type: string
+          example: "AI_TEMPLATE"
+          enum:
+            - AI_TEMPLATE
+            - CUSTOM
+            - OTHER_POSITION_AS_TEMPLATE>
+        phases:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                example: phase_1
+              thread_id:
+                type: string
+                example: "id_123456"
+              status:
+                type: string
+                example: "COMPLETED"
+                enum:
+                  - COMPLETED
+                  - IN_PROGRESS
+                  - DRAFT
+              type:
+                type: string
+                example: "DESCRIPTION"
+                enum:
+                  - DESCRIPTION
+                  - READY_TO_PUBLISH
+                  - FINAL_INTERVIEW
+                  - TECHNICAL_TEST
+                  - SOFT_SKILLS
+              data:
+                type: object
+                example: {}
+            required:
+              - name
+              - thread_id
+              - status
+              - data
+              - type
+      required:
+        - thread_id
+        - status
+        - phases
+        - type
+    PostPositionConfigurationResponse:
+      type: object
+      properties:
+        thread_id:
+          type: string
+          example: "6777862efe77308365432a36"
+        status:
+          type: string
+          example: "COMPLETED"
+          enum:
+            - COMPLETED
+            - IN_PROGRESS
+            - DRAFT
+        type:
+          type: string
+          example: "AI_TEMPLATE"
+          enum:
+            - AI_TEMPLATE
+            - CUSTOM
+            - OTHER_POSITION_AS_TEMPLATE>
+        phases:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                example: phase_1
+              thread_id:
+                type: string
+                example: "id_123456"
+              status:
+                type: string
+                example: "COMPLETED"
+                enum:
+                  - COMPLETED
+                  - IN_PROGRESS
+                  - DRAFT
+              type:
+                type: string
+                example: "DESCRIPTION"
+                enum:
+                  - DESCRIPTION
+                  - READY_TO_PUBLISH
+                  - FINAL_INTERVIEW
+                  - TECHNICAL_TEST
+                  - SOFT_SKILLS
+              data:
+                type: object
+                example: {}
