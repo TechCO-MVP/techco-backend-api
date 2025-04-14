@@ -13,11 +13,26 @@ class STATUS(str, Enum):
     COMPLETED = "COMPLETED"
 
 
+class TYPE(str, Enum):
+    AI_TEMPLATE = "AI_TEMPLATE"
+    CUSTOM = "CUSTOM"
+    OTHER_POSITION_AS_TEMPLATE = "OTHER_POSITION_AS_TEMPLATE"
+
+
+class PHASE_TYPE(str, Enum):
+    DESCRIPTION = "DESCRIPTION"
+    SOFT_SKILLS = "SOFT_SKILLS"
+    TECHNICAL_TEST = "TECHNICAL_TEST"
+    FINAL_INTERVIEW = "FINAL_INTERVIEW"
+    READY_TO_PUBLISH = "READY_TO_PUBLISH"
+
+
 class Phase(BaseModel):
     name: str
     thread_id: str
     status: STATUS
     data: dict
+    type: PHASE_TYPE
 
 
 class PositionConfigurationDTO(BaseModel):
@@ -26,6 +41,7 @@ class PositionConfigurationDTO(BaseModel):
     thread_id: str = Field(default="", alias="thread_id")
     status: STATUS = STATUS.DRAFT
     phases: Optional[List[Phase]] = Field(default=[])
+    type: TYPE
     
     @model_validator(mode="before")
     def validate_and_convert_fields(cls, values):
