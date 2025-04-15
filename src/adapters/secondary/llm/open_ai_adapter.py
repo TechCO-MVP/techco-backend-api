@@ -1,16 +1,19 @@
 import json
 import os
 from time import sleep
-from typing import List, Dict, Any
+from typing import Any, Dict, List
 
 import boto3
 from aws_lambda_powertools import Logger
 from openai import OpenAI
+from openai.types.beta.assistant import Assistant
 from openai.types.beta.threads.run import Run
 
+from src.adapters.secondary.llm.assistants.index import get_config_by_type
+from src.adapters.secondary.llm.open_ai_tools import OpenAITools
+from src.domain.assistant import ASSISTANT_TYPE
 from src.models.openai.index import OpenAIMessage
 from src.services.llm.llm_service import LLMService
-from src.adapters.secondary.llm.open_ai_tools import OpenAITools
 
 logger = Logger("OpenAIAdapter")
 
@@ -175,6 +178,24 @@ class OpenAIAdapter(LLMService):
             run_id=thread_run.id,
             tool_outputs=tool_outputs,
         )
+
+    def create_assistant(self, identifier: str, type: ASSISTANT_TYPE) -> Assistant:
+        """
+        Create a new assistant with the given identifier,
+        the identifier will be appended to the assistant name.
+        """
+        logger.info(f"Creating assistant with identifier: {identifier}, type: {type}")
+        config = get_config_by_type(type)
+        assistant = self.client.beta.assistants.create(
+            name=f"{config["name"]} - {identifier}",
+            model=config["model"],
+            instructions=config["instructions"],
+            response_format=config["response_format"],
+            tools=config["tools"],
+        )
+
+        logger.info(f"Assistant created with ID: {assistant.id}")
+        return assistant
 
     def get_secret_api_key(self) -> str:
         try:

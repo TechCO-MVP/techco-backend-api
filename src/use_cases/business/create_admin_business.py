@@ -1,6 +1,11 @@
+import uuid
+from typing import Dict
+
 import boto3
 
+from src.adapters.secondary.llm.open_ai_adapter import OpenAIAdapter
 from src.constants.index import CLIENT_ID, ENV, REGION_NAME
+from src.domain.assistant import ASSISTANT_TYPE
 from src.domain.business import BusinessDTO, BusinessEntity
 from src.domain.user import UserDTO, UserEntity
 from src.repositories.document_db.business_repository import BusinessRepository
@@ -16,6 +21,9 @@ def validate_business_dto(business_dto: BusinessDTO):
 
 
 def create_business_and_user(business_dto: BusinessDTO, user_dto: UserDTO):
+    assistants = create_assistants_for_business()
+    business_dto.assistants = assistants
+
     business_repository = BusinessRepository()
     business_entity = BusinessEntity(props=business_dto)
     business_entity = business_repository.create(business_entity)
@@ -77,3 +85,19 @@ def crete_admin_business_use_case(
         except Exception as e:
             document_db_client.abort_transaction()
             raise e
+
+
+def create_assistants_for_business() -> Dict[str, Dict]:
+    unique_identifier = str(uuid.uuid4())
+
+    open_ai_adapter = OpenAIAdapter()
+    assistant = open_ai_adapter.create_assistant(
+        unique_identifier, ASSISTANT_TYPE.POSITION_ASSISTANT
+    )
+
+    return {
+        ASSISTANT_TYPE.POSITION_ASSISTANT: {
+            "assistant_id": assistant.id,
+            "assistant_type": ASSISTANT_TYPE.POSITION_ASSISTANT,
+        }
+    }
