@@ -25,9 +25,9 @@ def post_position_configuration():
         body = app.current_event.json_body
         body["user_id"] = user_entity.id
 
-        update_status_dto = PositionConfigurationDTO(**body)
+        create_position_configuration_dto = PositionConfigurationDTO(**body)
         
-        response = post_position_configuration_use_case(update_status_dto)
+        response = post_position_configuration_use_case(create_position_configuration_dto)
 
         return Response(
             status_code=200,

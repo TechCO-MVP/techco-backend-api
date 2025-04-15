@@ -13,7 +13,7 @@ def get_position_configuration_use_case(params: dict, user_email: str) -> list[P
     elif params["all"].lower() == "true":
         user_repository = UserRepository()
         user_entity = user_repository.getByEmail(user_email)
-        query = {"user_id": user_entity.id}
+        query = {"user_id": user_entity.id, "business_id": params["business_id"]}
         return position_repository.getAll(query)
     else:
         raise ValueError("Invalid values")

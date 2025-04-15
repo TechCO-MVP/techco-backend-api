@@ -2,7 +2,7 @@ from enum import Enum
 from typing import List, Optional
 
 from bson import ObjectId
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field, model_validator, ValidationError
 
 from src.domain.base_entity import BaseEntity
 
@@ -38,6 +38,7 @@ class Phase(BaseModel):
 class PositionConfigurationDTO(BaseModel):
 
     user_id: str = Field(default="", alias="user_id")
+    business_id: str = Field(default="", alias="business_id")
     thread_id: str = Field(default="", alias="thread_id")
     status: STATUS = STATUS.DRAFT
     phases: Optional[List[Phase]] = Field(default=[])
@@ -45,7 +46,7 @@ class PositionConfigurationDTO(BaseModel):
     
     @model_validator(mode="before")
     def validate_and_convert_fields(cls, values):
-        fields_to_validate = ["user_id"]
+        fields_to_validate = ["user_id", "business_id", "thread_id"]
         for field in fields_to_validate:
             if field in values:
                 if isinstance(values[field], ObjectId):
@@ -54,6 +55,36 @@ class PositionConfigurationDTO(BaseModel):
                     raise ValueError(f"Invalid {field} format. Must be a string or ObjectId.")
         return values
 
+class GetPositionConfigurationQueryParams(BaseModel):
+    business_id: str
+    id: Optional[str] = None
+    al1l: Optional[bool] = None
+
+    @model_validator(mode="before")
+    def check_id_or_all(cls, values):
+        if not values.get("id") and not values.get("all"):
+            raise ValueError("Either 'id' or 'all' query parameter is required")
+        return values
+
+    @model_validator(mode="before")
+    def validate_and_convert_fields(cls, values):
+        fields_to_validate = ["business_id"]
+
+        for field in fields_to_validate:
+            if field in values:
+                if isinstance(values[field], ObjectId):
+                    values[field] = str(values[field])
+                elif not isinstance(values[field], str):
+                    raise ValueError(f"Invalid {field} format. Must be a string or ObjectId.")
+
+        return values
+    
+    @classmethod
+    def validate_params(cls, params):
+        try:
+            return cls(**params)
+        except ValidationError as e:
+            raise ValueError(f"Invalid query parameters: {e}")
 
 class PositionConfigurationEntity(BaseEntity[PositionConfigurationDTO]):
     pass
