@@ -4,35 +4,28 @@ from aws_lambda_powertools.utilities.typing import LambdaContext
 from pydantic import ValidationError
 
 from src.domain.position_configuration import PositionConfigurationDTO
-from src.use_cases.position_configuration.post_position_configuration import post_position_configuration_use_case
-from src.use_cases.user.get_user_by_mail import get_user_by_mail_use_case
+from src.use_cases.position_configuration.put_position_configuration import put_position_configuration_use_case
+
 
 logger = Logger()
 app = APIGatewayRestResolver()
 
 
-@app.post("/position_configuration/create")
-def post_position_configuration():
-    """Post position configuration."""
+@app.put("/position_configuration/update")
+def put_position_configuration():
+    """Put position configuration."""
     try:
-        authorizer = app.current_event.request_context.authorizer["claims"]
-        user_email = authorizer["email"]
-
-        user_entity = get_user_by_mail_use_case(user_email)
-        if not user_entity:
-            raise ValueError("User not found")
         
         body = app.current_event.json_body
-        body["user_id"] = user_entity.id
-
-        create_position_configuration_dto = PositionConfigurationDTO(**body)
         
-        response = post_position_configuration_use_case(create_position_configuration_dto)
+        PositionConfigurationDTO(**body)
+        
+        response = put_position_configuration_use_case(body)
 
         return Response(
             status_code=200,
             body={
-                "message": "Position configuration created successfully",
+                "message": "Position configuration updated successfully",
                 "body": {
                     "data": response.to_dto(flat=True),
                 },

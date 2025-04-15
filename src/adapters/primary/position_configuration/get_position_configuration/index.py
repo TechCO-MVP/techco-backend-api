@@ -3,6 +3,7 @@ from aws_lambda_powertools.event_handler import APIGatewayRestResolver, Response
 from aws_lambda_powertools.utilities.typing import LambdaContext
 from pydantic import ValidationError
 
+from src.domain.position_configuration import GetPositionConfigurationQueryParams
 from src.use_cases.position_configuration.get_position_configuration import get_position_configuration_use_case
 
 logger = Logger()
@@ -18,6 +19,7 @@ def get_position_configuration():
         user_email = authorizer["email"]
         
         query_params = app.current_event.query_string_parameters
+        GetPositionConfigurationQueryParams.validate_params(query_params)
 
         response = get_position_configuration_use_case(query_params, user_email)
 
