@@ -770,6 +770,12 @@ paths:
           description: The ID of the position_configuration.
           schema:
             type: string
+        - name: business_id
+          in: query
+          required: false
+          description: The ID of the business.
+          schema:
+            type: string
         - name: all
           in: query
           required: false
@@ -812,6 +818,35 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/PostPositionConfigurationResponse"
+        "400":
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Exception response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exception"
+  /position_configuration/update:
+    put:
+      summary: Update position configuration
+      description: Update position configuration as new.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PutPositionConfiguration"
+      responses:
+        "200":
+          description: position configuration updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PutPositionConfigurationResponse"
         "400":
           description: Error
           content:
@@ -2114,6 +2149,9 @@ components:
         thread_id:
           type: string
           example: "6777862efe77308365432a36"
+        business_id:
+          type: string
+          example: "6777862efe77308365432a36"
         status:
           type: string
           example: "COMPLETED"
@@ -2166,12 +2204,170 @@ components:
               - type
       required:
         - thread_id
+        - business_id
         - status
         - phases
         - type
     PostPositionConfigurationResponse:
       type: object
       properties:
+        thread_id:
+          type: string
+          example: "6777862efe77308365432a36"
+        status:
+          type: string
+          example: "COMPLETED"
+          enum:
+            - COMPLETED
+            - IN_PROGRESS
+            - DRAFT
+        type:
+          type: string
+          example: "AI_TEMPLATE"
+          enum:
+            - AI_TEMPLATE
+            - CUSTOM
+            - OTHER_POSITION_AS_TEMPLATE>
+        phases:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                example: phase_1
+              thread_id:
+                type: string
+                example: "id_123456"
+              status:
+                type: string
+                example: "COMPLETED"
+                enum:
+                  - COMPLETED
+                  - IN_PROGRESS
+                  - DRAFT
+              type:
+                type: string
+                example: "DESCRIPTION"
+                enum:
+                  - DESCRIPTION
+                  - READY_TO_PUBLISH
+                  - FINAL_INTERVIEW
+                  - TECHNICAL_TEST
+                  - SOFT_SKILLS
+              data:
+                type: object
+                example: {}
+    PutPositionConfiguration:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: "6777862efe77308365432a36"
+        created_at:
+          type: string
+          example: "2025-04-14T00:14:46.388345"
+        updated_at:
+          type: string
+          example: "2025-04-14T00:14:46.388345"
+          nullable: true
+        deleted_at:
+          type: string
+          example: "2025-04-14T00:14:46.388345"
+          nullable: true
+        user_id:
+          type: string
+          example: "6777862efe77308365432a36"
+        business_id:
+          type: string
+          example: "6777862efe77308365432a36"
+        thread_id:
+          type: string
+          example: "6777862efe77308365432a36"
+        status:
+          type: string
+          example: "COMPLETED"
+          enum:
+            - COMPLETED
+            - IN_PROGRESS
+            - DRAFT
+        type:
+          type: string
+          example: "AI_TEMPLATE"
+          enum:
+            - AI_TEMPLATE
+            - CUSTOM
+            - OTHER_POSITION_AS_TEMPLATE>
+        phases:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                example: phase_1
+              thread_id:
+                type: string
+                example: "id_123456"
+              status:
+                type: string
+                example: "COMPLETED"
+                enum:
+                  - COMPLETED
+                  - IN_PROGRESS
+                  - DRAFT
+              type:
+                type: string
+                example: "DESCRIPTION"
+                enum:
+                  - DESCRIPTION
+                  - READY_TO_PUBLISH
+                  - FINAL_INTERVIEW
+                  - TECHNICAL_TEST
+                  - SOFT_SKILLS
+              data:
+                type: object
+                example: {}
+            required:
+              - name
+              - thread_id
+              - status
+              - data
+              - type
+      required:
+        - _id
+        - created_at
+        - updated_at
+        - deleted_at
+        - user_id
+        - business_id
+        - thread_id
+        - status
+        - phases
+        - type
+    PutPositionConfigurationResponse:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: "6777862efe77308365432a36"
+        created_at:
+          type: string
+          example: "2025-04-14T00:14:46.388345"
+        updated_at:
+          type: string
+          example: "2025-04-14T00:14:46.388345"
+          nullable: true
+        deleted_at:
+          type: string
+          example: "2025-04-14T00:14:46.388345"
+          nullable: true
+        user_id:
+          type: string
+          example: "6777862efe77308365432a36"
+        business_id:
+          type: string
+          example: "6777862efe77308365432a36"
         thread_id:
           type: string
           example: "6777862efe77308365432a36"
