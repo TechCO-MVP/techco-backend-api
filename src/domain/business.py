@@ -1,8 +1,9 @@
 from enum import Enum
-from typing import Optional
+from typing import Dict, Optional
 
 from pydantic import BaseModel
 
+from src.domain.assistant import Assistant
 from src.domain.base_entity import BaseEntity
 
 
@@ -25,6 +26,7 @@ class BusinessDTO(BaseModel):
     segment: Optional[str] = None
     industry: Optional[str] = None
     parent_business_id: Optional[str] = None
+    assistants: Dict[str, Assistant] = {}
 
 
 class BusinessEntity(BaseEntity[BusinessDTO]):
