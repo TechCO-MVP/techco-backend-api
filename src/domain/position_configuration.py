@@ -2,7 +2,7 @@ from enum import Enum
 from typing import List, Optional
 
 from bson import ObjectId
-from pydantic import BaseModel, Field, model_validator, ValidationError
+from pydantic import BaseModel, Field, ValidationError, model_validator
 
 from src.domain.base_entity import BaseEntity
 
@@ -36,14 +36,13 @@ class Phase(BaseModel):
 
 
 class PositionConfigurationDTO(BaseModel):
-
     user_id: str = Field(default="", alias="user_id")
     business_id: str = Field(default="", alias="business_id")
     thread_id: str = Field(default="", alias="thread_id")
     status: STATUS = STATUS.DRAFT
     phases: Optional[List[Phase]] = Field(default=[])
     type: TYPE
-    
+
     @model_validator(mode="before")
     def validate_and_convert_fields(cls, values):
         fields_to_validate = ["user_id", "business_id", "thread_id"]
@@ -54,6 +53,7 @@ class PositionConfigurationDTO(BaseModel):
                 elif not isinstance(values[field], str):
                     raise ValueError(f"Invalid {field} format. Must be a string or ObjectId.")
         return values
+
 
 class GetPositionConfigurationQueryParams(BaseModel):
     business_id: str
@@ -78,13 +78,14 @@ class GetPositionConfigurationQueryParams(BaseModel):
                     raise ValueError(f"Invalid {field} format. Must be a string or ObjectId.")
 
         return values
-    
+
     @classmethod
     def validate_params(cls, params):
         try:
             return cls(**params)
         except ValidationError as e:
             raise ValueError(f"Invalid query parameters: {e}")
+
 
 class PositionConfigurationEntity(BaseEntity[PositionConfigurationDTO]):
     pass
