@@ -8,6 +8,7 @@ from aws_lambda_powertools import Logger
 from openai import OpenAI
 from openai.types.beta.assistant import Assistant
 from openai.types.beta.threads.run import Run
+from openai.types.beta.thread import Thread
 
 from src.adapters.secondary.llm.assistants.index import get_config_by_type
 from src.adapters.secondary.llm.open_ai_tools import OpenAITools
@@ -196,6 +197,15 @@ class OpenAIAdapter(LLMService):
 
         logger.info(f"Assistant created with ID: {assistant.id}")
         return assistant
+
+    def get_thread(self, thread_id: str) -> Thread:
+        """
+        Get the thread with the given ID.
+        """
+        logger.info(f"Getting thread with ID: {thread_id}")
+        thread = self.client.beta.threads.retrieve(thread_id=thread_id)
+
+        return thread
 
     def get_secret_api_key(self) -> str:
         try:
