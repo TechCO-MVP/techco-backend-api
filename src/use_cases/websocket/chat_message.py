@@ -46,8 +46,8 @@ def send_request_to_llm(payload: dict, user_email: str) -> dict:
 
     logger.info(f"Sending request to LLM with message: {payload["message"]}")
 
-    thread_run = open_ai_adapter.get_thread(payload["thread_id"])
-    thread_run = open_ai_adapter.create_message_thread(thread_run, payload["message"])
+    thread = open_ai_adapter.get_thread(payload["thread_id"])
+    thread_run = open_ai_adapter.create_message_thread(thread, payload["message"])
 
     response = open_ai_adapter.run_and_process_thread(thread_run)
     response = json.loads(response)
