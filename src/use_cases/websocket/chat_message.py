@@ -2,21 +2,27 @@ import json
 import boto3
 from aws_lambda_powertools import Logger
 
+from src.domain.business import BusinessEntity
+from src.use_cases.websocket.config import HOMOLOGATE_POSITION_CONFIGURATION_AND_ASSISTAND
+from src.adapters.secondary.llm.open_ai_adapter import OpenAIAdapter
+from src.use_cases.business.get_business_by_id import get_business_by_id_use_case
+from src.domain.position_configuration import ChatPositionConfigurationPayload
 from src.utils.send_chat_message_by_websocket import send_chat_message_by_websocket
 
 logger = Logger()
 dynamodb = boto3.client("dynamodb")
 
-def chat_message_use_case(connection_id, payload):
-    message = payload.get("message")
+def chat_message_use_case(connection_id, payload, user_email):
+    logger.info(f"Chat message use case started with payload: {payload}")
+    ChatPositionConfigurationPayload(**payload)
 
-    response_LLM = send_request_to_llm(message)
+    response_LLM = send_request_to_llm(payload, user_email)
 
     send_chat_message_by_websocket(
         connection_id,
         {
             "type": "chat_message",
-            "message": response_LLM["message"],
+            "payload": response_LLM,
         }
     )
 
@@ -25,18 +31,28 @@ def chat_message_use_case(connection_id, payload):
         "body": json.dumps({"status": "chat sent"})
     }
 
-def send_request_to_llm(message):
-    # Simulate sending a request to an LLM and getting a response
-    # In a real-world scenario, this would involve making an API call to the LLM service
-    logger.info(f"Sending request to LLM with message: {message}")
+def send_request_to_llm(payload: dict, user_email: str) -> dict:
+    business_entity: BusinessEntity = get_business_by_id_use_case(payload.business_id, user_email)
     
-    # Simulated response from LLM
-    response = {
-        "status": "success",
-        "response": f"LLM response to '{message}'",
-        "message": "Message processed successfully by LLM, this is mocked response"
-    }
+    assistand_name = HOMOLOGATE_POSITION_CONFIGURATION_AND_ASSISTAND.get(payload["phase_type"])
 
-    logger.info(f"Received response from LLM: {response}")
+    if not assistand_name:
+        raise ValueError(f"Assistant not found for phase type: {payload["phase_type"]}")
     
-    return response
+    context = {"business_id": business_entity.id}
+    open_ai_adapter = OpenAIAdapter(context)
+    open_ai_adapter.assistant_id = business_entity.props.assistants[assistand_name]
+
+    logger.info(f"Sending request to LLM with message: {payload["message"]}")
+
+    # TODO: check GET THREAD
+    # thread_run = open_ai_adapter.get_thread()
+    thread_run = open_ai_adapter.create_message_thread(thread_run, payload["message"])
+
+    response = open_ai_adapter.run_and_process_thread(thread_run)
+    response = json.loads(response)
+    payload["message"] = response.get("message", "Something failed with Assistant")
+    logger.info("Assistant:")
+    logger.info(f"Received response from LLM: {response}")
+        
+    return payload
