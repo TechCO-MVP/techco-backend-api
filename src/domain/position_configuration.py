@@ -38,7 +38,6 @@ class Phase(BaseModel):
 class PositionConfigurationDTO(BaseModel):
     user_id: str = Field(default="", alias="user_id")
     business_id: str = Field(default="", alias="business_id")
-    thread_id: str = Field(default="", alias="thread_id")
     status: STATUS = STATUS.DRAFT
     phases: Optional[List[Phase]] = Field(default=[])
     type: TYPE
@@ -58,7 +57,7 @@ class PositionConfigurationDTO(BaseModel):
 class GetPositionConfigurationQueryParams(BaseModel):
     business_id: str
     id: Optional[str] = None
-    al1l: Optional[bool] = None
+    all: Optional[bool] = None
 
     @model_validator(mode="before")
     def check_id_or_all(cls, values):
@@ -77,6 +76,26 @@ class GetPositionConfigurationQueryParams(BaseModel):
                 elif not isinstance(values[field], str):
                     raise ValueError(f"Invalid {field} format. Must be a string or ObjectId.")
 
+        return values
+
+
+class ChatPositionConfigurationPayload(BaseModel):
+    phase_type: PHASE_TYPE
+    thread_id: str
+    position_configuration_id: str
+    business_id: str
+    message: str
+
+    @model_validator(mode="before")
+    def validate_and_convert_fields(cls, values):
+        fields_to_validate = ["business_id", "thread_id", "position_configuration_id"]
+
+        for field in fields_to_validate:
+            if field in values:
+                if isinstance(values[field], ObjectId):
+                    values[field] = str(values[field])
+                elif not isinstance(values[field], str):
+                    raise ValueError(f"Invalid {field} format. Must be a string or ObjectId.")
         return values
 
     @classmethod
