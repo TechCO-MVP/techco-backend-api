@@ -4,8 +4,9 @@ from aws_lambda_powertools.utilities.typing import LambdaContext
 from pydantic import ValidationError
 
 from src.domain.position_configuration import PositionConfigurationDTO
-from src.use_cases.position_configuration.put_position_configuration import put_position_configuration_use_case
-
+from src.use_cases.position_configuration.put_position_configuration import (
+    put_position_configuration_use_case,
+)
 
 logger = Logger()
 app = APIGatewayRestResolver()
@@ -15,11 +16,11 @@ app = APIGatewayRestResolver()
 def put_position_configuration():
     """Put position configuration."""
     try:
-        
+
         body = app.current_event.json_body
-        
+
         PositionConfigurationDTO(**body)
-        
+
         response = put_position_configuration_use_case(body)
 
         return Response(

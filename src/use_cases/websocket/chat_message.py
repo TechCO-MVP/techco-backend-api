@@ -1,12 +1,13 @@
 import json
+
 import boto3
 from aws_lambda_powertools import Logger
 
-from src.domain.business import BusinessEntity
-from src.use_cases.websocket.config import HOMOLOGATE_POSITION_CONFIGURATION_AND_ASSISTAND
 from src.adapters.secondary.llm.open_ai_adapter import OpenAIAdapter
-from src.use_cases.business.get_business_by_id import get_business_by_id_use_case
+from src.domain.business import BusinessEntity
 from src.domain.position_configuration import ChatPositionConfigurationPayload
+from src.use_cases.business.get_business_by_id import get_business_by_id_use_case
+from src.use_cases.websocket.config import HOMOLOGATE_POSITION_CONFIGURATION_AND_ASSISTAND
 from src.utils.send_chat_message_by_websocket import send_chat_message_by_websocket
 
 logger = Logger()

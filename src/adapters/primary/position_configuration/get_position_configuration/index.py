@@ -4,7 +4,9 @@ from aws_lambda_powertools.utilities.typing import LambdaContext
 from pydantic import ValidationError
 
 from src.domain.position_configuration import GetPositionConfigurationQueryParams
-from src.use_cases.position_configuration.get_position_configuration import get_position_configuration_use_case
+from src.use_cases.position_configuration.get_position_configuration import (
+    get_position_configuration_use_case,
+)
 
 logger = Logger()
 app = APIGatewayRestResolver()
@@ -17,7 +19,7 @@ def get_position_configuration():
 
         authorizer = app.current_event.request_context.authorizer["claims"]
         user_email = authorizer["email"]
-        
+
         query_params = app.current_event.query_string_parameters
         GetPositionConfigurationQueryParams.validate_params(query_params)
 
@@ -25,7 +27,7 @@ def get_position_configuration():
 
         if response:
             data = [position.to_dto(flat=True) for position in response]
-            message = "Position configuration found successfully" 
+            message = "Position configuration found successfully"
         else:
             data = []
             message = "Position configuration not found"

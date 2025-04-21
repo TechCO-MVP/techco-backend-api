@@ -78,6 +78,7 @@ class GetPositionConfigurationQueryParams(BaseModel):
 
         return values
 
+
 class ChatPositionConfigurationPayload(BaseModel):
     phase_type: PHASE_TYPE
     thread_id: str
@@ -87,11 +88,7 @@ class ChatPositionConfigurationPayload(BaseModel):
 
     @model_validator(mode="before")
     def validate_and_convert_fields(cls, values):
-        fields_to_validate = [
-            "business_id",
-            "thread_id",
-            "position_configuration_id"
-        ]
+        fields_to_validate = ["business_id", "thread_id", "position_configuration_id"]
 
         for field in fields_to_validate:
             if field in values:

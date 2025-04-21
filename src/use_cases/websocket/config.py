@@ -1,5 +1,5 @@
-from src.domain.position_configuration import PHASE_TYPE
 from src.domain.assistant import ASSISTANT_TYPE
+from src.domain.position_configuration import PHASE_TYPE
 
 HOMOLOGATE_POSITION_CONFIGURATION_AND_ASSISTAND = {
     PHASE_TYPE.DESCRIPTION: ASSISTANT_TYPE.POSITION_ASSISTANT,
