@@ -78,6 +78,12 @@ class GetPositionConfigurationQueryParams(BaseModel):
 
         return values
 
+    @classmethod
+    def validate_params(cls, params):
+        try:
+            return cls(**params)
+        except ValidationError as e:
+            raise ValueError(f"Invalid query parameters: {e}")
 
 class ChatPositionConfigurationPayload(BaseModel):
     phase_type: PHASE_TYPE
