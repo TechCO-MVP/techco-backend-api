@@ -33,21 +33,20 @@ def chat_message_use_case(connection_id, payload, user_email):
     }
 
 def send_request_to_llm(payload: dict, user_email: str) -> dict:
-    business_entity: BusinessEntity = get_business_by_id_use_case(payload.business_id, user_email)
+    business_entity: BusinessEntity = get_business_by_id_use_case(payload["business_id"], user_email)
     
     assistand_name = HOMOLOGATE_POSITION_CONFIGURATION_AND_ASSISTAND.get(payload["phase_type"])
 
     if not assistand_name:
-        raise ValueError(f"Assistant not found for phase type: {payload["phase_type"]}")
+        raise ValueError(f"Assistant not found for phase type: {payload['phase_type']}")
     
     context = {"business_id": business_entity.id}
     open_ai_adapter = OpenAIAdapter(context)
-    open_ai_adapter.assistant_id = business_entity.props.assistants[assistand_name]
+    open_ai_adapter.assistant_id = business_entity.props.assistants[assistand_name].assistant_id
 
-    logger.info(f"Sending request to LLM with message: {payload["message"]}")
+    logger.info(f"Sending request to LLM with message: {payload['message']}")
 
-    thread = open_ai_adapter.get_thread(payload["thread_id"])
-    thread_run = open_ai_adapter.create_message_thread(thread, payload["message"])
+    thread_run = open_ai_adapter.create_message_thread(payload["thread_id"], payload["message"])
 
     response = open_ai_adapter.run_and_process_thread(thread_run)
     response = json.loads(response)

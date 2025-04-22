@@ -61,20 +61,20 @@ class OpenAIAdapter(LLMService):
 
         return thread_run
 
-    def create_message_thread(self, thread_run: Run, message: str, role: str = "user") -> Run:
+    def create_message_thread(self, thread_id: str, message: str, role: str = "user") -> Run:
         """
         Create a message thread with the given message and role.
         """
         logger.info("Creating message thread message")
 
         self.client.beta.threads.messages.create(
-            thread_id=thread_run.thread_id,
+            thread_id=thread_id,
             role=role,
             content=message,
         )
 
         thread_run = self.client.beta.threads.runs.create(
-            thread_id=thread_run.thread_id,
+            thread_id=thread_id,
             assistant_id=self.assistant_id,
         )
 
@@ -188,7 +188,7 @@ class OpenAIAdapter(LLMService):
         logger.info(f"Creating assistant with identifier: {identifier}, type: {type}")
         config = get_config_by_type(type)
         assistant = self.client.beta.assistants.create(
-            name=f"{config["name"]} - {identifier}",
+            name=f"{config['name']} - {identifier}",
             model=config["model"],
             instructions=config["instructions"],
             response_format=config["response_format"],
