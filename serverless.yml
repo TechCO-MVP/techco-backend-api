@@ -670,7 +670,7 @@ functions:
     handler: src/adapters/primary/llm/get_message_history/index.handler
     events:
       - http:
-          path: /llm/message_history
+          path: /llm/message_history/{thread_id}
           method: get
           cors: true
           private: true
