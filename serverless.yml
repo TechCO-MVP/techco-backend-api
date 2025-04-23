@@ -666,6 +666,19 @@ functions:
             authorizerId:
               Ref: ApiGatewayAuthorizer
 
+  get_message_history:
+    handler: src/adapters/primary/llm/get_message_history/index.handler
+    events:
+      - http:
+          path: /llm/message_history
+          method: get
+          cors: true
+          private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+
 stepFunctions:
   stateMachines: ${file(./src/resources/brightdata/serverless.yml):stateMachines}
 
