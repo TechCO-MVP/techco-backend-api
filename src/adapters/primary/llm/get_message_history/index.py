@@ -9,8 +9,8 @@ logger = Logger()
 app = APIGatewayRestResolver()
 
 
-@app.get("/llm/message_history")
-def get_message_history():
+@app.get("/llm/message_history/<thread_id>")
+def get_message_history(thread_id):
     """Get message_history."""
     try:
 
