@@ -19,7 +19,7 @@ def get_business_by_id_use_case(business_id: str, email: str) -> BusinessEntity:
 
     parent_business_id = business_entity.get_parent_business_id()
 
-    if parent_business_id != user_entity.props.business_id:
+    if parent_business_id not in [business.business_id for business in user_entity.props.roles]:
         raise ValueError("User does not have access to this business")
 
     return business_entity
