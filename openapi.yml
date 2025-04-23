@@ -859,6 +859,48 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Exception"
+  /llm/message_history/{thread_id}:
+    get:
+      summary: Get history message llm
+      description: Get history message llm.
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          description: The limit of pagunation, default value is 20.
+          schema:
+            type: string
+        - name: message_id
+          in: query
+          required: false
+          description: The ID of the last message for obteain next pagination, begining not send this param or send as a void string ("").
+          schema:
+            type: string
+        - name: thread_id
+          in: path
+          required: true
+          description: is the id of the conversation stared by the llm.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: messages found successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetLlmMessagesHistoryResponse"
+        "400":
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Exception response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exception"
 
 components:
   schemas:
@@ -2415,3 +2457,70 @@ components:
               data:
                 type: object
                 example: {}
+    GetLlmMessagesHistoryResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: messages found successfully.
+        body:
+          type: object
+          properties:
+            data:
+              type: object
+              properties:
+                object:
+                  type: string
+                  example: "list"
+                data:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: "6777862efe77308365432a36"
+                      object:
+                        type: string
+                        example: "message"
+                      created:
+                        type: integer
+                        example: 1677859200
+                      assistand_id:
+                        type: string
+                        example: "6777862efe77308365432a36"
+                      thread_id:
+                        type: string
+                        example: "6777862efe77308365432a36"
+                      run_id:
+                        type: string
+                        example: "6777862efe77308365432a36"
+                      role:
+                        type: string
+                        example: "assistant"
+                      content:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            type:
+                              type: string
+                              example: "text"
+                            text:
+                              type: string
+                              example: "Hello, how are you?"
+                      attachments:
+                        type: array
+                        items:
+                          type: object
+                      metadata:
+                        type: object
+                first_id:
+                  type: string
+                  example: "6777862efe77308365432a36"
+                last_id:
+                  type: string
+                  example: "6777862efe77308365432a36"
+                has_more:
+                  type: boolean
+                  example: true
