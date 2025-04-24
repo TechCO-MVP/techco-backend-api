@@ -50,7 +50,7 @@ def send_request_to_llm(payload: dict, user_email: str) -> dict:
 
     response = open_ai_adapter.run_and_process_thread(thread_run)
     response = json.loads(response)
-    payload["message"] = response.get("message", "Something failed with Assistant")
+    payload.update(response)
     logger.info("Assistant:")
     logger.info(f"Received response from LLM: {response}")
         
