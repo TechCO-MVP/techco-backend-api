@@ -901,6 +901,35 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Exception"
+  /position_configuration/complete/phase:
+    post:
+      summary: Complete and save data phase
+      description: Complete and save data phase.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CompletePhaseRequest"
+      responses:
+        "200":
+          description: phase completed successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CompletePhaseResponse"
+        "400":
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Exception response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exception"
 
 components:
   schemas:
@@ -1621,7 +1650,7 @@ components:
                         type: object
                         # additionalProperties:
                         #   type: object
-                
+
     ListPositionValueError:
       type: object
       properties:
@@ -2063,16 +2092,16 @@ components:
           example: "6777862efe77308365432a36"
         business_id:
           type: string
-          example:  "6791faad993cf24a7b7f37b2"
+          example: "6791faad993cf24a7b7f37b2"
         message:
           type: string
-          example:  "mensaje de prueba post notification"
+          example: "mensaje de prueba post notification"
         notification_type:
           type: string
-          example:  "TAGGED_IN_COMMENT"
+          example: "TAGGED_IN_COMMENT"
         hiring_process_id:
           type: string
-          example:  "67c930fe1ad8328f2a3184c2"
+          example: "67c930fe1ad8328f2a3184c2"
         phase_id:
           type: string
           example: "1"
@@ -2184,7 +2213,7 @@ components:
                           - SOFT_SKILLS
                       data:
                         type: object
-                        example: {}         
+                        example: {}
     PostPositionConfiguration:
       type: object
       properties:
@@ -2524,3 +2553,54 @@ components:
                 has_more:
                   type: boolean
                   example: true
+    CompletePhaseRequest:
+      type: object
+      properties:
+        position_configuration_id:
+          type: string
+        data:
+          type: object
+      required:
+        - position_configuration_id
+        - data
+    CompletePhaseResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Phase completed successfully"
+        body:
+          type: object
+          properties:
+            data:
+              type: object
+              properties:
+                _id:
+                  type: string
+                  example: "6777862efe77308365432a36"
+                created_at:
+                  type: string
+                  example: "2025-04-14T00:14:46.388345"
+                updated_at:
+                  type: string
+                  example: "2025-04-14T00:14:46.388345"
+                deleted_at:
+                  type: string
+                  example: "2025-04-14T00:14:46.388345"
+                user_id:
+                  type: string
+                  example: "6777862efe77308365432a36"
+                business_id:
+                  type: string
+                  example: "6777862efe77308365432a36"
+                current_phase:
+                  type: string
+                  example: "SOFT_SKILLS"
+                status:
+                  type: string
+                  example: "COMPLETED"
+                type:
+                  type: string
+                  example: "AI_TEMPLATE"
+                phases:
+                  type: array

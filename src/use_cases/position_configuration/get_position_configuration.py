@@ -1,10 +1,13 @@
-from src.repositories.document_db.position_configuration_repository import PositionConfigurationRepository
+from src.repositories.document_db.position_configuration_repository import (
+    PositionConfigurationRepository,
+)
 from src.repositories.document_db.user_repository import UserRepository
 from src.domain.position_configuration import PositionConfigurationEntity
 
 
-
-def get_position_configuration_use_case(params: dict, user_email: str) -> list[PositionConfigurationEntity]:
+def get_position_configuration_use_case(
+    params: dict, user_email: str
+) -> list[PositionConfigurationEntity]:
     """get position use case."""
     position_repository = PositionConfigurationRepository()
 
