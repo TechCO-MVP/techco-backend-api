@@ -38,6 +38,7 @@ class Phase(BaseModel):
 class PositionConfigurationDTO(BaseModel):
     user_id: str = Field(default="", alias="user_id")
     business_id: str = Field(default="", alias="business_id")
+    current_phase: PHASE_TYPE = PHASE_TYPE.DESCRIPTION
     status: STATUS = STATUS.DRAFT
     phases: Optional[List[Phase]] = Field(default=[])
     type: TYPE
@@ -84,6 +85,7 @@ class GetPositionConfigurationQueryParams(BaseModel):
             return cls(**params)
         except ValidationError as e:
             raise ValueError(f"Invalid query parameters: {e}")
+
 
 class ChatPositionConfigurationPayload(BaseModel):
     phase_type: PHASE_TYPE
