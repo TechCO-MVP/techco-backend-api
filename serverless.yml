@@ -692,6 +692,19 @@ functions:
             authorizerId:
               Ref: ApiGatewayAuthorizer
 
+  position_configuration_next_phase:
+    handler: src/adapters/primary/position_configuration/next_phase/index.handler
+    events:
+      - http:
+          path: /position_configuration/next_phase
+          method: post
+          cors: true
+          private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+
 stepFunctions:
   stateMachines: ${file(./src/resources/brightdata/serverless.yml):stateMachines}
 

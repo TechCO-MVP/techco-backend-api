@@ -33,6 +33,7 @@ class Phase(BaseModel):
     status: STATUS
     data: dict
     type: PHASE_TYPE
+    configuration_type: Optional[TYPE] = None
 
 
 class PositionConfigurationDTO(BaseModel):
