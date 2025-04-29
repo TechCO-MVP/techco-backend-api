@@ -665,7 +665,7 @@ functions:
             type: COGNITO_USER_POOLS
             authorizerId:
               Ref: ApiGatewayAuthorizer
-  
+
   put_position_configuration:
     handler: src/adapters/primary/position_configuration/update_position_configuration/index.handler
     events:
@@ -685,6 +685,32 @@ functions:
       - http:
           path: /llm/message_history/{thread_id}
           method: get
+          cors: true
+          private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+
+  position_configuration_complete_phase:
+    handler: src/adapters/primary/position_configuration/complete_phase/index.handler
+    events:
+      - http:
+          path: /position_configuration/complete/phase
+          method: post
+          cors: true
+          private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+
+  position_configuration_next_phase:
+    handler: src/adapters/primary/position_configuration/next_phase/index.handler
+    events:
+      - http:
+          path: /position_configuration/next_phase
+          method: post
           cors: true
           private: true
           authorizer:
