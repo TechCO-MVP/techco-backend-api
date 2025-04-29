@@ -6,12 +6,12 @@ from src.repositories.document_db.position_configuration_repository import (
 )
 
 
-def complete_phase_position_configuration_use_case(
+def next_phase_position_configuration_use_case(
     position_configuration_id: str,
-    data: dict,
+    configuration_type: str,
     user_email: str,
 ) -> PositionConfigurationEntity:
-    """Complete phase use case."""
+    """Next phase use case."""
     position_configuration_repository = PositionConfigurationRepository()
     position_configuration_entity = position_configuration_repository.getById(
         position_configuration_id
@@ -28,10 +28,10 @@ def complete_phase_position_configuration_use_case(
 
     business_id = position_configuration_entity.props.business_id
     role = next((r for r in user_entity.props.roles if r.business_id == business_id), None)
-    if not role:
+    if role:
         raise ValueError("Role not found for the given business id")
 
-    position_configuration_entity = complete_current_phase(position_configuration_entity, data)
+    position_configuration_entity = next_phase(position_configuration_entity, configuration_type)
     position_configuration_repository.update(
         position_configuration_id, position_configuration_entity
     )
@@ -39,19 +39,34 @@ def complete_phase_position_configuration_use_case(
     return position_configuration_entity
 
 
-def complete_current_phase(
+def next_phase(
     position_configuration_entity: PositionConfigurationEntity,
-    data: dict,
+    configuration_type: str,
 ) -> PositionConfigurationEntity:
-    """Complete current phase."""
+    """Next phase."""
     current_phase = position_configuration_entity.props.current_phase
+    phase, index = next(
+        (
+            (phase, idx)
+            for idx, phase in enumerate(position_configuration_entity.props.phases)
+            if phase.type == current_phase
+        ),
+        (None, None),
+    )
 
-    for phase in position_configuration_entity.props.phases:
-        if phase.type == current_phase:
-            if phase.status == STATUS.COMPLETED:
-                raise ValueError("Phase already completed")
+    if not phase:
+        raise ValueError("Current phase not found")
 
-            phase.status = STATUS.COMPLETED
-            phase.data = data
+    if phase.status != STATUS.COMPLETED:
+        raise ValueError("Current phase is not completed")
+
+    if index + 1 >= len(position_configuration_entity.props.phases):
+        raise ValueError("No more phases available")
+
+    next_phase = position_configuration_entity.props.phases[index + 1]
+    next_phase.status = STATUS.IN_PROGRESS
+    next_phase.configuration_type = configuration_type
+    position_configuration_entity.props.current_phase = next_phase.type
+    position_configuration_entity.props.phases[index + 1] = next_phase
 
     return position_configuration_entity
