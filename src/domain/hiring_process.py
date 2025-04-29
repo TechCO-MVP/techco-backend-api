@@ -1,6 +1,6 @@
 from datetime import datetime
 from enum import Enum
-from typing import Any, List
+from typing import Any, Dict, List, Optional
 
 from bson import ObjectId
 from pydantic import BaseModel, Field, field_validator
@@ -46,6 +46,7 @@ class HiringProcessDTO(BaseModel):
     profile: ProfileBrightDataDTO = Field(...)
     phases: dict[str, HiringProcessPhase] = {}
     phase_history: List[HiringProcessPhaseHistory] = []
+    assistants: Dict[str, Assistant] = {}
 
     @field_validator("position_id", mode="before")
     def validate_and_convert_position_id(cls, v):
@@ -64,6 +65,16 @@ class HiringProcessDTO(BaseModel):
             return v
 
         raise ValueError("Invalid business_id format. Must be a string or ObjectId.")
+
+
+class UpdateHiringProcessDTO(BaseModel):
+    id: str = Field(...)
+    phase_id: Optional[str]
+    status: Optional[HIRING_PROCESS_STATUS]
+    profile: Optional[ProfileBrightDataDTO]
+    phases: Optional[dict[str, HiringProcessPhase]]
+    phase_history: Optional[List[HiringProcessPhaseHistory]]
+    assistants: Optional[dict[str, Assistant]]
 
 
 class HiringProcessEntity(BaseEntity[HiringProcessDTO]):

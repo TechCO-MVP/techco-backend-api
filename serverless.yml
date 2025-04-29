@@ -493,6 +493,19 @@ functions:
               querystrings:
                 hiring_process_id: true
 
+  put_hiring_process_by_id:
+    handler: src/adapters/primary/hiring_process/put_hiring_process/index.handler
+    events:
+      - http:
+          path: /hiring_process/update
+          method: put
+          cors: true
+          private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+
   start_profile_filter_process:
     handler: src/adapters/primary/profile/filter/start.lambda_handler
     events:
