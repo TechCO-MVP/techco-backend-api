@@ -89,15 +89,23 @@ def crete_admin_business_use_case(
 
 def create_assistants_for_business() -> Dict[str, Dict]:
     unique_identifier = str(uuid.uuid4())
-
     open_ai_adapter = OpenAIAdapter()
-    assistant = open_ai_adapter.create_assistant(
-        unique_identifier, ASSISTANT_TYPE.POSITION_ASSISTANT
-    )
+    assistants = {}
 
-    return {
-        ASSISTANT_TYPE.POSITION_ASSISTANT: {
+    assistant_types = [
+        ASSISTANT_TYPE.POSITION_ASSISTANT,
+        ASSISTANT_TYPE.TECHNICAL_ASSESSMENT_ASSISTANT,
+        ASSISTANT_TYPE.SOFT_ASSESSMENT_ASSISTANT
+    ]
+
+    for assistant_type in assistant_types:
+        assistant = open_ai_adapter.create_assistant(
+            unique_identifier, assistant_type
+        )
+        
+        assistants[assistant_type] = {
             "assistant_id": assistant.id,
-            "assistant_type": ASSISTANT_TYPE.POSITION_ASSISTANT,
+            "assistant_type": assistant_type
         }
-    }
+        
+    return assistants

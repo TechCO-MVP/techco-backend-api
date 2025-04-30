@@ -5,6 +5,7 @@ from pydantic import BaseModel
 class ASSISTANT_TYPE(str, Enum):
     POSITION_ASSISTANT = "position_assistant"
     TECHNICAL_ASSESSMENT_ASSISTANT = "technical_assessment_assistant"
+    SOFT_ASSESSMENT_ASSISTANT = "soft_assessment_assistant"
 
 
 class Assistant(BaseModel):
