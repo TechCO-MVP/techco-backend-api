@@ -7,6 +7,7 @@ from pydantic import BaseModel, Field, field_validator
 
 from src.domain.base_entity import BaseEntity
 from src.domain.profile import ProfileBrightDataDTO
+from src.domain.assistant import Assistant
 
 
 class HIRING_PROCESS_STATUS(str, Enum):
