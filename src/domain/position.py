@@ -1,10 +1,11 @@
 from enum import Enum
-from typing import List, Optional
+from typing import Dict, List, Optional, Any
 
 from bson import ObjectId
 from pydantic import BaseModel, Field, ValidationError, model_validator
 
 from src.domain.base_entity import BaseEntity
+from src.domain.assistant import Assistant
 
 
 class POSITION_STATUS(str, Enum):
@@ -78,6 +79,7 @@ class PositionDTO(BaseModel):
     benefits: Optional[List[str]] = Field(default_factory=list)
     salary: Optional[Salary] = None
     pipe_id: Optional[str] = None
+    assistants: Dict[str, Assistant] = {}
 
     @model_validator(mode="before")
     def validate_and_convert_fields(cls, values):
