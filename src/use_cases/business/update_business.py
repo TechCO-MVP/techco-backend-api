@@ -17,6 +17,7 @@ def update_business_use_case(id: str, business_dto: BusinessDTO) -> BusinessEnti
     }
     updated_props["is_admin"] = business_entity.props.is_admin
     updated_props["parent_business_id"] = business_entity.props.parent_business_id
+    updated_props["assistants"] = business_entity.props.assistants
     business_entity.props = updated_props
 
     return business_repository.update(business_entity.id, business_entity)
