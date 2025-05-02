@@ -505,6 +505,19 @@ functions:
             type: COGNITO_USER_POOLS
             authorizerId:
               Ref: ApiGatewayAuthorizer
+  
+  put_hiring_process_custom_fields_by_id:
+    handler: src/adapters/primary/hiring_process/put_hiring_process__custom_fields/index.handler
+    events:
+      - http:
+          path: /hiring_process/custom_fields/update
+          method: put
+          cors: true
+          private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
 
   start_profile_filter_process:
     handler: src/adapters/primary/profile/filter/start.lambda_handler
