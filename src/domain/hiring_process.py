@@ -26,6 +26,7 @@ class HiringProcessPhaseField(BaseModel):
 class HiringProcessPhase(BaseModel):
     phase_id: int
     fields: dict[str, HiringProcessPhaseField] = {}
+    custom_fields: dict = {}
 
 
 class PhaseMove(BaseModel):
@@ -38,6 +39,26 @@ class HiringProcessPhaseHistory(BaseModel):
     to_phase: PhaseMove
     date: datetime = Field(default_factory=datetime.now)
 
+
+class STATUS(str, Enum):
+    DRAFT = "DRAFT"
+    IN_PROGRESS = "IN_PROGRESS"
+    COMPLETED = "COMPLETED"
+
+
+class PHASE_TYPE(str, Enum):
+    DESCRIPTION = "DESCRIPTION"
+    SOFT_SKILLS = "SOFT_SKILLS"
+    TECHNICAL_TEST = "TECHNICAL_TEST"
+    FINAL_INTERVIEW = "FINAL_INTERVIEW"
+    READY_TO_PUBLISH = "READY_TO_PUBLISH"
+
+class Phase(BaseModel):
+    name: str
+    thread_id: str
+    status: STATUS
+    data: dict
+    type: PHASE_TYPE
 
 class Assistant(BaseModel):
     assistant_type: ASSISTANT_TYPE
@@ -53,7 +74,7 @@ class HiringProcessDTO(BaseModel):
     profile: ProfileBrightDataDTO = Field(...)
     phases: dict[str, HiringProcessPhase] = {}
     phase_history: List[HiringProcessPhaseHistory] = []
-    assesments: Dict[str, Phase] = {}
+    assesments: Optional[List[Phase]] = Field(default=[])
 
     @field_validator("position_id", mode="before")
     def validate_and_convert_position_id(cls, v):

@@ -10,21 +10,8 @@ def put_hiring_process_by_id_use_case(body: dict) -> tuple:
     """put hiring process by id use case."""
     UpdateHiringProcessDTO(**body)
     hiring_repository = HiringProcessRepository()
-
     hiring = hiring_repository.getById(body.get("id"))
-    hiring_dto = hiring.to_dto(flat=True)
-    changes_made = False
-
-    for key, new_value in body.items():
-        if (
-            hiring_dto.get(key)
-            and (current_value := hiring_dto.get(key)) != new_value
-            and key in UpdateHiringProcessDTO.model_fields
-        ):
-            hiring_dto[key] = new_value
-            changes_made = True
-            logger.info(f"Field '{key}' updated from '{current_value}' to '{new_value}'")
-
+    hiring_dto, changes_made = updat_hiring_data(hiring, body)
     message = "Hiring process updated successfully"
 
     if changes_made:
@@ -35,3 +22,26 @@ def put_hiring_process_by_id_use_case(body: dict) -> tuple:
         logger.info(message)
 
     return hiring_dto, message
+
+
+def updat_hiring_data(hiring: HiringProcessEntity, body: dict) -> tuple:
+    """update hiring data."""
+    hiring_dto = hiring.to_dto(flat=True)
+    current_phases = hiring_dto["phases"]
+    changes_made = False
+    
+    for key, new_value in body.items():
+        if (
+            hiring_dto.get(key)
+            and (current_value := hiring_dto.get(key)) != new_value
+            and key in UpdateHiringProcessDTO.model_fields
+        ):
+            hiring_dto[key] = new_value
+            changes_made = True
+            logger.info(f"Field '{key}' updated from '{current_value}' to '{new_value}'")
+        
+        if key == "phases" and changes_made:
+            for phase in hiring_dto[key]:
+                hiring_dto[key][phase]["custom_fileds"] = current_phases[phase].get("custom_fields", {})
+
+    return hiring_dto, changes_made
