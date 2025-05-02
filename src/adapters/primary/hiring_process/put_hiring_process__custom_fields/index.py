@@ -3,19 +3,19 @@ from aws_lambda_powertools.event_handler import APIGatewayRestResolver, Response
 from aws_lambda_powertools.utilities.typing import LambdaContext
 from pydantic import ValidationError
 
-from src.use_cases.hiring_process.put_hiring_process_by_id import put_hiring_process_by_id_use_case
+from src.use_cases.hiring_process.put_hiring_process_custom_fields_by_id import put_hiring_process_custom_fields_by_id_use_case
 
 logger = Logger()
 app = APIGatewayRestResolver()
 
 
-@app.put("/hiring_process/update")
-def put_hiring_process_by_id():
-    """put hiring_process data"""
+@app.put("/hiring_process/custom_fields/update")
+def put_hiring_process_custom_fields_by_id():
+    """put hiring_process custom_fields data"""
     try:
 
         body = app.current_event.json_body
-        response, message = put_hiring_process_by_id_use_case(body)
+        response, message = put_hiring_process_custom_fields_by_id_use_case(body)
 
         return Response(
             status_code=200,
@@ -56,7 +56,7 @@ def handler(event: dict, context: LambdaContext) -> dict:
     request: The request object, described like:
     {
         "body": {
-            "hiring_process_DTO"
+            "UpdateHiringProcessCustomFieldsDTO"
         }
     }
     """

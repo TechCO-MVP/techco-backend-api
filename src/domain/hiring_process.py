@@ -105,5 +105,10 @@ class UpdateHiringProcessDTO(BaseModel):
     assistants: Optional[dict[str, Assistant]]
 
 
+class UpdateHiringProcessCustomFieldsDTO(BaseModel):
+    id: str = Field(...)
+    phases: dict[str, HiringProcessPhase]
+
+
 class HiringProcessEntity(BaseEntity[HiringProcessDTO]):
     pass
