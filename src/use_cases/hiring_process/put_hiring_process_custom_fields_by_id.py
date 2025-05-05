@@ -1,14 +1,14 @@
 from aws_lambda_powertools import Logger
 from src.repositories.document_db.hiring_process_repository import HiringProcessRepository
 from src.domain.base_entity import from_dto_to_entity
-from src.domain.hiring_process import HiringProcessEntity, UpdateHiringProcessDTO
+from src.domain.hiring_process import HiringProcessEntity, UpdateHiringProcessCustomFieldsDTO
 
 
 logger = Logger()
 
-def put_hiring_process_by_id_use_case(body: dict) -> tuple:
-    """put hiring process by id use case."""
-    UpdateHiringProcessDTO(**body)
+def put_hiring_process_custom_fields_by_id_use_case(body: dict) -> tuple:
+    """put hiring process custom fileds by id use case."""
+    UpdateHiringProcessCustomFieldsDTO(**body)
     hiring_repository = HiringProcessRepository()
     hiring = hiring_repository.getById(body.get("id"))
     hiring_dto, changes_made = updat_hiring_data(hiring, body)
@@ -25,23 +25,21 @@ def put_hiring_process_by_id_use_case(body: dict) -> tuple:
 
 
 def updat_hiring_data(hiring: HiringProcessEntity, body: dict) -> tuple:
-    """update hiring data."""
+    """update hiring data - custom fields."""
     hiring_dto = hiring.to_dto(flat=True)
     current_phases = hiring_dto["phases"]
     changes_made = False
     
-    for key, new_value in body.items():
-        if (
-            hiring_dto.get(key)
-            and (current_value := hiring_dto.get(key)) != new_value
-            and key in UpdateHiringProcessDTO.model_fields
-        ):
-            hiring_dto[key] = new_value
+    for phase_id, fields in body.items():
+        if phase_id not in current_phases:
+            logger.warning(f"Phase ID '{phase_id}' not found in current phases.")
+            continue
+
+        current_custom_fields = current_phases[phase_id].get("custom_fields", {})
+
+        if current_custom_fields and current_custom_fields != fields["custom_fields"]:
+            logger.info(f"Custom fields for phase '{phase_id}' updated from '{current_custom_fields}' to '{fields['custom_fields']}'")
+            hiring_dto["phases"][phase_id]["custom_fields"] = fields.get("custom_fields")
             changes_made = True
-            logger.info(f"Field '{key}' updated from '{current_value}' to '{new_value}'")
-        
-        if key == "phases" and changes_made:
-            for phase in hiring_dto[key]:
-                hiring_dto[key][phase]["custom_fileds"] = current_phases[phase].get("custom_fields", {})
 
     return hiring_dto, changes_made

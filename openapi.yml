@@ -685,6 +685,42 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Exception"
+  /hiring_process/custom_fields/update:
+    put:
+      summary: Update hiring_process, only custom fields
+      description: Update hiring_process only custom fields in phases.
+      parameters:
+        - name: Authorizer
+          in: header
+          required: true
+          description: The ID token of the user.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateHiringProcessCustomFieldsById"
+      responses:
+        "200":
+          description: Hiring process updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UpdateHiringProcessCustomFieldsByIdResponse"
+        "400":
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Exception response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exception"
   /profile/filter/start:
     post:
       summary: Start profile filter process
@@ -2313,6 +2349,161 @@ components:
                 assistants:
                   type: object
                   example: {}
+    UpdateHiringProcessCustomFieldsById:
+      type: object
+      properties:
+        id: 
+          type: string
+          example: 67c930fe1ad8328f2a3184c2
+        phases:
+          type: object
+          example: {
+            "123456778": {
+              "phase_id": "123456778",
+              "custom_fields": {}
+            }
+          }
+      required:
+        - id
+        - phases
+    UpdateHiringProcessCustomFieldsByIdResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Hiring process updated successfully.
+        body:
+          type: object
+          properties:
+            data:
+              type: object
+              properties:
+                id: 
+                  type: string
+                  example: 67c930fe1ad8328f2a3184c2
+                phase_id: 
+                  type: string
+                  example: '2'
+                status:
+                  type: string
+                  example:  STARTED
+                profile:
+                  type: object
+                  properties:
+                    timestamp: 
+                      type: string
+                      example: Mon Mar 03 2025 10:00:00 GMT-0500 (hora estándar de Colombia)
+                    linkedin_num_id:  
+                      type: string
+                      example: '277819915'
+                    name:  
+                      type: string
+                      example: peipto perez
+                    country_code:  
+                      type: string
+                    position:  
+                      type: string
+                    city:  
+                      type: string
+                    current_company:  
+                      type: string
+                    about:  
+                      type: string
+                    posts:  
+                      type: string
+                    experience:  
+                      type: string
+                    url:  
+                      type: string
+                    people_also_viewed:  
+                      type: string
+                    educations_details:  
+                      type: string
+                    education:  
+                      type: string
+                    recommendations_count:  
+                      type: string
+                    avatar:  
+                      type: string
+                    languages:  
+                      type: string
+                    certifications:  
+                      type: string
+                    recommendations:  
+                      type: string
+                    volunteer_experience:  
+                      type: string
+                    courses:  
+                      type: string
+                    followers:  
+                      type: string
+                    connections:  
+                      type: string
+                    current_company_company_id:  
+                      type: string
+                    current_company_name:  
+                      type: string
+                    publications:  
+                      type: string
+                    patents:  
+                      type: string
+                    projects:  
+                      type: string
+                    organizations:  
+                      type: string
+                    input_url:  
+                      type: string
+                    linkedin_id:  
+                      type: string
+                    activity:  
+                      type: string
+                    banner_image:  
+                      type: string
+                    honors_and_awards:  
+                      type: string
+                    similar_profiles:  
+                      type: string
+                    default_avatar:  
+                      type: string
+                    memorialized_account:  
+                      type: string
+                    profile_evaluation:  
+                      type: string
+                    link_vacancy_form:  
+                      type: string
+                    card_id:  
+                      type: string
+                phases: {}
+                phase_history:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      from_phase:
+                        type: object
+                        properties:
+                          phase_id:
+                            type: integer
+                            example: 123654
+                          name:
+                            type: string
+                            example: ASÑDLKAS
+                      to_phase:
+                        type: object
+                        properties:
+                          phase_id:
+                            type: integer
+                            example: 987654
+                          name:
+                            type: string
+                            example: ÑKDAFAS
+                      date:
+                        type: string
+                        format: date-time
+                        example: '2025-03-03T15:00:00'
+                assistants: 
+                  type: object
+                  example: {}
 
     ProfileFilterStart:
       type: object
@@ -2969,6 +3160,7 @@ components:
                   example: "AI_TEMPLATE"
                 phases:
                   type: array
+                  items: {}
     NextPhaseRequest:
       type: object
       properties:
