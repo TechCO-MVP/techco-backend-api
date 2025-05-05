@@ -60,6 +60,7 @@ class COUNTRY_CODE(str, Enum):
 
 
 class PositionDTO(BaseModel):
+    position_configuration_id: str = Field(default="", alias="position_configuration_id")
     business_id: str = Field(default="", alias="business_id")
     owner_position_user_id: str
     recruiter_user_id: str

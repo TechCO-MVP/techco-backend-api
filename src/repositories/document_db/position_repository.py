@@ -7,7 +7,7 @@ from src.repositories.repository import IRepository
 
 class PositionRepository(IRepository[PositionEntity]):
 
-    _adapter: IRepository[PositionEntity]
+    _adapter: PositionDBAdapter[PositionEntity]
 
     def __init__(self):
         super().__init__()
