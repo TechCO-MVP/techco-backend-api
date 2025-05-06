@@ -22,7 +22,6 @@ def start_filter_profile_use_case(
     process_type: str = PROCESS_TYPE.PROFILES_SEARCH,
 ) -> dict:
     """Start filter profile use case."""
-
     document_db_client = DocumentDBClient()
     client = document_db_client.get_client()
 
