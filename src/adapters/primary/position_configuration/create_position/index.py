@@ -3,9 +3,9 @@ from aws_lambda_powertools.event_handler import APIGatewayRestResolver, Response
 from aws_lambda_powertools.utilities.typing import LambdaContext
 from pydantic import ValidationError
 
-from src.use_cases.position_configuration.next_phase import (
-    next_phase_position_configuration_use_case,
-)
+from src.domain.profile import ProfileFilterProcessQueryDTO
+from src.use_cases.position_configuration.crete_position import create_position_use_case
+from src.use_cases.profile.start_filter_profile_use_case import start_filter_profile_use_case
 
 logger = Logger()
 app = APIGatewayRestResolver()
@@ -24,10 +24,22 @@ def create_position():
         authorizer = app.current_event.request_context.authorizer["claims"]
         user_email = authorizer["email"]
 
-        response = next_phase_position_configuration_use_case(
-            body["position_configuration_id"], body["configuration_type"], user_email
-        )
+        response = create_position_use_case(body["position_configuration_id"], user_email)
         logger.info(f"Response from use case: {response}")
+
+        profile_filter_process = ProfileFilterProcessQueryDTO(
+            role=response.props.role,
+            seniority=response.props.seniority,
+            country_code=response.props.country_code,
+            city=response.props.city,
+            description=response.props.description,
+            responsabilities=response.props.responsabilities,
+            skills=response.props.skills,
+            business_id=response.props.business_id,
+            position_id=response.id,
+        )
+
+        start_filter_profile_use_case(profile_filter_process, user_email)
 
         return Response(
             status_code=200,
