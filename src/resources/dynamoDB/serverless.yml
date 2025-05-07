@@ -21,3 +21,27 @@ WebSocketConnections:
     TimeToLiveSpecification:
         AttributeName: "expires_at"
         Enabled: true
+
+WebSocketConnectionsPublic:
+  Type: AWS::DynamoDB::Table
+  Properties:
+    BillingMode: PAY_PER_REQUEST
+    AttributeDefinitions:
+      - AttributeName: hiring_process_id
+        AttributeType: S
+      - AttributeName: connection_id
+        AttributeType: S
+    KeySchema:
+      - AttributeName: connection_id
+        KeyType: HASH
+    GlobalSecondaryIndexes:
+      - IndexName: hiring_process_id_index
+        KeySchema:
+          - AttributeName: hiring_process_id
+            KeyType: HASH
+        Projection:
+          ProjectionType: KEYS_ONLY
+    TableName: ${self:provider.stage}-websocket-connections-public
+    TimeToLiveSpecification:
+        AttributeName: "expires_at"
+        Enabled: true
