@@ -21,4 +21,5 @@ API_URL = environ.get("API_URL", "https://zcich4tlm3.execute-api.us-east-1.amazo
 
 TOKEN_SERVICE_BRIGHTDATA_SECRET_NAME = environ.get("TOKEN_SERVICE_BRIGHTDATA", "")
 TABLE_WEBSOCKET_CONNECTIONS = f"{ENV}-websocket-connections"
+TABLE_WEBSOCKET_CONNECTIONS_PUBLIC = f"{ENV}-websocket-connections-public"
 API_ID = environ.get("API_ID", "y7fav1lech")
