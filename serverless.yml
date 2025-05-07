@@ -111,6 +111,8 @@ provider:
           Resource:
             - !GetAtt WebSocketConnections.Arn
             - !Sub "${WebSocketConnections.Arn}/index/user_id_index"
+            - !GetAtt WebSocketConnectionsPublic.Arn
+            - !Sub "${WebSocketConnectionsPublic.Arn}/index/hiring_process_id_index"
 
 custom:
   userPoolName: ${self:provider.stage}-passwordless-user-pool
@@ -165,6 +167,7 @@ resources:
     PipefyFieldUpdateQueue: ${file(./src/resources/pipefy/serverless.yml):PipefyFieldUpdateQueue}
     EventBridgeToSQSRole: ${file(./src/resources/pipefy/serverless.yml):EventBridgeToSQSRole}
     WebSocketConnections: ${file(./src/resources/dynamoDB/serverless.yml):WebSocketConnections}
+    WebSocketConnectionsPublic: ${file(./src/resources/dynamoDB/serverless.yml):WebSocketConnectionsPublic}
     serverlessApiGatewayCloudWatchRole:
       Type: AWS::IAM::Role
       Properties:
@@ -649,6 +652,29 @@ functions:
 
   defaultMessageHandler:
     handler: src/adapters/primary/websocket/default.handler
+    events:
+      - websocket:
+          route: $default
+
+  webSocketConnectPublic:
+    handler: src/adapters/primary/websocket/public_connect.handler
+    events:
+      - websocket:
+          route: $connect
+          authorizer: null
+          request:
+            parameters:
+              querystrings:
+                hiring_process_id: true
+  
+  webSocketDisconnectPublic:
+    handler: src/adapters/primary/websocket/public_disconnect.handler
+    events:
+      - websocket:
+          route: $disconnect
+
+  defaultMessageHandlerPublic:
+    handler: src/adapters/primary/websocket/public_default.handler
     events:
       - websocket:
           route: $default
