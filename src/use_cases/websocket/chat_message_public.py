@@ -42,6 +42,10 @@ def send_request_to_llm(payload: dict) -> dict:
         raise ValueError(f"Assistant not found for phase type: {payload['phase_type']}")
 
     position_entity: PositionEntity = get_position_entity_use_case({"id": hiring_process_entity.props.position_id})
+    
+    if not position_entity:
+        raise ValueError(f"Position not found for ID: {hiring_process_entity.props.position_id}")
+    
     context = {"position_id": position_entity.id}
     open_ai_adapter = OpenAIAdapter(context)
     open_ai_adapter.assistant_id = position_entity.props.assistants[assistand_name].assistant_id
