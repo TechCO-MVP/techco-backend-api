@@ -661,11 +661,6 @@ functions:
     events:
       - websocket:
           route: $connect
-          authorizer: null
-          request:
-            parameters:
-              querystrings:
-                hiring_process_id: true
   
   webSocketDisconnectPublic:
     handler: src/adapters/primary/websocket/public_disconnect.handler
