@@ -224,10 +224,12 @@ resources:
         Principal: apigateway.amazonaws.com
     PublicDefaultPermission:
       Type: AWS::Lambda::Permission
+      DependsOn: DefaultMessageHandlerPublicFunction
       Properties:
-        FunctionName: !GetAtt defaultMessageHandlerPublicLambdaFunction.Arn
+        FunctionName: !GetAtt DefaultMessageHandlerPublicLambdaFunction.Arn
         Action: lambda:InvokeFunction
         Principal: apigateway.amazonaws.com
+        SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${PublicWebSocketApi}/*"
     serverlessApiGatewayCloudWatchRole:
       Type: AWS::IAM::Role
       Properties:
