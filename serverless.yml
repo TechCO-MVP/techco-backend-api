@@ -644,7 +644,7 @@ functions:
     events:
       - websocket:
           route: $connect
-          webSocketApiId:
+          websocketApiId:
             Ref: AuthWebSocketApi
           authorizer:
             name: webSocketAuthorizer
@@ -655,7 +655,7 @@ functions:
     events:
       - websocket:
           route: $disconnect
-          webSocketApiId:
+          websocketApiId:
             Ref: AuthWebSocketApi
 
   defaultMessageHandler:
@@ -663,7 +663,7 @@ functions:
     events:
       - websocket:
           route: $default
-          webSocketApiId:
+          websocketApiId:
             Ref: AuthWebSocketApi
 
   webSocketConnectPublic:
@@ -671,7 +671,7 @@ functions:
     events:
       - websocket:
           route: $connect
-          webSocketApiId:
+          websocketApiId:
             Ref: PublicWebSocketApi
   
   webSocketDisconnectPublic:
@@ -679,7 +679,7 @@ functions:
     events:
       - websocket:
           route: $disconnect
-          webSocketApiId:
+          websocketApiId:
             Ref: PublicWebSocketApi
 
   defaultMessageHandlerPublic:
@@ -687,7 +687,7 @@ functions:
     events:
       - websocket:
           route: $default
-          webSocketApiId:
+          websocketApiId:
             Ref: PublicWebSocketApi
 
   get_position_configuration_list:
