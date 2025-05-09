@@ -786,11 +786,11 @@ functions:
       - websocket:
             route: $default
                         
-    webSocketConnectPublic:
-      handler: src/adapters/primary/websocket/public_connect.handler
-      events:
-      - websocket:
-          route: $connect
+  webSocketConnectPublic:
+    handler: src/adapters/primary/websocket/public_connect.handler
+    events:
+    - websocket:
+        route: $connect
 
   webSocketDisconnectPublic:
     handler: src/adapters/primary/websocket/public_disconnect.handler
