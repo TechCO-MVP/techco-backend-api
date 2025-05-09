@@ -182,19 +182,19 @@ resources:
     PrivateConnectPermission:
       Type: AWS::Lambda::Permission
       Properties:
-        FunctionName: !GetAtt PrivateConnectLambdaFunction.Arn
+        FunctionName: !GetAtt webSocketConnectLambdaFunction.Arn
         Action: lambda:InvokeFunction
         Principal: apigateway.amazonaws.com
     PrivateDisconnectPermission:
       Type: AWS::Lambda::Permission
       Properties:
-        FunctionName: !GetAtt PrivateDisconnectLambdaFunction.Arn
+        FunctionName: !GetAtt webSocketDisconnectLambdaFunction.Arn
         Action: lambda:InvokeFunction
         Principal: apigateway.amazonaws.com
     PrivateDefaultPermission:
       Type: AWS::Lambda::Permission
       Properties:
-        FunctionName: !GetAtt PrivateDefaultLambdaFunction.Arn
+        FunctionName: !GetAtt defaultMessageHandlerLambdaFunction.Arn
         Action: lambda:InvokeFunction
         Principal: apigateway.amazonaws.com
     WebSocketConnectionsPublic: ${file(./src/resources/dynamoDB/serverless.yml):WebSocketConnectionsPublic}
@@ -213,19 +213,19 @@ resources:
     PublicConnectPermission:
       Type: AWS::Lambda::Permission
       Properties:
-        FunctionName: !GetAtt PublicConnectLambdaFunction.Arn
+        FunctionName: !GetAtt webSocketConnectPublicLambdaFunction.Arn
         Action: lambda:InvokeFunction
         Principal: apigateway.amazonaws.com
     PublicDisconnectPermission:
       Type: AWS::Lambda::Permission
       Properties:
-        FunctionName: !GetAtt PublicDisconnectLambdaFunction.Arn
+        FunctionName: !GetAtt webSocketDisconnectPublicLambdaFunction.Arn
         Action: lambda:InvokeFunction
         Principal: apigateway.amazonaws.com
     PublicDefaultPermission:
       Type: AWS::Lambda::Permission
       Properties:
-        FunctionName: !GetAtt PublicDefaultLambdaFunction.Arn
+        FunctionName: !GetAtt defaultMessageHandlerPublicLambdaFunction.Arn
         Action: lambda:InvokeFunction
         Principal: apigateway.amazonaws.com
     serverlessApiGatewayCloudWatchRole:
