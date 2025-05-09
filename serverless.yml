@@ -167,11 +167,67 @@ resources:
     PipefyFieldUpdateQueue: ${file(./src/resources/pipefy/serverless.yml):PipefyFieldUpdateQueue}
     EventBridgeToSQSRole: ${file(./src/resources/pipefy/serverless.yml):EventBridgeToSQSRole}
     WebSocketConnections: ${file(./src/resources/dynamoDB/serverless.yml):WebSocketConnections}
-    AuthWebSocketApi: ${file(./src/resources/websocket/serverless.yml):AuthWebSocketApi}
-    AuthWebSocketStage: ${file(./src/resources/websocket/serverless.yml):AuthWebSocketStage}
+    PrivateWebSocketApi:
+      Type: AWS::ApiGatewayV2::Api
+      Properties:
+        Name: private-websocket
+        ProtocolType: WEBSOCKET
+        RouteSelectionExpression: $request.body.action
+    PrivateWebSocketStage:
+      Type: AWS::ApiGatewayV2::Stage
+      Properties:
+        ApiId: !Ref PrivateWebSocketApi
+        StageName: dev
+        AutoDeploy: true
+    PrivateConnectPermission:
+      Type: AWS::Lambda::Permission
+      Properties:
+        FunctionName: !GetAtt PrivateConnectLambdaFunction.Arn
+        Action: lambda:InvokeFunction
+        Principal: apigateway.amazonaws.com
+    PrivateDisconnectPermission:
+      Type: AWS::Lambda::Permission
+      Properties:
+        FunctionName: !GetAtt PrivateDisconnectLambdaFunction.Arn
+        Action: lambda:InvokeFunction
+        Principal: apigateway.amazonaws.com
+    PrivateDefaultPermission:
+      Type: AWS::Lambda::Permission
+      Properties:
+        FunctionName: !GetAtt PrivateDefaultLambdaFunction.Arn
+        Action: lambda:InvokeFunction
+        Principal: apigateway.amazonaws.com
     WebSocketConnectionsPublic: ${file(./src/resources/dynamoDB/serverless.yml):WebSocketConnectionsPublic}
-    PublicWebSocketApi: ${file(./src/resources/websocket/serverless.yml):PublicWebSocketApi}
-    PublicWebSocketStage: ${file(./src/resources/websocket/serverless.yml):PublicWebSocketStage}
+    PublicWebSocketApi:
+      Type: AWS::ApiGatewayV2::Api
+      Properties:
+        Name: public-websocket
+        ProtocolType: WEBSOCKET
+        RouteSelectionExpression: $request.body.action
+    PublicWebSocketStage:
+      Type: AWS::ApiGatewayV2::Stage
+      Properties:
+        ApiId: !Ref PublicWebSocketApi
+        StageName: dev
+        AutoDeploy: true
+    PublicConnectPermission:
+      Type: AWS::Lambda::Permission
+      Properties:
+        FunctionName: !GetAtt PublicConnectLambdaFunction.Arn
+        Action: lambda:InvokeFunction
+        Principal: apigateway.amazonaws.com
+    PublicDisconnectPermission:
+      Type: AWS::Lambda::Permission
+      Properties:
+        FunctionName: !GetAtt PublicDisconnectLambdaFunction.Arn
+        Action: lambda:InvokeFunction
+        Principal: apigateway.amazonaws.com
+    PublicDefaultPermission:
+      Type: AWS::Lambda::Permission
+      Properties:
+        FunctionName: !GetAtt PublicDefaultLambdaFunction.Arn
+        Action: lambda:InvokeFunction
+        Principal: apigateway.amazonaws.com
     serverlessApiGatewayCloudWatchRole:
       Type: AWS::IAM::Role
       Properties:
@@ -644,8 +700,6 @@ functions:
     events:
       - websocket:
           route: $connect
-          websocketApi:
-            Ref: AuthWebSocketApi
           authorizer:
             name: webSocketAuthorizer
             identitySource: route.request.querystring.token
@@ -655,41 +709,31 @@ functions:
     events:
       - websocket:
           route: $disconnect
-          websocketApi:
-            Ref: AuthWebSocketApi
-
+          
   defaultMessageHandler:
     handler: src/adapters/primary/websocket/default.handler
     events:
       - websocket:
           route: $default
-          websocketApi:
-            Ref: AuthWebSocketApi
-
+          
   webSocketConnectPublic:
     handler: src/adapters/primary/websocket/public_connect.handler
     events:
       - websocket:
           route: $connect
-          websocketApi:
-            Ref: PublicWebSocketApi
-  
+          
   webSocketDisconnectPublic:
     handler: src/adapters/primary/websocket/public_disconnect.handler
     events:
       - websocket:
           route: $disconnect
-          websocketApi:
-            Ref: PublicWebSocketApi
-
+          
   defaultMessageHandlerPublic:
     handler: src/adapters/primary/websocket/public_default.handler
     events:
       - websocket:
           route: $default
-          websocketApi:
-            Ref: PublicWebSocketApi
-
+          
   get_position_configuration_list:
     handler: src/adapters/primary/position_configuration/get_position_configuration/index.handler
     events:
