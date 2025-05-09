@@ -701,6 +701,7 @@ functions:
     events:
       - websocket:
           route: $connect
+          apiId: !Ref PrivateWebSocketApi
           authorizer:
             name: webSocketAuthorizer
             identitySource: route.request.querystring.token
@@ -710,31 +711,36 @@ functions:
     events:
       - websocket:
           route: $disconnect
-          
+          apiId: !Ref PrivateWebSocketApi
+
   defaultMessageHandler:
     handler: src/adapters/primary/websocket/default.handler
     events:
       - websocket:
-          route: $default
-          
-  webSocketConnectPublic:
-    handler: src/adapters/primary/websocket/public_connect.handler
-    events:
+            route: $default
+            apiId: !Ref PrivateWebSocketApi
+            
+    webSocketConnectPublic:
+      handler: src/adapters/primary/websocket/public_connect.handler
+      events:
       - websocket:
           route: $connect
-          
+          apiId: !Ref PublicWebSocketApi
+
   webSocketDisconnectPublic:
     handler: src/adapters/primary/websocket/public_disconnect.handler
     events:
       - websocket:
           route: $disconnect
-          
+          apiId: !Ref PublicWebSocketApi
+
   defaultMessageHandlerPublic:
     handler: src/adapters/primary/websocket/public_default.handler
     events:
       - websocket:
           route: $default
-          
+          apiId: !Ref PublicWebSocketApi
+
   get_position_configuration_list:
     handler: src/adapters/primary/position_configuration/get_position_configuration/index.handler
     events:
