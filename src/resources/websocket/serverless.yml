@@ -5,19 +5,19 @@ AuthWebSocketApi:
     ProtocolType: WEBSOCKET
     RouteSelectionExpression: $request.body.action
 
-PublicWebSocketApi:
-  Type: AWS::ApiGatewayV2::Api
-  Properties:
-    Name: ${self:service}-${self:provider.stage}-public-websocket
-    ProtocolType: WEBSOCKET
-    RouteSelectionExpression: $request.body.action
-
 AuthWebSocketStage:
   Type: AWS::ApiGatewayV2::Stage
   Properties:
     ApiId: !Ref AuthWebSocketApi
     StageName: ${self:provider.stage}
     AutoDeploy: true
+
+PublicWebSocketApi:
+  Type: AWS::ApiGatewayV2::Api
+  Properties:
+    Name: ${self:service}-${self:provider.stage}-public-websocket
+    ProtocolType: WEBSOCKET
+    RouteSelectionExpression: $request.body.action
 
 PublicWebSocketStage:
   Type: AWS::ApiGatewayV2::Stage
