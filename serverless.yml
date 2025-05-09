@@ -643,8 +643,9 @@ functions:
     handler: src/adapters/primary/websocket/connect.handler
     events:
       - websocket:
-          name: auth-websocket-api
           route: $connect
+          webSocketApiId:
+            Ref: AuthWebSocketApi
           authorizer:
             name: webSocketAuthorizer
             identitySource: route.request.querystring.token
@@ -653,36 +654,41 @@ functions:
     handler: src/adapters/primary/websocket/disconnect.handler
     events:
       - websocket:
-          name: auth-websocket-api
           route: $disconnect
+          webSocketApiId:
+            Ref: AuthWebSocketApi
 
   defaultMessageHandler:
     handler: src/adapters/primary/websocket/default.handler
     events:
       - websocket:
-          name: auth-websocket-api
           route: $default
+          webSocketApiId:
+            Ref: AuthWebSocketApi
 
   webSocketConnectPublic:
     handler: src/adapters/primary/websocket/public_connect.handler
     events:
       - websocket:
-          name: public-websocket-api
           route: $connect
+          webSocketApiId:
+            Ref: PublicWebSocketApi
   
   webSocketDisconnectPublic:
     handler: src/adapters/primary/websocket/public_disconnect.handler
     events:
       - websocket:
-          name: public-websocket-api
           route: $disconnect
+          webSocketApiId:
+            Ref: PublicWebSocketApi
 
   defaultMessageHandlerPublic:
     handler: src/adapters/primary/websocket/public_default.handler
     events:
       - websocket:
-          name: public-websocket-api
           route: $default
+          webSocketApiId:
+            Ref: PublicWebSocketApi
 
   get_position_configuration_list:
     handler: src/adapters/primary/position_configuration/get_position_configuration/index.handler
