@@ -8,7 +8,6 @@ provider:
   stage: dev
   region: us-east-1
   timeout: 30
-  websocketApiRouteSelectionExpression: $request.body.action
   versionFunctions: false
   vpc:
     securityGroupIds:
@@ -233,6 +232,32 @@ resources:
         FunctionName: !GetAtt defaultMessageHandlerLambdaFunction.Arn
         Action: lambda:InvokeFunction
         Principal: apigateway.amazonaws.com
+    PrivateWebSocketConnectIntegration:
+      Type: AWS::ApiGatewayV2::Integration
+      Properties:
+        ApiId: !Ref PrivateWebSocketApi
+        IntegrationType: AWS_PROXY
+        IntegrationUri: !GetAtt webSocketConnect.Arn
+        IntegrationMethod: POST
+        ContentHandlingStrategy: CONVERT_TO_TEXT
+
+    PrivateWebSocketDisconnectIntegration:
+      Type: AWS::ApiGatewayV2::Integration
+      Properties:
+        ApiId: !Ref PrivateWebSocketApi
+        IntegrationType: AWS_PROXY
+        IntegrationUri: !GetAtt webSocketDisconnect.Arn
+        IntegrationMethod: POST
+        ContentHandlingStrategy: CONVERT_TO_TEXT
+
+    PrivateWebSocketDefaultIntegration:
+      Type: AWS::ApiGatewayV2::Integration
+      Properties:
+        ApiId: !Ref PrivateWebSocketApi
+        IntegrationType: AWS_PROXY
+        IntegrationUri: !GetAtt defaultMessageHandler.Arn
+        IntegrationMethod: POST
+        ContentHandlingStrategy: CONVERT_TO_TEXT
     WebSocketConnectionsPublic: ${file(./src/resources/dynamoDB/serverless.yml):WebSocketConnectionsPublic}
     PublicWebSocketApi:
       Type: AWS::ApiGatewayV2::Api
@@ -298,6 +323,32 @@ resources:
         Action: lambda:InvokeFunction
         Principal: apigateway.amazonaws.com
         SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${PublicWebSocketApi}/*"
+    PublicWebSocketConnectIntegration:
+      Type: AWS::ApiGatewayV2::Integration
+      Properties:
+        ApiId: !Ref PublicWebSocketApi
+        IntegrationType: AWS_PROXY
+        IntegrationUri: !GetAtt webSocketConnectPublic.Arn
+        IntegrationMethod: POST
+        ContentHandlingStrategy: CONVERT_TO_TEXT
+
+    PublicWebSocketDisconnectIntegration:
+      Type: AWS::ApiGatewayV2::Integration
+      Properties:
+        ApiId: !Ref PublicWebSocketApi
+        IntegrationType: AWS_PROXY
+        IntegrationUri: !GetAtt webSocketDisconnectPublic.Arn
+        IntegrationMethod: POST
+        ContentHandlingStrategy: CONVERT_TO_TEXT
+
+    PublicWebSocketDefaultIntegration:
+      Type: AWS::ApiGatewayV2::Integration
+      Properties:
+        ApiId: !Ref PublicWebSocketApi
+        IntegrationType: AWS_PROXY
+        IntegrationUri: !GetAtt defaultMessageHandlerPublic.Arn
+        IntegrationMethod: POST
+        ContentHandlingStrategy: CONVERT_TO_TEXT
     serverlessApiGatewayCloudWatchRole:
       Type: AWS::IAM::Role
       Properties:
