@@ -111,8 +111,8 @@ provider:
           Resource:
             - !GetAtt WebSocketConnections.Arn
             - !Sub "${WebSocketConnections.Arn}/index/user_id_index"
-            # - !GetAtt WebSocketConnectionsPublic.Arn
-            # - !Sub "${WebSocketConnectionsPublic.Arn}/index/hiring_process_id_index"
+            - !GetAtt WebSocketConnectionsPublic.Arn
+            - !Sub "${WebSocketConnectionsPublic.Arn}/index/hiring_process_id_index"
 
 custom:
   userPoolName: ${self:provider.stage}-passwordless-user-pool
@@ -258,7 +258,7 @@ resources:
     #     IntegrationUri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${defaultMessageHandler.Arn}/invocations"
     #     IntegrationMethod: POST
     #     ContentHandlingStrategy: CONVERT_TO_TEXT
-    # WebSocketConnectionsPublic: ${file(./src/resources/dynamoDB/serverless.yml):WebSocketConnectionsPublic}
+    WebSocketConnectionsPublic: ${file(./src/resources/dynamoDB/serverless.yml):WebSocketConnectionsPublic}
     # PublicWebSocketApi:
     #   Type: AWS::ApiGatewayV2::Api
     #   Properties:
