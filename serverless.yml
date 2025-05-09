@@ -111,8 +111,8 @@ provider:
           Resource:
             - !GetAtt WebSocketConnections.Arn
             - !Sub "${WebSocketConnections.Arn}/index/user_id_index"
-            - !GetAtt WebSocketConnectionsPublic.Arn
-            - !Sub "${WebSocketConnectionsPublic.Arn}/index/hiring_process_id_index"
+            # - !GetAtt WebSocketConnectionsPublic.Arn
+            # - !Sub "${WebSocketConnectionsPublic.Arn}/index/hiring_process_id_index"
 
 custom:
   userPoolName: ${self:provider.stage}-passwordless-user-pool
