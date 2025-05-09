@@ -8,6 +8,7 @@ provider:
   stage: dev
   region: us-east-1
   timeout: 30
+  websocketApiRouteSelectionExpression: $request.body.action
   versionFunctions: false
   vpc:
     securityGroupIds:
@@ -179,6 +180,41 @@ resources:
         ApiId: !Ref PrivateWebSocketApi
         StageName: dev
         AutoDeploy: true
+    PrivateWebSocketConnectRoute:
+      Type: AWS::ApiGatewayV2::Route
+      Properties:
+        ApiId: !Ref PrivateWebSocketApi
+        RouteKey: $connect
+        AuthorizationType: CUSTOM
+        AuthorizerId: !Ref webSocketAuthorizer
+        OperationName: ConnectRoute
+        Target: !Join 
+          - /
+          - - integrations
+            - !Ref PrivateWebSocketConnectIntegration
+
+    PrivateWebSocketDisconnectRoute:
+      Type: AWS::ApiGatewayV2::Route
+      Properties:
+        ApiId: !Ref PrivateWebSocketApi
+        RouteKey: $disconnect
+        OperationName: DisconnectRoute
+        Target: !Join 
+          - /
+          - - integrations
+            - !Ref PrivateWebSocketDisconnectIntegration
+
+    PrivateWebSocketDefaultRoute:
+      Type: AWS::ApiGatewayV2::Route
+      Properties:
+        ApiId: !Ref PrivateWebSocketApi
+        RouteKey: $default
+        OperationName: DefaultRoute
+        Target: !Join 
+          - /
+          - - integrations
+            - !Ref PrivateWebSocketDefaultIntegration
+
     PrivateConnectPermission:
       Type: AWS::Lambda::Permission
       Properties:
@@ -210,6 +246,39 @@ resources:
         ApiId: !Ref PublicWebSocketApi
         StageName: dev
         AutoDeploy: true
+    PublicWebSocketConnectRoute:
+      Type: AWS::ApiGatewayV2::Route
+      Properties:
+        ApiId: !Ref PublicWebSocketApi
+        RouteKey: $connect
+        OperationName: ConnectRoute
+        Target: !Join 
+          - /
+          - - integrations
+            - !Ref PublicWebSocketConnectIntegration
+
+    PublicWebSocketDisconnectRoute:
+      Type: AWS::ApiGatewayV2::Route
+      Properties:
+        ApiId: !Ref PublicWebSocketApi
+        RouteKey: $disconnect
+        OperationName: DisconnectRoute
+        Target: !Join 
+          - /
+          - - integrations
+            - !Ref PublicWebSocketDisconnectIntegration
+
+    PublicWebSocketDefaultRoute:
+      Type: AWS::ApiGatewayV2::Route
+      Properties:
+        ApiId: !Ref PublicWebSocketApi
+        RouteKey: $default
+        OperationName: DefaultRoute
+        Target: !Join 
+          - /
+          - - integrations
+            - !Ref PublicWebSocketDefaultIntegration
+
     PublicConnectPermission:
       Type: AWS::Lambda::Permission
       Properties:
@@ -701,7 +770,6 @@ functions:
     events:
       - websocket:
           route: $connect
-          apiId: !Ref PrivateWebSocketApi
           authorizer:
             name: webSocketAuthorizer
             identitySource: route.request.querystring.token
@@ -711,35 +779,30 @@ functions:
     events:
       - websocket:
           route: $disconnect
-          apiId: !Ref PrivateWebSocketApi
-
+          
   defaultMessageHandler:
     handler: src/adapters/primary/websocket/default.handler
     events:
       - websocket:
             route: $default
-            apiId: !Ref PrivateWebSocketApi
-            
+                        
     webSocketConnectPublic:
       handler: src/adapters/primary/websocket/public_connect.handler
       events:
       - websocket:
           route: $connect
-          apiId: !Ref PublicWebSocketApi
 
   webSocketDisconnectPublic:
     handler: src/adapters/primary/websocket/public_disconnect.handler
     events:
       - websocket:
           route: $disconnect
-          apiId: !Ref PublicWebSocketApi
 
   defaultMessageHandlerPublic:
     handler: src/adapters/primary/websocket/public_default.handler
     events:
       - websocket:
           route: $default
-          apiId: !Ref PublicWebSocketApi
 
   get_position_configuration_list:
     handler: src/adapters/primary/position_configuration/get_position_configuration/index.handler
