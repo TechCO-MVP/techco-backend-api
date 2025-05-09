@@ -167,7 +167,11 @@ resources:
     PipefyFieldUpdateQueue: ${file(./src/resources/pipefy/serverless.yml):PipefyFieldUpdateQueue}
     EventBridgeToSQSRole: ${file(./src/resources/pipefy/serverless.yml):EventBridgeToSQSRole}
     WebSocketConnections: ${file(./src/resources/dynamoDB/serverless.yml):WebSocketConnections}
+    AuthWebSocketApi: ${file(./src/resources/websocket/serverless.yml):AuthWebSocketApi}
+    AuthWebSocketStage: ${file(./src/resources/websocket/serverless.yml):AuthWebSocketStage}
     WebSocketConnectionsPublic: ${file(./src/resources/dynamoDB/serverless.yml):WebSocketConnectionsPublic}
+    PublicWebSocketApi: ${file(./src/resources/websocket/serverless.yml):PublicWebSocketApi}
+    PublicWebSocketStage: ${file(./src/resources/websocket/serverless.yml):PublicWebSocketStage}
     serverlessApiGatewayCloudWatchRole:
       Type: AWS::IAM::Role
       Properties:
@@ -639,6 +643,7 @@ functions:
     handler: src/adapters/primary/websocket/connect.handler
     events:
       - websocket:
+          websocketApi: auth-websocket-api
           route: $connect
           authorizer:
             name: webSocketAuthorizer
@@ -648,30 +653,35 @@ functions:
     handler: src/adapters/primary/websocket/disconnect.handler
     events:
       - websocket:
+          websocketApi: auth-websocket-api
           route: $disconnect
 
   defaultMessageHandler:
     handler: src/adapters/primary/websocket/default.handler
     events:
       - websocket:
+          websocketApi: auth-websocket-api
           route: $default
 
   webSocketConnectPublic:
     handler: src/adapters/primary/websocket/public_connect.handler
     events:
       - websocket:
+          websocketApi: public-websocket-api
           route: $connect
   
   webSocketDisconnectPublic:
     handler: src/adapters/primary/websocket/public_disconnect.handler
     events:
       - websocket:
+          websocketApi: public-websocket-api
           route: $disconnect
 
   defaultMessageHandlerPublic:
     handler: src/adapters/primary/websocket/public_default.handler
     events:
       - websocket:
+          websocketApi: public-websocket-api
           route: $default
 
   get_position_configuration_list:
