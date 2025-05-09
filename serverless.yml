@@ -224,9 +224,9 @@ resources:
         Principal: apigateway.amazonaws.com
     PublicDefaultPermission:
       Type: AWS::Lambda::Permission
-      DependsOn: DefaultMessageHandlerPublicFunction
+      DependsOn: defaultMessageHandlerPublic
       Properties:
-        FunctionName: !GetAtt DefaultMessageHandlerPublicLambdaFunction.Arn
+        FunctionName: !GetAtt defaultMessageHandlerPublicLambdaFunction.Arn
         Action: lambda:InvokeFunction
         Principal: apigateway.amazonaws.com
         SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${PublicWebSocketApi}/*"
