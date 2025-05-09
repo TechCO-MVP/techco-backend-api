@@ -217,19 +217,19 @@ resources:
     PrivateConnectPermission:
       Type: AWS::Lambda::Permission
       Properties:
-        FunctionName: !GetAtt webSocketConnect.Arn
+        FunctionName: !Ref webSocketConnect
         Action: lambda:InvokeFunction
         Principal: apigateway.amazonaws.com
     PrivateDisconnectPermission:
       Type: AWS::Lambda::Permission
       Properties:
-        FunctionName: !GetAtt webSocketDisconnect.Arn
+        FunctionName: !Ref webSocketDisconnect
         Action: lambda:InvokeFunction
         Principal: apigateway.amazonaws.com
     PrivateDefaultPermission:
       Type: AWS::Lambda::Permission
       Properties:
-        FunctionName: !GetAtt defaultMessageHandler.Arn
+        FunctionName: !Ref defaultMessageHandler
         Action: lambda:InvokeFunction
         Principal: apigateway.amazonaws.com
     PrivateWebSocketConnectIntegration:
@@ -237,7 +237,7 @@ resources:
       Properties:
         ApiId: !Ref PrivateWebSocketApi
         IntegrationType: AWS_PROXY
-        IntegrationUri: !GetAtt webSocketConnect.Arn
+        IntegrationUri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${webSocketConnect.Arn}/invocations"
         IntegrationMethod: POST
         ContentHandlingStrategy: CONVERT_TO_TEXT
 
@@ -246,7 +246,7 @@ resources:
       Properties:
         ApiId: !Ref PrivateWebSocketApi
         IntegrationType: AWS_PROXY
-        IntegrationUri: !GetAtt webSocketDisconnect.Arn
+        IntegrationUri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${webSocketDisconnect.Arn}/invocations"
         IntegrationMethod: POST
         ContentHandlingStrategy: CONVERT_TO_TEXT
 
@@ -255,7 +255,7 @@ resources:
       Properties:
         ApiId: !Ref PrivateWebSocketApi
         IntegrationType: AWS_PROXY
-        IntegrationUri: !GetAtt defaultMessageHandler.Arn
+        IntegrationUri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${defaultMessageHandler.Arn}/invocations"
         IntegrationMethod: POST
         ContentHandlingStrategy: CONVERT_TO_TEXT
     WebSocketConnectionsPublic: ${file(./src/resources/dynamoDB/serverless.yml):WebSocketConnectionsPublic}
@@ -307,19 +307,19 @@ resources:
     PublicConnectPermission:
       Type: AWS::Lambda::Permission
       Properties:
-        FunctionName: !GetAtt webSocketConnectPublic.Arn
+        FunctionName: !Ref webSocketConnectPublic
         Action: lambda:InvokeFunction
         Principal: apigateway.amazonaws.com
     PublicDisconnectPermission:
       Type: AWS::Lambda::Permission
       Properties:
-        FunctionName: !GetAtt webSocketDisconnectPublic.Arn
+        FunctionName: !Ref webSocketDisconnectPublic
         Action: lambda:InvokeFunction
         Principal: apigateway.amazonaws.com
     PublicDefaultPermission:
       Type: AWS::Lambda::Permission
       Properties:
-        FunctionName: !GetAtt defaultMessageHandlerPublic.Arn
+        FunctionName: !Ref defaultMessageHandlerPublic
         Action: lambda:InvokeFunction
         Principal: apigateway.amazonaws.com
         SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${PublicWebSocketApi}/*"
@@ -328,7 +328,7 @@ resources:
       Properties:
         ApiId: !Ref PublicWebSocketApi
         IntegrationType: AWS_PROXY
-        IntegrationUri: !GetAtt webSocketConnectPublic.Arn
+        IntegrationUri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${webSocketConnectPublic.Arn}/invocations"
         IntegrationMethod: POST
         ContentHandlingStrategy: CONVERT_TO_TEXT
 
@@ -337,7 +337,7 @@ resources:
       Properties:
         ApiId: !Ref PublicWebSocketApi
         IntegrationType: AWS_PROXY
-        IntegrationUri: !GetAtt webSocketDisconnectPublic.Arn
+        IntegrationUri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${webSocketDisconnectPublic.Arn}/invocations"
         IntegrationMethod: POST
         ContentHandlingStrategy: CONVERT_TO_TEXT
 
@@ -346,7 +346,7 @@ resources:
       Properties:
         ApiId: !Ref PublicWebSocketApi
         IntegrationType: AWS_PROXY
-        IntegrationUri: !GetAtt defaultMessageHandlerPublic.Arn
+        IntegrationUri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${defaultMessageHandlerPublic.Arn}/invocations"
         IntegrationMethod: POST
         ContentHandlingStrategy: CONVERT_TO_TEXT
     serverlessApiGatewayCloudWatchRole:
