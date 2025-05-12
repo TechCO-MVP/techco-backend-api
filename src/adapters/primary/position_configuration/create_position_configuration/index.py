@@ -3,7 +3,6 @@ from aws_lambda_powertools.event_handler import APIGatewayRestResolver, Response
 from aws_lambda_powertools.utilities.typing import LambdaContext
 from pydantic import ValidationError
 
-from src.domain.position_configuration import PositionConfigurationDTO
 from src.use_cases.position_configuration.post_position_configuration import (
     post_position_configuration_use_case,
 )
@@ -25,11 +24,16 @@ def post_position_configuration():
             raise ValueError("User not found")
 
         body = app.current_event.json_body
-        body["user_id"] = user_entity.id
 
-        create_position_configuration_dto = PositionConfigurationDTO(**body)
+        if not body.get("business_id"):
+            raise ValueError("business_id is required")
 
-        response = post_position_configuration_use_case(create_position_configuration_dto)
+        if not body.get("flow_type"):
+            raise ValueError("flow_type is required")
+
+        response = post_position_configuration_use_case(
+            body["business_id"], body["flow_type"], user_entity.id
+        )
 
         return Response(
             status_code=200,
