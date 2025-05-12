@@ -2358,17 +2358,13 @@ components:
     UpdateHiringProcessCustomFieldsById:
       type: object
       properties:
-        id: 
+        id:
           type: string
           example: 67c930fe1ad8328f2a3184c2
         phases:
           type: object
-          example: {
-            "123456778": {
-              "phase_id": "123456778",
-              "custom_fields": {}
-            }
-          }
+          example:
+            { "123456778": { "phase_id": "123456778", "custom_fields": {} } }
       required:
         - id
         - phases
@@ -2384,100 +2380,100 @@ components:
             data:
               type: object
               properties:
-                id: 
+                id:
                   type: string
                   example: 67c930fe1ad8328f2a3184c2
-                phase_id: 
+                phase_id:
                   type: string
-                  example: '2'
+                  example: "2"
                 status:
                   type: string
-                  example:  STARTED
+                  example: STARTED
                 profile:
                   type: object
                   properties:
-                    timestamp: 
+                    timestamp:
                       type: string
                       example: Mon Mar 03 2025 10:00:00 GMT-0500 (hora estándar de Colombia)
-                    linkedin_num_id:  
+                    linkedin_num_id:
                       type: string
-                      example: '277819915'
-                    name:  
+                      example: "277819915"
+                    name:
                       type: string
                       example: peipto perez
-                    country_code:  
+                    country_code:
                       type: string
-                    position:  
+                    position:
                       type: string
-                    city:  
+                    city:
                       type: string
-                    current_company:  
+                    current_company:
                       type: string
-                    about:  
+                    about:
                       type: string
-                    posts:  
+                    posts:
                       type: string
-                    experience:  
+                    experience:
                       type: string
-                    url:  
+                    url:
                       type: string
-                    people_also_viewed:  
+                    people_also_viewed:
                       type: string
-                    educations_details:  
+                    educations_details:
                       type: string
-                    education:  
+                    education:
                       type: string
-                    recommendations_count:  
+                    recommendations_count:
                       type: string
-                    avatar:  
+                    avatar:
                       type: string
-                    languages:  
+                    languages:
                       type: string
-                    certifications:  
+                    certifications:
                       type: string
-                    recommendations:  
+                    recommendations:
                       type: string
-                    volunteer_experience:  
+                    volunteer_experience:
                       type: string
-                    courses:  
+                    courses:
                       type: string
-                    followers:  
+                    followers:
                       type: string
-                    connections:  
+                    connections:
                       type: string
-                    current_company_company_id:  
+                    current_company_company_id:
                       type: string
-                    current_company_name:  
+                    current_company_name:
                       type: string
-                    publications:  
+                    publications:
                       type: string
-                    patents:  
+                    patents:
                       type: string
-                    projects:  
+                    projects:
                       type: string
-                    organizations:  
+                    organizations:
                       type: string
-                    input_url:  
+                    input_url:
                       type: string
-                    linkedin_id:  
+                    linkedin_id:
                       type: string
-                    activity:  
+                    activity:
                       type: string
-                    banner_image:  
+                    banner_image:
                       type: string
-                    honors_and_awards:  
+                    honors_and_awards:
                       type: string
-                    similar_profiles:  
+                    similar_profiles:
                       type: string
-                    default_avatar:  
+                    default_avatar:
                       type: string
-                    memorialized_account:  
+                    memorialized_account:
                       type: string
-                    profile_evaluation:  
+                    profile_evaluation:
                       type: string
-                    link_vacancy_form:  
+                    link_vacancy_form:
                       type: string
-                    card_id:  
+                    card_id:
                       type: string
                 phases: {}
                 phase_history:
@@ -2506,8 +2502,8 @@ components:
                       date:
                         type: string
                         format: date-time
-                        example: '2025-03-03T15:00:00'
-                assistants: 
+                        example: "2025-03-03T15:00:00"
+                assistants:
                   type: object
                   example: {}
 
@@ -2779,68 +2775,19 @@ components:
     PostPositionConfiguration:
       type: object
       properties:
-        thread_id:
-          type: string
-          example: "6777862efe77308365432a36"
         business_id:
           type: string
           example: "6777862efe77308365432a36"
-        status:
-          type: string
-          example: "COMPLETED"
-          enum:
-            - COMPLETED
-            - IN_PROGRESS
-            - DRAFT
-        type:
+        flow_type:
           type: string
           example: "AI_TEMPLATE"
           enum:
-            - AI_TEMPLATE
+            - HIGH_PROFILE_FLOW
             - CUSTOM
-            - OTHER_POSITION_AS_TEMPLATE>
-        phases:
-          type: array
-          items:
-            type: object
-            properties:
-              name:
-                type: string
-                example: phase_1
-              thread_id:
-                type: string
-                example: "id_123456"
-              status:
-                type: string
-                example: "COMPLETED"
-                enum:
-                  - COMPLETED
-                  - IN_PROGRESS
-                  - DRAFT
-              type:
-                type: string
-                example: "DESCRIPTION"
-                enum:
-                  - DESCRIPTION
-                  - READY_TO_PUBLISH
-                  - FINAL_INTERVIEW
-                  - TECHNICAL_TEST
-                  - SOFT_SKILLS
-              data:
-                type: object
-                example: {}
-            required:
-              - name
-              - thread_id
-              - status
-              - data
-              - type
+            - OTHER_POSITION_AS_TEMPLATE
       required:
-        - thread_id
         - business_id
-        - status
-        - phases
-        - type
+        - flow_type
     PostPositionConfigurationResponse:
       type: object
       properties:

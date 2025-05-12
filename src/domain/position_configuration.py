@@ -28,6 +28,12 @@ class PHASE_TYPE(str, Enum):
     READY_TO_PUBLISH = "READY_TO_PUBLISH"
 
 
+class FLOW_TYPE(str, Enum):
+    HIGH_PROFILE_FLOW = "HIGH_PROFILE_FLOW"
+    MEDIUM_PROFILE_FLOW = "MEDIUM_PROFILE_FLOW"
+    LOW_PROFILE_FLOW = "LOW_PROFILE_FLOW"
+
+
 class Phase(BaseModel):
     name: str
     thread_id: str
@@ -43,7 +49,8 @@ class PositionConfigurationDTO(BaseModel):
     current_phase: PHASE_TYPE = PHASE_TYPE.DESCRIPTION
     status: STATUS = STATUS.DRAFT
     phases: Optional[List[Phase]] = Field(default=[])
-    type: TYPE
+    flow_type: FLOW_TYPE
+    type: Optional[TYPE] = None
 
     @model_validator(mode="before")
     def validate_and_convert_fields(cls, values):
