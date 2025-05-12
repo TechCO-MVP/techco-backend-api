@@ -1,6 +1,5 @@
 from aws_lambda_powertools import Logger
 
-from src.domain.notification import NotificationDTO
 from src.utils.send_notification_by_websocket import send_notification_by_websocket
 from src.repositories.document_db.position_repository import PositionRepository
 from src.domain.notification import NotificationDTO, NotificationType, NotificationStatus
@@ -49,7 +48,8 @@ def send_message_to_websocket_by_position_id(event):
             business_id=event["business_id"],
             message=f"El proceso de seleeccion para la vacante {event['process_filters']['role']} se completo satisfactoriamente",
             notification_type=NotificationType.PROFILE_FILTER_PROCESS,
-            status=NotificationStatus.NEW
+            status=NotificationStatus.NEW,
+            position_id=position.id
         )
         
         send_notification_by_websocket(notification)
