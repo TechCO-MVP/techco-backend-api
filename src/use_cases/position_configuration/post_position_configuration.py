@@ -1,8 +1,8 @@
 from src.adapters.secondary.llm.open_ai_adapter import OpenAIAdapter
 from src.constants.position.configuration import assistant_phase_mapping, position_configuration
 from src.domain.position_configuration import (
+    FLOW_TYPE,
     PHASE_TYPE,
-    TYPE,
     Phase,
     PositionConfigurationDTO,
     PositionConfigurationEntity,
@@ -14,9 +14,14 @@ from src.repositories.document_db.position_configuration_repository import (
 
 
 def post_position_configuration_use_case(
-    position_configuration_dto: PositionConfigurationDTO,
-) -> list[dict]:
+    business_id: str, flow_type: FLOW_TYPE, user_id: str
+) -> PositionConfigurationEntity:
     """create position configuration use case."""
+    position_configuration_dto = PositionConfigurationDTO(
+        user_id=user_id,
+        business_id=business_id,
+        flow_type=flow_type,
+    )
     position_configuration_dto.phases = create_position_phases(position_configuration_dto)
 
     position_configuration_repository = PositionConfigurationRepository()
@@ -29,13 +34,7 @@ def create_position_phases(
     position_configuration_dto: PositionConfigurationDTO,
 ) -> list[dict]:
     """create position phases."""
-    phases_type = {
-        TYPE.AI_TEMPLATE: create_ai_phases,
-        TYPE.CUSTOM: create_custom_phases,
-        TYPE.OTHER_POSITION_AS_TEMPLATE: create_other_position_phases,
-    }
-
-    return phases_type[position_configuration_dto.type](position_configuration_dto)
+    return position_configuration["flow_type"][position_configuration_dto.flow_type]
 
 
 def create_ai_phases(
@@ -54,7 +53,7 @@ def create_ai_phases(
 
 
 def create_custom_phases(
-    position_configuration_dto: PositionConfigurationDTO,
+    _: PositionConfigurationDTO,
 ) -> list[Phase]:
     """create custom phases."""
     phases = position_configuration["phases"]
@@ -62,7 +61,7 @@ def create_custom_phases(
 
 
 def create_other_position_phases(
-    position_configuration_dto: PositionConfigurationDTO,
+    _: PositionConfigurationDTO,
 ) -> list[Phase]:
     """create other position phases."""
     phases = position_configuration["phases"]
