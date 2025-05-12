@@ -64,6 +64,7 @@ def build_message_to_websocket(hiring_process: HiringProcessEntity):
             status=NotificationStatus.NEW,
             hiring_process_id=hiring_process.id,
             phase_id=hiring_process.props.phase_id,
+            position_id=hiring_process.props.position_id
         )
         
         send_notification_by_websocket(notification)

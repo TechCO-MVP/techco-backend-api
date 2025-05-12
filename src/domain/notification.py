@@ -25,6 +25,7 @@ class NotificationDTO(BaseModel):
     notification_type: NotificationType
     status: NotificationStatus = NotificationStatus.NEW
     process: Optional[str] = Field(default="", alias="process")
+    position_id: Optional[str] = Field(default="", alias="position_id")
     hiring_process_id: Optional[str] = Field(default="", alias="hiring_process_id")
     read_at: Optional[str] = Field(default=None, alias="read_at")
     phase_id: Optional[str] = Field(default="", alias="phase_id")
