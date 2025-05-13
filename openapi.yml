@@ -2780,11 +2780,11 @@ components:
           example: "6777862efe77308365432a36"
         flow_type:
           type: string
-          example: "AI_TEMPLATE"
+          example: "MEDIUM_PROFILE_FLOW"
           enum:
             - HIGH_PROFILE_FLOW
-            - CUSTOM
-            - OTHER_POSITION_AS_TEMPLATE
+            - MEDIUM_PROFILE_FLOW
+            - LOW_PROFILE_FLOW
       required:
         - business_id
         - flow_type
