@@ -21,9 +21,9 @@ def put_notification_status():
         if not body:
             raise ValueError("Request body is empty")
 
+        notification_data = {"status": body.get("status", NotificationStatus.READ.value)}
 
         for notification in body.get("notification_id", []):
-            notification_data = {"status": body.get("status", NotificationStatus.READ.value)}
             notification_data["notification_id"] = notification
             notification_dto = UpdateNotificationStatusDTO(**notification_data)
 
