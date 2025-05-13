@@ -85,7 +85,6 @@ def create_documentdb_client_local() -> MongoClient:
     cluster_port = os.getenv("DOCUMENTDB_PORT")
 
     uri = f"mongodb://{cluster_endpoint}:{cluster_port}/"
-    uri = f"mongodb+srv://88zamoramario:Yym.211109@cluster0.6ciph.mongodb.net/"
     client = MongoClient(uri)
 
     return client
