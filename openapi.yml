@@ -2680,8 +2680,10 @@ components:
       type: object
       properties:
         notification_id:
-          type: string
-          example: id_123456kjhsad_3124987_sdak
+          type: array
+          items:
+            type: string
+          example: [id_123456kjhsad_3124987_sdak, id_123456kjhsad_3124987_sdak] 
         status:
           type: string
           example: READ
