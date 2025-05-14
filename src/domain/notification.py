@@ -18,6 +18,11 @@ class NotificationType(str, Enum):
     PROFILE_FILTER_PROCESS = "PROFILE_FILTER_PROCESS"
 
 
+class PHASE_TYPE(str, Enum):
+    INFORMATIVE = "Informativa"
+    ACTION_CALL = "Llamado a la acción"
+
+
 class NotificationDTO(BaseModel):
     user_id: str = Field(default="", alias="user_id")
     business_id: str = Field(default="", alias="business_id")
@@ -29,6 +34,8 @@ class NotificationDTO(BaseModel):
     hiring_process_id: Optional[str] = Field(default="", alias="hiring_process_id")
     read_at: Optional[str] = Field(default=None, alias="read_at")
     phase_id: Optional[str] = Field(default="", alias="phase_id")
+    phase_name: Optional[str] = Field(default="", alias="phase_name")
+    phase_type: Optional[PHASE_TYPE] = Field(default="", alias="phase_type")
 
 
 class UpdateNotificationStatusDTO(BaseModel):

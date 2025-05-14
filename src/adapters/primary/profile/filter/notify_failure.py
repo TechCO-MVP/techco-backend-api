@@ -1,6 +1,5 @@
 from aws_lambda_powertools import Logger
 
-from src.domain.notification import NotificationDTO
 from src.utils.send_notification_by_websocket import send_notification_by_websocket
 from src.repositories.document_db.position_repository import PositionRepository
 from src.domain.notification import NotificationDTO, NotificationType, NotificationStatus
