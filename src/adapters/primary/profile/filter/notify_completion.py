@@ -46,7 +46,7 @@ def send_message_to_websocket_by_position_id(event):
         notification = NotificationDTO(
             user_id=user,
             business_id=event["business_id"],
-            message=f"El proceso de seleeccion para la vacante {event['process_filters']['role']} se completo satisfactoriamente",
+            message=f"El proceso de seleccion para la vacante {event['process_filters']['role']} se completo satisfactoriamente",
             notification_type=NotificationType.PROFILE_FILTER_PROCESS,
             status=NotificationStatus.NEW,
             position_id=position.id
