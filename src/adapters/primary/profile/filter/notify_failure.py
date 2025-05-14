@@ -49,7 +49,8 @@ def send_message_to_websocket_by_position_id(event):
             business_id=event["business_id"],
             message=f"El proceso de seleeccion para la vacante {event['process_filters']['role']} ha fallado",
             notification_type=NotificationType.PROFILE_FILTER_PROCESS,
-            status=NotificationStatus.NEW
+            status=NotificationStatus.NEW,
+            position_id=position.id,
         )
         
         send_notification_by_websocket(notification)

@@ -3,7 +3,7 @@ from aws_lambda_powertools.event_handler import APIGatewayRestResolver, Response
 from aws_lambda_powertools.utilities.typing import LambdaContext
 from pydantic import ValidationError
 
-from src.domain.notification import UpdateNotificationStatusDTO
+from src.domain.notification import UpdateNotificationStatusDTO, NotificationStatus
 from src.use_cases.notification.update_notification_status import put_notificationr_status_use_case
 
 
@@ -21,11 +21,11 @@ def put_notification_status():
         if not body:
             raise ValueError("Request body is empty")
 
-        notification_data = body.copy()
+        notification_data = {"status": body.get("status", NotificationStatus.READ.value)}
 
         for notification in body.get("notification_id", []):
-            notification_data["notification_id"] = notification     
-            notification_dto = UpdateNotificationStatusDTO(**body)
+            notification_data["notification_id"] = notification
+            notification_dto = UpdateNotificationStatusDTO(**notification_data)
 
             put_notificationr_status_use_case(notification_dto)
 

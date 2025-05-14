@@ -387,7 +387,7 @@ paths:
         - name: business_id
           in: query
           required: true
-          description: The ID of the business.
+          description: The ID of the business (principal business).
           schema:
             type: string
         - name: id
@@ -402,6 +402,12 @@ paths:
           description: Flag to indicate if all users should be retrieved.
           schema:
             type: boolean
+        - name: exclude_business_id
+          in: query
+          required: false
+          description: The ID of the business to exclude.
+          schema:
+            type: string
       responses:
         "200":
           description: User found successfully
@@ -2674,8 +2680,10 @@ components:
       type: object
       properties:
         notification_id:
-          type: string
-          example: id_123456kjhsad_3124987_sdak
+          type: array
+          items:
+            type: string
+          example: [id_123456kjhsad_3124987_sdak, id_123456kjhsad_3124987_sdak] 
         status:
           type: string
           example: READ

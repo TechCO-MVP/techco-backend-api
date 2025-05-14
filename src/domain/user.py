@@ -39,6 +39,7 @@ class UserEntity(BaseEntity[UserDTO]):
 
 class GetUserQueryParams(BaseModel):
     business_id: str
+    exclude_business_id: Optional[str] = None
     id: Optional[str] = None
     all: Optional[bool] = None
 

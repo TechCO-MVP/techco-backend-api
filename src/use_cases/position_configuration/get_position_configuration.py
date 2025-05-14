@@ -9,14 +9,15 @@ def get_position_configuration_use_case(
     params: dict, user_email: str
 ) -> list[PositionConfigurationEntity]:
     """get position use case."""
-    position_repository = PositionConfigurationRepository()
+    position_configuration_repository = PositionConfigurationRepository()
 
     if id := params.get("id"):
-        return [position_repository.getById(id)]
+        return [position_configuration_repository.getById(id)]
     elif params["all"].lower() == "true":
         user_repository = UserRepository()
         user_entity = user_repository.getByEmail(user_email)
         query = {"user_id": user_entity.id, "business_id": params["business_id"]}
-        return position_repository.getAll(query)
+        position_configurations = position_configuration_repository.getAll(query)
+        return position_configurations.reverse()
     else:
         raise ValueError("Invalid values")
