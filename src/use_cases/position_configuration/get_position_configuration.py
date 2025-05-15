@@ -18,6 +18,6 @@ def get_position_configuration_use_case(
         user_entity = user_repository.getByEmail(user_email)
         query = {"user_id": user_entity.id, "business_id": params["business_id"]}
         position_configurations = position_configuration_repository.getAll(query)
-        return position_configurations.reverse()
+        return position_configurations
     else:
         raise ValueError("Invalid values")
