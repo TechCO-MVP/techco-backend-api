@@ -108,6 +108,7 @@ def create_position(
         business_id=position_configuration.props.business_id,
         recruiter_user_id=data.get("recruiter_user_id"),
         responsible_users=data.get("responsible_users"),
+        flow_type=position_configuration.props.flow_type,
         role=data.get("role"),
         seniority=data.get("seniority"),
         country_code=data.get("country_code"),

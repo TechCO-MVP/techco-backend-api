@@ -50,7 +50,7 @@ class PositionConfigurationDTO(BaseModel):
     status: STATUS = STATUS.DRAFT
     phases: Optional[List[Phase]] = Field(default=[])
     flow_type: FLOW_TYPE
-    type: Optional[TYPE] = None
+    type: Optional[TYPE] = None  # deprecated
 
     @model_validator(mode="before")
     def validate_and_convert_fields(cls, values):

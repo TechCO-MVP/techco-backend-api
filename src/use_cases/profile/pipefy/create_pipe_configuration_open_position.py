@@ -1,11 +1,17 @@
 import time
 from typing import List
 
-from src.constants.index import API_URL, DEFAULT_PIPE_TEMPLATE_ID
+from src.constants.index import (
+    API_URL,
+    DEFAULT_PIPE_TEMPLATE_ID,
+    MEDIUM_PROFILE_PIPE_TEMPLATE_ID,
+    LOW_PROFILE_PIPE_TEMPLATE_ID,
+)
 from src.domain.hiring_process import HiringProcessDTO
 from src.domain.profile_brightdata import ProfileBrightDataDTO
 from src.domain.profile import PROCESS_STATUS
 from src.domain.position import POSITION_STATUS
+from src.domain.position_configuration import FLOW_TYPE
 from src.errors.entity_not_found import EntityNotFound
 from src.repositories.document_db.profile_filter_process import ProfileFilterProcessRepository
 from src.repositories.pipefy.card_repository import CardRepository
@@ -60,12 +66,17 @@ def create_pipe_configuration_open_position(
     if profile_filter_process is None:
         raise EntityNotFound("Profile filter process not found")
 
+    position_repository = PositionRepository()
+    position = position_repository.getById(position_id)
+    if position is None:
+        raise EntityNotFound("Position not found")
+
     profiles = profile_filter_process.props.profiles
 
     # create pipe
     graphql_client = get_client()
     pipe_repository = PipeRepository(graphql_client)
-    pipe_template_id = DEFAULT_PIPE_TEMPLATE_ID
+    pipe_template_id = get_pipe_id_by_flow_type(position.props.flow_type)
     pipes = pipe_repository.clone_pipe(pipe_template_id)
     pipe_id = pipes["clonePipes"]["pipes"][0]["id"]
 
@@ -104,11 +115,22 @@ def create_pipe_configuration_open_position(
     profile_filter_process_repository.update(profile_filter_process.id, profile_filter_process)
 
     # update position
-    position_repository = PositionRepository()
-    position = position_repository.getById(position_id)
     position.props.pipe_id = pipe_id
     position.props.status = POSITION_STATUS.ACTIVE
 
     position_repository.update(position_id, position)
 
     return profile_filter_process.to_dto(flat=True)
+
+
+def get_pipe_id_by_flow_type(flow_type: str) -> str:
+    pipes = {
+        FLOW_TYPE.HIGH_PROFILE_FLOW: DEFAULT_PIPE_TEMPLATE_ID,
+        FLOW_TYPE.MEDIUM_PROFILE_FLOW: MEDIUM_PROFILE_PIPE_TEMPLATE_ID,
+        FLOW_TYPE.LOW_PROFILE_FLOW: LOW_PROFILE_PIPE_TEMPLATE_ID,
+    }
+
+    if flow_type not in pipes:
+        raise ValueError(f"Invalid flow type: {flow_type}")
+
+    return pipes[flow_type]
