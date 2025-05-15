@@ -1,11 +1,12 @@
 from enum import Enum
-from typing import Dict, List, Optional, Any
+from typing import Dict, List, Optional
 
 from bson import ObjectId
 from pydantic import BaseModel, Field, ValidationError, model_validator
 
 from src.domain.base_entity import BaseEntity
 from src.domain.assistant import Assistant
+from src.domain.position_configuration import FLOW_TYPE
 
 
 class POSITION_STATUS(str, Enum):
@@ -66,6 +67,7 @@ class PositionDTO(BaseModel):
     owner_position_user_id: str
     recruiter_user_id: str
     responsible_users: List[PositionStakeholders] = Field(default_factory=list)
+    flow_type: FLOW_TYPE
     role: str
     seniority: str
     country_code: COUNTRY_CODE
