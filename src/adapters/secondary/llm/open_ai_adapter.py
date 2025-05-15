@@ -219,28 +219,29 @@ class OpenAIAdapter(LLMService):
             logger.error(f"Failed to get secret for OpenAI Adapter: {e}")
             raise e
 
-    def get_message_history(self, thread_id: str, limit: str=20, message_id: str=None ) -> dict:
+    def get_message_history(self, thread_id: str, limit: str = 20, message_id: str = None) -> dict:
         """
         Get the message history for the given thread ID and message ID.
         """
-        
+
         headers = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {self.get_secret_api_key()}",
-            "OpenAI-Beta": "assistants=v2"
+            "OpenAI-Beta": "assistants=v2",
         }
         url = f"https://api.openai.com/v1/threads/{thread_id}/messages?order=desc&limit={limit}"
 
         if message_id:
             url += f"&after={message_id}"
-        
+
         get_messages = requests.get(url, headers=headers, timeout=5)
         logger.info(f"Response from OpenAI API: {get_messages.status_code} - {get_messages.text}")
-        
+
         if get_messages.status_code == 200:
             return get_messages.json()
         else:
-            error = f"Failed to get message history: {get_messages.status_code} - {get_messages.text}"
+            error = (
+                f"Failed to get message history: {get_messages.status_code} - {get_messages.text}"
+            )
             logger.error(error)
             raise Exception(error)
-        

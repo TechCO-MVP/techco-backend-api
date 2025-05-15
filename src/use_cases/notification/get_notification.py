@@ -11,6 +11,4 @@ def get_notification_use_case(user: UserEntity) -> dict:
     notification_repository = NotificationRepository()
     notifications = notification_repository.getAll({"user_id": user.id})
     build_response = [build_notification_response_use_case(notification) for notification in notifications]
-    build_response.reverse()
-
     return build_response

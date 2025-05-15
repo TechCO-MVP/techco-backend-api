@@ -46,11 +46,11 @@ class Phase(BaseModel):
 class PositionConfigurationDTO(BaseModel):
     user_id: str = Field(default="", alias="user_id")
     business_id: str = Field(default="", alias="business_id")
-    current_phase: PHASE_TYPE = PHASE_TYPE.DESCRIPTION
+    current_phase: PHASE_TYPE | None = PHASE_TYPE.DESCRIPTION
     status: STATUS = STATUS.DRAFT
     phases: Optional[List[Phase]] = Field(default=[])
     flow_type: FLOW_TYPE
-    type: Optional[TYPE] = None
+    type: Optional[TYPE] = None  # deprecated
 
     @model_validator(mode="before")
     def validate_and_convert_fields(cls, values):
