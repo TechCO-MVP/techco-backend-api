@@ -36,7 +36,7 @@ class PositionConfigurationDBAdapter(IRepository[PositionConfigurationEntity]):
         logger.info(f"Getting all position_configuration entities with filter: {filter_params}")
 
         result = []
-        positions_configuration = list(collection.find(filter_params))
+        positions_configuration = list(collection.find(filter_params).sort("created_at", -1))
         if not positions_configuration:
             return []
 

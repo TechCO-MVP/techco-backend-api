@@ -29,7 +29,7 @@ class NotificationDocumentDBAdapter(IRepository[NotificationEntity]):
 
     def getAll(self, params: dict) -> list[NotificationEntity] | None:
         collection = self._client[self._collection_name]
-        notifications_data = collection.find(params)
+        notifications_data = list(collection.find(params).sort("created_at", -1))
         notifications_entities = []
         for notification in notifications_data:
             notification["_id"] = str(notification["_id"])
