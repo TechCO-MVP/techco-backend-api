@@ -608,7 +608,8 @@ functions:
           request:
             parameters:
               querystrings:
-                token: true
+                token: false
+                position_id: false
 
   put_position_status:
     handler: src/adapters/primary/position/put_position_status/index.handler
