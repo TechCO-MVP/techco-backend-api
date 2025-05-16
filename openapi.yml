@@ -562,12 +562,18 @@ paths:
   /position/token:
     get:
       summary: get data position by token JWT
-      description: get DATA vacancies asociated to a business and the hiring process and position.
+      description: get DATA vacancies asociated to a business and the hiring process and position. At least one of token or position_id must be provided.
       parameters:
         - name: token
           in: query
-          required: true
-          description: The token of the especific hiring process asociated to the porfile.
+          required: false
+          description: The token of the especific hiring process asociated to the porfile. Either this or position_id must be provided.
+          schema:
+            type: string
+        - name: position_id
+          in: query
+          required: false
+          description: The id of the especific position. Either this or token must be provided.
           schema:
             type: string
       responses:

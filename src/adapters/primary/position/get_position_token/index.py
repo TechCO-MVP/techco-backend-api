@@ -64,7 +64,8 @@ def handler(event: dict, context: LambdaContext) -> dict:
     request: The request object, described like:
     {
         "queryStringParameters": {
-            "token": "string",
+            "token": "string",  # Opcional, pero se requiere token o position_id
+            "position_id": "string"  # Opcional, pero se requiere token o position_id
         }
     }
     """
