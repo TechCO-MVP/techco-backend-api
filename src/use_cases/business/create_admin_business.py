@@ -94,18 +94,14 @@ def create_assistants_for_business() -> Dict[str, Dict]:
 
     assistant_types = [
         ASSISTANT_TYPE.POSITION_ASSISTANT,
-        ASSISTANT_TYPE.TECHNICAL_ASSESSMENT_ASSISTANT,
-        ASSISTANT_TYPE.SOFT_ASSESSMENT_ASSISTANT
     ]
 
     for assistant_type in assistant_types:
-        assistant = open_ai_adapter.create_assistant(
-            unique_identifier, assistant_type
-        )
-        
+        assistant = open_ai_adapter.create_assistant(unique_identifier, assistant_type)
+
         assistants[assistant_type] = {
             "assistant_id": assistant.id,
-            "assistant_type": assistant_type
+            "assistant_type": assistant_type,
         }
-        
+
     return assistants
