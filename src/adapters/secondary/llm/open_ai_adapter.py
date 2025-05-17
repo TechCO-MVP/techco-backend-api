@@ -238,7 +238,12 @@ class OpenAIAdapter(LLMService):
         logger.info(f"Response from OpenAI API: {get_messages.status_code} - {get_messages.text}")
 
         if get_messages.status_code == 200:
-            return get_messages.json()
+            messages = get_messages.json()
+            
+            if not messages.get("has_more"):
+                messages["data"].pop()
+
+            return messages
         else:
             error = (
                 f"Failed to get message history: {get_messages.status_code} - {get_messages.text}"
