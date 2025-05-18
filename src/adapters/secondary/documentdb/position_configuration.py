@@ -95,6 +95,6 @@ class PositionConfigurationDBAdapter(IRepository[PositionConfigurationEntity]):
         """Delete a position_configuration entity from the database."""
         logger.info(f"Deleting position_configuration entity with id: {id}")
         collection = self._client[self._collection_name]
-        collection.update_one(
-            {"_id": ObjectId(id)}, {"$set": {"deleted_at": datetime.now()}}, session=self._session
+        collection.delete_one(
+            {"_id": ObjectId(id)}, session=self._session
         )

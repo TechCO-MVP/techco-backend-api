@@ -1073,6 +1073,36 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Exception"
+  /position_configuration/{id}:
+    delete:
+      summary: Delete position configuration
+      description: Delete a position configuration.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the position configuration.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: position configuration deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeletePositionConfigurationResponse"
+        "400":
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Exception response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exception"
 
 components:
   schemas:
@@ -3336,3 +3366,17 @@ components:
           properties:
             data:
               type: "#/components/schemas/Position"
+    DeletePositionConfigurationResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Position configuration deleted successfully"
+        body:
+          type: object
+          properties:
+            data:
+              type: boolean
+              example: null
+              
+              
