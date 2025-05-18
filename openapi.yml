@@ -1073,12 +1073,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Exception"
-  /position_configuration/{id}:
+  /position_configuration/{position_configuration_id}:
     delete:
       summary: Delete position configuration
       description: Delete a position configuration.
       parameters:
-        - name: id
+        - name: position_configuration_id
           in: path
           required: true
           description: The ID of the position configuration.
