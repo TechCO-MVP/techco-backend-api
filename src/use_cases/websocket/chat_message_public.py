@@ -15,6 +15,7 @@ from src.utils.send_chat_message_by_websocket import send_chat_message_by_websoc
 logger = Logger()
 dynamodb = boto3.client("dynamodb")
 
+
 def chat_message_public_use_case(connection_id, payload, user_email):
     logger.info(f"Chat message use case started with payload: {payload}")
     ChatPositionConfigurationPayload(**payload)
@@ -26,26 +27,28 @@ def chat_message_public_use_case(connection_id, payload, user_email):
         {
             "type": "chat_message",
             "payload": response_LLM,
-        }
+        },
     )
 
-    return {
-        "statusCode": 200,
-        "body": json.dumps({"status": "chat sent"})
-    }
+    return {"statusCode": 200, "body": json.dumps({"status": "chat sent"})}
+
 
 def send_request_to_llm(payload: dict) -> dict:
-    hiring_process_entity: HiringProcessEntity = get_hiring_process_use_case({"hiring_process_id": payload["hiring_process_id"]})
+    hiring_process_entity: HiringProcessEntity = get_hiring_process_use_case(
+        {"hiring_process_id": payload["hiring_process_id"]}
+    )
     assistand_name = assistant_phase_mapping.get(payload["phase_type"])
 
     if not assistand_name:
         raise ValueError(f"Assistant not found for phase type: {payload['phase_type']}")
 
-    position_entity: PositionEntity = get_position_entity_use_case({"id": hiring_process_entity.props.position_id})
-    
+    position_entity: PositionEntity = get_position_entity_use_case(
+        {"id": hiring_process_entity.props.position_id}
+    )
+
     if not position_entity:
         raise ValueError(f"Position not found for ID: {hiring_process_entity.props.position_id}")
-    
+
     context = {"position_id": position_entity.id}
     open_ai_adapter = OpenAIAdapter(context)
     open_ai_adapter.assistant_id = position_entity.props.assistants[assistand_name].assistant_id
@@ -59,5 +62,5 @@ def send_request_to_llm(payload: dict) -> dict:
     payload.update(response)
     logger.info("Assistant:")
     logger.info(f"Received response from LLM: {response}")
-        
+
     return payload
