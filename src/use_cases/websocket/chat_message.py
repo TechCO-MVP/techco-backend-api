@@ -40,7 +40,7 @@ def send_request_to_llm(payload: dict, user_email: str) -> dict:
     assistand_name = assistant_phase_mapping.get(payload["phase_type"])
 
     if not assistand_name:
-        assistant_id = get_assistant_for_phase(payload["phase_type"])(None, payload["phase_type"])
+        assistant_id = get_assistant_for_phase[payload["phase_type"]](None, payload["phase_type"])
         if not assistant_id:
             raise ValueError(f"Assistant not found for phase type: {payload['phase_type']}")
     else:
