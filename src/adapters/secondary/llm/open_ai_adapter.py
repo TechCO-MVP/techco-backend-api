@@ -41,7 +41,7 @@ class OpenAIAdapter(LLMService):
         self.delete_file(file_id)
         return self.get_thread_response(thread_run)
 
-    def initialize_assistant_thread(self, assistant_id: str) -> Run:
+    def initialize_assistant_thread(self, assistant_id: str, initial_message: str = "Hola!") -> Run:
         """
         Initialize the assistant with the given ID.
         the thread is initialized with a greeting message.
@@ -54,7 +54,7 @@ class OpenAIAdapter(LLMService):
                 "messages": [
                     {
                         "role": "user",
-                        "content": "Hola!",
+                        "content": initial_message,
                     }
                 ]
             },
