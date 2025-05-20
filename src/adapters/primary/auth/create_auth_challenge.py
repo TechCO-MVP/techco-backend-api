@@ -51,13 +51,21 @@ def send_otp_email(email, user_name, secret_code):
     secret_code: The secret code
     """
     ses_client = boto3.client("ses", region_name=REGION_NAME)
-    
+
     # Reemplazar las variables en el template
+    html_company_image = """<img src="[URL_DEL_LOGO_BODY]" alt="Talent Connect Logo">"""
+    company_image = LOGO_BODY_URL
+
+    if company_image:
+        html_company_image = html_company_image.replace("[URL_DEL_LOGO_BODY]", company_image)
+    else:
+        html_company_image = ""
+
     email_template = EMAIL_OTP_TEMPLATE
     email_template = email_template.replace("{{OTP}}", secret_code)
     email_template = email_template.replace("{{name}}", user_name)
     email_template = email_template.replace("[URL_DEL_LOGO_HEADER]", LOGO_HEADER_URL)
-    html_content = html_content.replace("[URL_DEL_LOGO_BODY]", LOGO_BODY_URL)
+    html_content = email_template.replace('<img src="[URL_DEL_LOGO_BODY]" alt="Talent Connect Logo">', html_company_image)
     
     ses_client.send_email(
         Source=EMAIL_OTP,
