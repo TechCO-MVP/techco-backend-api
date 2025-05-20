@@ -10,7 +10,9 @@ S3PublicData:
   Type: AWS::S3::Bucket
   Properties:
     BucketName: ${self:provider.stage}-techco-public-data-${self:provider.region}
-    AccessControl: PublicRead
+    OwnershipControls:
+      Rules:
+        - ObjectOwnership: BucketOwnerPreferred
     PublicAccessBlockConfiguration:
       BlockPublicAcls: false
       BlockPublicPolicy: false
