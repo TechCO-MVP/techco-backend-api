@@ -9,7 +9,7 @@ provider:
 S3PublicData:
   Type: AWS::S3::Bucket
   Properties:
-    BucketName: techco-public-data
+    BucketName: ${self:provider.stage}-techco-public-data-${self:provider.region}
     AccessControl: PublicRead
     PublicAccessBlockConfiguration:
       BlockPublicAcls: false
@@ -32,7 +32,7 @@ S3PublicData:
       - Key: Environment
         Value: ${self:provider.stage}
       - Key: Name
-        Value: techco-public-data
+        Value: ${self:provider.stage}-techco-public-data
 
 S3PublicDataPolicy:
   Type: AWS::S3::BucketPolicy
