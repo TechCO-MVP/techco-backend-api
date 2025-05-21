@@ -36,11 +36,13 @@ EMAIL_OTP_TEMPLATE = """
         justify-content: center;
         align-items: center;
         text-align: center;
+        padding: 12px 0;
         }
         .logo {
         height: 40px;
         display: block;
         margin: 0 auto;
+        object-fit: contain;
         }
         .body {
         padding: 32px;
@@ -92,10 +94,15 @@ EMAIL_OTP_TEMPLATE = """
         display: flex;
         justify-content: center;
         align-items: center;
+        width: 100%;
         }
         .footer-text {
         color: white;
         font-size: 12px;
+        text-align: center;
+        line-height: 48px;
+        width: 100%;
+        padding: 0 20px;
         }
         .bold {
         font-weight: bold;
@@ -143,3 +150,5 @@ EMAIL_OTP_TEMPLATE = """
 """
 
 LOGO_HEADER_URL = "https://dev-techco-public-data-us-east-1.s3.us-east-1.amazonaws.com/Talent_connect_white_logo.png"
+
+LOGO_BODY_URL = False
