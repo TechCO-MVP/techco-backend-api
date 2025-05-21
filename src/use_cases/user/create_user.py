@@ -1,7 +1,7 @@
 import boto3
 
 from src.constants.index import REGION_NAME, EMAIL_OTP, UI_URI
-from src.constants.auth.index import EMAIL_NEW_USER_TEMPLATE, LOGO_HEADER_URL, LOGO_BODY_URL
+from src.constants.auth.index import EMAIL_NEW_USER_TEMPLATE, LOGO_HEADER_URL
 from src.domain.user import UserDTO, UserEntity, UserStatus
 from src.repositories.document_db.business_repository import BusinessRepository
 from src.repositories.document_db.client import DocumentDBClient
