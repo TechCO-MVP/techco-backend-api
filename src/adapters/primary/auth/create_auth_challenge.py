@@ -70,8 +70,7 @@ def send_otp_email(email, user_name, secret_code):
         Message={
             "Subject": {"Data": "Tu Código OTP - Talent Connect"},
             "Body": {
-                "Html": {"Data": html_content},
-                "Text": {"Data": f"Tu código OTP es: {secret_code}"}
+                "Html": {"Data": html_content}
             },
         },
     )
