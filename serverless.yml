@@ -27,7 +27,7 @@ provider:
     DOCUMENTDB_ENDPOINT: !GetAtt DocumentDBCluster.Endpoint
     DOCUMENTDB_PORT: 27017
     DOCUMENTDB_DATABASE: techco
-    UI_URI: "https://develop.dzkuw34ypddf5.amplifyapp.com"
+    UI_URI: "https://develop.dzkuw34ypddf5.amplifyapp.com/es/signin"
     PROFILE_FILTER_PROCESS_ARN: arn:aws:states:${self:provider.region}:#{AWS::AccountId}:stateMachine:ProfileFilterProcess-${self:provider.stage}
     S3_RAW_PROFILE_DATA_IA_BUCKET_NAME: !Ref S3RawProfileDataIA
     S3_DEPURATED_PROFILE_DATA_IA_BUCKET_NAME: !Ref S3DepuratedProfileDataIA
