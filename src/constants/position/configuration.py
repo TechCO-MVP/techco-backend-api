@@ -34,7 +34,7 @@ def get_assistant_from_phase(_: PositionConfigurationEntity, phase_type: PHASE_T
     """Get assistant."""
     phase_type_assistant_mapping = {
         PHASE_TYPE.SOFT_SKILLS: "asst_eX6Zf5YPjXXktU6YohqrFXk6",
-        PHASE_TYPE.TECHNICAL_TEST: "asst_ZZM4FpbtxliIPenYEXRy07uD",
+        PHASE_TYPE.TECHNICAL_TEST: "asst_5R3qT8lExjOWwDOZtck7gJhd",
     }
 
     return phase_type_assistant_mapping.get(phase_type)
