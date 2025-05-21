@@ -40,6 +40,29 @@ def get_assistant_from_phase(_: PositionConfigurationEntity, phase_type: PHASE_T
     return phase_type_assistant_mapping.get(phase_type)
 
 
+def get_phase_data(
+    position_configuration: PositionConfigurationEntity, phase_type: PHASE_TYPE
+) -> dict:
+    """Get position data."""
+    index, phase = next(
+        (
+            (idx, phase)
+            for idx, phase in enumerate(position_configuration.props.phases)
+            if phase.type == phase_type
+        ),
+        (None, None),
+    )
+
+    if index is None:
+        raise ValueError(f"{phase_type} phase not found")
+
+    data = phase.data
+    if not data:
+        raise ValueError(f"{phase_type} phase data not found")
+
+    return data
+
+
 def get_initial_message_soft_skills(position_configuration: PositionConfigurationEntity) -> str:
     """Get initial message for soft skills."""
     business_repository = BusinessRepository()
@@ -47,9 +70,19 @@ def get_initial_message_soft_skills(position_configuration: PositionConfiguratio
     if not business:
         raise ValueError("Business does not exist")
 
+    position_data = get_phase_data(position_configuration, PHASE_TYPE.DESCRIPTION)
+
+    responsabilities = ", ".join(position_data.get("responsabilities", []))
+    skills = ", ".join(skill.get("name", "") for skill in position_data.get("skills", []))
+
     message = f"""
     Hola!
     Descripción de la empresa: {business.props.description}
+    Rol: {position_data.get("role", "No especificado")}
+    Seniority: {position_data.get("seniority", "No especificado")}
+    Descripción de la posición: {position_data.get("description", "No especificado")}
+    Responsabilidades: {responsabilities}
+    Habilidades: {skills}
     """
 
     return message
@@ -62,29 +95,27 @@ def get_initial_message_technical_test(position_configuration: PositionConfigura
     if not business:
         raise ValueError("Business does not exist")
 
-    index, phase = next(
-        (
-            (idx, phase)
-            for idx, phase in enumerate(position_configuration.props.phases)
-            if phase.type == PHASE_TYPE.SOFT_SKILLS
-        ),
-        (None, None),
+    position_data = get_phase_data(position_configuration, PHASE_TYPE.DESCRIPTION)
+
+    responsabilities = ", ".join(position_data.get("responsabilities", []))
+    skills = ", ".join(skill.get("name", "") for skill in position_data.get("skills", []))
+
+    soft_skills_data = get_phase_data(position_configuration, PHASE_TYPE.SOFT_SKILLS)
+
+    is_lead_position = soft_skills_data.get("is_lead_position", False)
+    how_much_autonomy = soft_skills_data.get("how_much_autonomy", "No especificado")
+    challenges_of_the_position = soft_skills_data.get(
+        "challenges_of_the_position", "No especificado"
     )
-
-    if index is None:
-        raise ValueError("Soft skills phase not found")
-
-    data = phase.data
-    if not data:
-        raise ValueError("Soft skills phase data not found")
-
-    is_lead_position = data.get("is_lead_position", False)
-    how_much_autonomy = data.get("how_much_autonomy", "No especificado")
-    challenges_of_the_position = data.get("challenges_of_the_position", "No especificado")
 
     message = f"""
     Hola!
     Descripción de la empresa: {business.props.description}
+    Rol: {position_data.get("role", "No especificado")}
+    Seniority: {position_data.get("seniority", "No especificado")}
+    Descripción de la posición: {position_data.get("description", "No especificado")}
+    Responsabilidades: {responsabilities}
+    Habilidades: {skills}
     Es una posición de liderazgo: {"Sí" if is_lead_position else "No"}
     Cuánto nivel de autonomía tiene la posición: {how_much_autonomy}
     Cuáles son los desafíos de la posición: {challenges_of_the_position}
