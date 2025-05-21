@@ -33,9 +33,4 @@ def lambda_handler(event: dict, context: LambdaContext) -> dict:
         return query_profiles_ai_use_case(process_id, profile_filter_process)
     except Exception as e:
         logger.error(f"Error querying open ai: {e}")
-        return {
-            "Type": "Fail",
-            "Status": "ERROR",
-            "ErrorInfo": "Error querying brightdata",
-            "ErrorDetails": f"{e}",
-        }
+        raise e
