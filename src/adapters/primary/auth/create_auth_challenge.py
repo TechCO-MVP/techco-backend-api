@@ -3,11 +3,8 @@ import random
 import boto3
 
 from src.constants.index import EMAIL_OTP, REGION_NAME
-from src.constants.auth.index import EMAIL_OTP_TEMPLATE, LOGO_HEADER_URL
+from src.constants.auth.index import EMAIL_OTP_TEMPLATE, LOGO_HEADER_URL, LOGO_BODY_URL
 from src.use_cases.user.get_user_by_mail import get_user_by_mail_use_case
-
-
-LOGO_BODY_URL = "https://dev-techco-public-data-us-east-1.s3.us-east-1.amazonaws.com/Talent_connect_black_logo.png"
 
 
 def handler(event, _):
