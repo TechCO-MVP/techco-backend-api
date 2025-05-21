@@ -46,7 +46,8 @@ def create_position_use_case(
     if not role:
         raise ValueError("Role not found for the given business id")
 
-    position_entity = PositionRepository.getAll(
+    position_repository = PositionRepository()
+    position_entity = position_repository.getAll(
         {position_configuration_id: position_configuration_id}
     )
     if position_entity:
@@ -74,7 +75,8 @@ def create_position_use_case(
     position_dto.owner_position_user_id = user_entity.id
 
     position_repository = PositionRepository()
-    position_entity = position_repository.create(position_dto)
+    position_entity = PositionEntity(props=position_dto)
+    position_entity = position_repository.create(position_entity)
 
     if not position_entity:
         raise ValueError("Position entity was not able to be created")
@@ -106,6 +108,7 @@ def create_position(
     position_dto = PositionDTO(
         position_configuration_id=position_configuration.id,
         business_id=position_configuration.props.business_id,
+        owner_position_user_id="",
         recruiter_user_id=data.get("recruiter_user_id"),
         responsible_users=data.get("responsible_users"),
         flow_type=position_configuration.props.flow_type,
