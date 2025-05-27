@@ -1213,6 +1213,9 @@ components:
         email:
           type: string
           example: mail.@mail.co
+        full_name:
+          type: string
+          example: fake full name
         company_name:
           type: string
           example: Pepsico
