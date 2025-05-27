@@ -5,6 +5,7 @@ import boto3
 from src.constants.index import EMAIL_OTP, REGION_NAME
 from src.constants.auth.index import EMAIL_OTP_TEMPLATE, LOGO_HEADER_URL, LOGO_BODY_URL
 from src.use_cases.user.get_user_by_mail import get_user_by_mail_use_case
+from src.errors.entity_not_found import EntityNotFound
 
 
 def handler(event, _):
@@ -14,20 +15,26 @@ def handler(event, _):
     {
         "request": {
             "userAttributes": {
-                "username": "username",
+                "name": "username",
                 "email": "email"
             }
         }
     }
     """
+    print(f"event: {event}")
     secret_code = generate_secret_code()
 
     email = event["request"]["userAttributes"]["email"]
     event["response"]["publicChallengeParameters"] = {"email": email}
     event["response"]["privateChallengeParameters"] = {"secretLoginCode": secret_code}
     event["response"]["challengeMetadata"] = f"CODE-{secret_code}"
-    user_entity = get_user_by_mail_use_case(email)
-    user_name = user_entity.props.full_name
+
+    try:
+        user_entity = get_user_by_mail_use_case(email)
+        user_name = user_entity.props.full_name
+    except EntityNotFound as e:
+        print(f"{str(e)} in DB")
+        user_name = event["request"]["userAttributes"]["name"]
 
     send_otp_email(email, user_name, secret_code)
     return event
