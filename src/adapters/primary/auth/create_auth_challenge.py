@@ -3,10 +3,17 @@ import random
 import boto3
 
 from src.constants.index import EMAIL_OTP, REGION_NAME
-from src.constants.auth.index import EMAIL_OTP_TEMPLATE, LOGO_HEADER_URL, LOGO_BODY_URL
+from src.constants.auth.index import (
+    EMAIL_OTP_TEMPLATE,
+    EMAIL_OTP_TEMPLATE_PRINCIPAL_BUSINESS,
+    LOGO_HEADER_URL,
+    LOGO_BODY_URL,
+)
 from src.use_cases.user.get_user_by_mail import get_user_by_mail_use_case
 from src.errors.entity_not_found import EntityNotFound
 
+
+ADMIN_USER = False
 
 def handler(event, _):
     """
@@ -28,13 +35,14 @@ def handler(event, _):
     event["response"]["publicChallengeParameters"] = {"email": email}
     event["response"]["privateChallengeParameters"] = {"secretLoginCode": secret_code}
     event["response"]["challengeMetadata"] = f"CODE-{secret_code}"
-
+    
     try:
         user_entity = get_user_by_mail_use_case(email)
         user_name = user_entity.props.full_name
     except EntityNotFound as e:
         print(f"{str(e)} in DB")
         user_name = event["request"]["userAttributes"]["name"]
+        ADMIN_USER = True
 
     send_otp_email(email, user_name, secret_code)
     return event
@@ -65,7 +73,7 @@ def send_otp_email(email, user_name, secret_code):
     else:
         html_company_image = ""
 
-    email_template = EMAIL_OTP_TEMPLATE
+    email_template = EMAIL_OTP_TEMPLATE_PRINCIPAL_BUSINESS if ADMIN_USER else EMAIL_OTP_TEMPLATE
     email_template = email_template.replace("{{OTP}}", secret_code)
     email_template = email_template.replace("{{name}}", user_name)
     email_template = email_template.replace("[URL_DEL_LOGO_HEADER]", LOGO_HEADER_URL)
