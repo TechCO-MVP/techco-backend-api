@@ -31,3 +31,6 @@ class UserRepository(IRepository[UserEntity]):
 
     def delete(self, id: str):
         return self._adapter.delete(id)
+
+    def get_admin_user_by_business_id(self, business_id: str):
+        return self._adapter.get_admin_user_by_business_id(business_id)
