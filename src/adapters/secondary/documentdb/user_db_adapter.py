@@ -5,6 +5,7 @@ from pymongo.database import Database
 
 from src.db.constants import BUSINESS_COLLECTION_NAME, USER_COLLECTION_NAME
 from src.domain.base_entity import from_dto_to_entity
+from src.domain.role import Role
 from src.domain.user import UserEntity
 from src.repositories.document_db.client import DocumentDBClient
 from src.repositories.repository import IRepository
@@ -147,3 +148,16 @@ class UserDocumentDBAdapter(IRepository[UserEntity]):
     def delete(self, id: str):
         collection = self._client[self._collection_name]
         collection.delete_one({"_id": id})
+
+    def get_admin_user_by_business_id(self, business_id: str) -> UserEntity:
+        """Get admin user by business_id."""
+        logger.info(f"Getting admin user by business_id: {business_id}")
+        collection = self._client[self._collection_name]
+        result = collection.find_one({"roles.business_id": business_id, "roles.role": Role.SUPER_ADMIN.value})
+
+        if not result:
+            logger.warning("User with business_id %s not found.", business_id)
+            return None
+
+        result["_id"] = str(result["_id"])
+        return from_dto_to_entity(UserEntity, result)
