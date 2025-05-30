@@ -32,7 +32,17 @@ def updat_hiring_data(hiring: HiringProcessEntity, body: dict) -> tuple:
     
     for phase_id, fields in body.get("phases", {}).items():
         if phase_id not in current_phases:
-            logger.warning(f"Phase ID '{phase_id}' not found in current phases.")
+            logger.info(f"Phase ID '{phase_id}' not found in current phases.")
+            logger.info(f"insert new phase '{phase_id}'")
+            new_phase = {
+                str(phase_id): {
+                    "phase_id": phase_id,
+                    "fields": {},
+                    "custom_fields": fields.get("custom_fields", {}),
+                },
+            }
+            hiring_dto["phases"].update(new_phase)
+            changes_made = True
             continue
 
         current_custom_fields = current_phases[phase_id].get("custom_fields", {})
