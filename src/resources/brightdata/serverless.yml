@@ -179,15 +179,15 @@ stateMachines:
               - notify_completion_profile_filter_process
               - Arn
           End: true
-        # InspectError:
-        #   Type: Pass
-        #   Result: 
-        #     error: $
-        #   Next: Fail
+        ParseError:
+          Type: Pass
+          Parameters:
+            Cause.$: "States.StringToJson($.Cause)"
+          Next: Fail
         Fail:
           Type: Choice
           Choices:
-            - Variable: "$.event.type"
+            - Variable: "$.Cause.event.type"
               StringEquals: "profiles_search"
               Next: CreatePipeConfigurationForOpenPosition
           Default: NotifyFailure
