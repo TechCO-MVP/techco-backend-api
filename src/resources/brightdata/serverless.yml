@@ -181,7 +181,7 @@ stateMachines:
         Fail:
           Type: Choice
           Choices:
-            - Variable: "$.type"
+            - Variable: "$.event.type"
               StringEquals: "profiles_search"
               Next: CreatePipeConfigurationForOpenPosition
           Default: NotifyFailure
