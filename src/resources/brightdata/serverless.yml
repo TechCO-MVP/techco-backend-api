@@ -179,11 +179,11 @@ stateMachines:
               - notify_completion_profile_filter_process
               - Arn
           End: true
-        InspectError:
-          Type: Pass
-          Result: 
-            error: $
-          Next: Fail
+        # InspectError:
+        #   Type: Pass
+        #   Result: 
+        #     error: $
+        #   Next: Fail
         Fail:
           Type: Choice
           Choices:
