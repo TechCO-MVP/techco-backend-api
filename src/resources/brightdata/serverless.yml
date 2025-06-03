@@ -182,7 +182,7 @@ stateMachines:
         ParseError:
           Type: Pass
           Parameters:
-            Cause.$: "States.StringToJson($.Cause)"
+            Cause.$: "States.StringToJson(States.StringToJson($.Cause).errorMessage)"
           Next: Fail
         Fail:
           Type: Choice
