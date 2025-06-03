@@ -117,8 +117,8 @@ stateMachines:
               MaxAttempts: 4
           Catch:
             - ErrorEquals: ["States.ALL"]
-              # Next: InspectError
-              Next: Fail
+              Next: ParseError
+              # Next: Fail
           Next: GetSnapshotData
         GetSnapshotData:
           Type: Task
