@@ -86,5 +86,6 @@ def lambda_handler(event, context: LambdaContext) -> dict:
         # raise Exception(json.dumps(error_dict))
         e.args[0]["event"] = process_dto
         e.args[0]["process_id"] = process_dto.get("_id")
+        e.event = process_dto
         logger.error(e)
         raise e
