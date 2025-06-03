@@ -119,8 +119,7 @@ stateMachines:
               MaxAttempts: 1
           Catch:
             - ErrorEquals: ["States.ALL"]
-              Next: ParseError
-              # Next: Fail
+              Next: Fail
           Next: GetSnapshotData
         GetSnapshotData:
           Type: Task
@@ -181,16 +180,11 @@ stateMachines:
               - notify_completion_profile_filter_process
               - Arn
           End: true
-        ParseError:
-          Type: Pass
-          Parameters:
-            Cause.$: "States.StringToJson($.Cause)"
-          Next: Fail
         Fail:
           Type: Choice
           Choices:
-            - Variable: "$.Cause.event.type"
-              StringEquals: "profiles_search"
+            - Variable: "$.Cause"
+              StringMatches: "*'type': 'profiles_search'*"
               Next: CreatePipeConfigurationForOpenPosition
           Default: NotifyFailure
         NotifyFailure:
