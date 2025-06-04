@@ -10,8 +10,8 @@ from src.constants.index import (
 from src.domain.hiring_process import HiringProcessDTO
 from src.domain.profile_brightdata import ProfileBrightDataDTO
 from src.domain.profile import PROCESS_STATUS
-from src.domain.position import POSITION_STATUS
-from src.domain.position_configuration import FLOW_TYPE
+from src.domain.position import POSITION_STATUS, Assessments
+from src.domain.position_configuration import FLOW_TYPE, PHASE_TYPE
 from src.errors.entity_not_found import EntityNotFound
 from src.repositories.document_db.profile_filter_process import ProfileFilterProcessRepository
 from src.repositories.pipefy.card_repository import CardRepository
@@ -19,6 +19,7 @@ from src.repositories.pipefy.mapping.index import map_profile_bright_data_fields
 from src.repositories.pipefy.pipe_repository import PipeRepository
 from src.repositories.pipefy.webhook_repository import WebhookRepository
 from src.repositories.document_db.position_repository import PositionRepository
+from src.repositories.document_db.position_configuration_repository import PositionConfigurationRepository
 from src.services.graphql.graphql_service import get_client
 from src.use_cases.hiring_process.create_hiring_process import create_hiring_process_use_case
 
@@ -117,6 +118,15 @@ def create_pipe_configuration_open_position(
     # update position
     position.props.pipe_id = pipe_id
     position.props.status = POSITION_STATUS.ACTIVE
+
+    position_configuration_repository = PositionConfigurationRepository()
+    position_configuration = position_configuration_repository.getById(position.props.position_configuration_id)
+
+    for phase in position_configuration.props.phases:
+        if phase.type in [PHASE_TYPE.TECHNICAL_TEST, PHASE_TYPE.SOFT_SKILLS]:
+            position.props.assessments.append(
+                Assessments(data=phase.data, type=phase.type)
+            )
 
     position_repository.update(position_id, position)
 
