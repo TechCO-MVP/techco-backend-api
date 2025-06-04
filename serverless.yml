@@ -27,7 +27,7 @@ provider:
     DOCUMENTDB_ENDPOINT: !GetAtt DocumentDBCluster.Endpoint
     DOCUMENTDB_PORT: 27017
     DOCUMENTDB_DATABASE: techco
-    UI_URI: "https://develop.dzkuw34ypddf5.amplifyapp.com"
+    UI_URI: "https://develop.dzkuw34ypddf5.amplifyapp.com/es/signin"
     PROFILE_FILTER_PROCESS_ARN: arn:aws:states:${self:provider.region}:#{AWS::AccountId}:stateMachine:ProfileFilterProcess-${self:provider.stage}
     S3_RAW_PROFILE_DATA_IA_BUCKET_NAME: !Ref S3RawProfileDataIA
     S3_DEPURATED_PROFILE_DATA_IA_BUCKET_NAME: !Ref S3DepuratedProfileDataIA
@@ -38,6 +38,8 @@ provider:
     PIPEFY_API_KEY_SECRET_NAME: pipefy_api_key
     PIPEFY_ORGANIZATION_ID: "301603037"
     PIPE_TEMPLATE_ID: "305713420"
+    MEDIUM_PROFILE_PIPE_TEMPLATE_ID: "306379995"
+    LOW_PROFILE_PIPE_TEMPLATE_ID: "306376951"
     API_URL: "https://zcich4tlm3.execute-api.us-east-1.amazonaws.com/dev"
     API_GATEWAY_API_KEY_SECRET_NAME: api-key-apigtw-dev
     TOKEN_SERVICE_BRIGHTDATA: TOKEN_BRIGHTDATA_V2
@@ -167,188 +169,7 @@ resources:
     PipefyFieldUpdateQueue: ${file(./src/resources/pipefy/serverless.yml):PipefyFieldUpdateQueue}
     EventBridgeToSQSRole: ${file(./src/resources/pipefy/serverless.yml):EventBridgeToSQSRole}
     WebSocketConnections: ${file(./src/resources/dynamoDB/serverless.yml):WebSocketConnections}
-    # PrivateWebSocketApi:
-    #   Type: AWS::ApiGatewayV2::Api
-    #   Properties:
-    #     Name: private-websocket
-    #     ProtocolType: WEBSOCKET
-    #     RouteSelectionExpression: $request.body.action
-    # PrivateWebSocketStage:
-    #   Type: AWS::ApiGatewayV2::Stage
-    #   Properties:
-    #     ApiId: !Ref PrivateWebSocketApi
-    #     StageName: dev
-    #     AutoDeploy: true
-    # PrivateWebSocketConnectRoute:
-    #   Type: AWS::ApiGatewayV2::Route
-    #   Properties:
-    #     ApiId: !Ref PrivateWebSocketApi
-    #     RouteKey: $connect
-    #     AuthorizationType: CUSTOM
-    #     AuthorizerId: !Ref webSocketAuthorizer
-    #     OperationName: ConnectRoute
-    #     Target: !Join 
-    #       - /
-    #       - - integrations
-    #         - !Ref PrivateWebSocketConnectIntegration
-
-    # PrivateWebSocketDisconnectRoute:
-    #   Type: AWS::ApiGatewayV2::Route
-    #   Properties:
-    #     ApiId: !Ref PrivateWebSocketApi
-    #     RouteKey: $disconnect
-    #     OperationName: DisconnectRoute
-    #     Target: !Join 
-    #       - /
-    #       - - integrations
-    #         - !Ref PrivateWebSocketDisconnectIntegration
-
-    # PrivateWebSocketDefaultRoute:
-    #   Type: AWS::ApiGatewayV2::Route
-    #   Properties:
-    #     ApiId: !Ref PrivateWebSocketApi
-    #     RouteKey: $default
-    #     OperationName: DefaultRoute
-    #     Target: !Join 
-    #       - /
-    #       - - integrations
-    #         - !Ref PrivateWebSocketDefaultIntegration
-
-    # PrivateConnectPermission:
-    #   Type: AWS::Lambda::Permission
-    #   Properties:
-    #     FunctionName: !Ref webSocketConnect
-    #     Action: lambda:InvokeFunction
-    #     Principal: apigateway.amazonaws.com
-    # PrivateDisconnectPermission:
-    #   Type: AWS::Lambda::Permission
-    #   Properties:
-    #     FunctionName: !Ref webSocketDisconnect
-    #     Action: lambda:InvokeFunction
-    #     Principal: apigateway.amazonaws.com
-    # PrivateDefaultPermission:
-    #   Type: AWS::Lambda::Permission
-    #   Properties:
-    #     FunctionName: !Ref defaultMessageHandler
-    #     Action: lambda:InvokeFunction
-    #     Principal: apigateway.amazonaws.com
-    # PrivateWebSocketConnectIntegration:
-    #   Type: AWS::ApiGatewayV2::Integration
-    #   Properties:
-    #     ApiId: !Ref PrivateWebSocketApi
-    #     IntegrationType: AWS_PROXY
-    #     IntegrationUri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${webSocketConnect.Arn}/invocations"
-    #     IntegrationMethod: POST
-    #     ContentHandlingStrategy: CONVERT_TO_TEXT
-
-    # PrivateWebSocketDisconnectIntegration:
-    #   Type: AWS::ApiGatewayV2::Integration
-    #   Properties:
-    #     ApiId: !Ref PrivateWebSocketApi
-    #     IntegrationType: AWS_PROXY
-    #     IntegrationUri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${webSocketDisconnect.Arn}/invocations"
-    #     IntegrationMethod: POST
-    #     ContentHandlingStrategy: CONVERT_TO_TEXT
-
-    # PrivateWebSocketDefaultIntegration:
-    #   Type: AWS::ApiGatewayV2::Integration
-    #   Properties:
-    #     ApiId: !Ref PrivateWebSocketApi
-    #     IntegrationType: AWS_PROXY
-    #     IntegrationUri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${defaultMessageHandler.Arn}/invocations"
-    #     IntegrationMethod: POST
-    #     ContentHandlingStrategy: CONVERT_TO_TEXT
     WebSocketConnectionsPublic: ${file(./src/resources/dynamoDB/serverless.yml):WebSocketConnectionsPublic}
-    # PublicWebSocketApi:
-    #   Type: AWS::ApiGatewayV2::Api
-    #   Properties:
-    #     Name: public-websocket
-    #     ProtocolType: WEBSOCKET
-    #     RouteSelectionExpression: $request.body.action
-    # PublicWebSocketStage:
-    #   Type: AWS::ApiGatewayV2::Stage
-    #   Properties:
-    #     ApiId: !Ref PublicWebSocketApi
-    #     StageName: dev
-    #     AutoDeploy: true
-    # PublicWebSocketConnectRoute:
-    #   Type: AWS::ApiGatewayV2::Route
-    #   Properties:
-    #     ApiId: !Ref PublicWebSocketApi
-    #     RouteKey: $connect
-    #     OperationName: ConnectRoute
-    #     Target: !Join 
-    #       - /
-    #       - - integrations
-    #         - !Ref PublicWebSocketConnectIntegration
-
-    # PublicWebSocketDisconnectRoute:
-    #   Type: AWS::ApiGatewayV2::Route
-    #   Properties:
-    #     ApiId: !Ref PublicWebSocketApi
-    #     RouteKey: $disconnect
-    #     OperationName: DisconnectRoute
-    #     Target: !Join 
-    #       - /
-    #       - - integrations
-    #         - !Ref PublicWebSocketDisconnectIntegration
-
-    # PublicWebSocketDefaultRoute:
-    #   Type: AWS::ApiGatewayV2::Route
-    #   Properties:
-    #     ApiId: !Ref PublicWebSocketApi
-    #     RouteKey: $default
-    #     OperationName: DefaultRoute
-    #     Target: !Join 
-    #       - /
-    #       - - integrations
-    #         - !Ref PublicWebSocketDefaultIntegration
-
-    # PublicConnectPermission:
-    #   Type: AWS::Lambda::Permission
-    #   Properties:
-    #     FunctionName: !Ref webSocketConnectPublic
-    #     Action: lambda:InvokeFunction
-    #     Principal: apigateway.amazonaws.com
-    # PublicDisconnectPermission:
-    #   Type: AWS::Lambda::Permission
-    #   Properties:
-    #     FunctionName: !Ref webSocketDisconnectPublic
-    #     Action: lambda:InvokeFunction
-    #     Principal: apigateway.amazonaws.com
-    # PublicDefaultPermission:
-    #   Type: AWS::Lambda::Permission
-    #   Properties:
-    #     FunctionName: !Ref defaultMessageHandlerPublic
-    #     Action: lambda:InvokeFunction
-    #     Principal: apigateway.amazonaws.com
-    #     SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${PublicWebSocketApi}/*"
-    # PublicWebSocketConnectIntegration:
-    #   Type: AWS::ApiGatewayV2::Integration
-    #   Properties:
-    #     ApiId: !Ref PublicWebSocketApi
-    #     IntegrationType: AWS_PROXY
-    #     IntegrationUri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${webSocketConnectPublic.Arn}/invocations"
-    #     IntegrationMethod: POST
-    #     ContentHandlingStrategy: CONVERT_TO_TEXT
-
-    # PublicWebSocketDisconnectIntegration:
-    #   Type: AWS::ApiGatewayV2::Integration
-    #   Properties:
-    #     ApiId: !Ref PublicWebSocketApi
-    #     IntegrationType: AWS_PROXY
-    #     IntegrationUri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${webSocketDisconnectPublic.Arn}/invocations"
-    #     IntegrationMethod: POST
-    #     ContentHandlingStrategy: CONVERT_TO_TEXT
-
-    # PublicWebSocketDefaultIntegration:
-    #   Type: AWS::ApiGatewayV2::Integration
-    #   Properties:
-    #     ApiId: !Ref PublicWebSocketApi
-    #     IntegrationType: AWS_PROXY
-    #     IntegrationUri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${defaultMessageHandlerPublic.Arn}/invocations"
-    #     IntegrationMethod: POST
-    #     ContentHandlingStrategy: CONVERT_TO_TEXT
     serverlessApiGatewayCloudWatchRole:
       Type: AWS::IAM::Role
       Properties:
@@ -373,6 +194,8 @@ resources:
                     - logs:DescribeLogStreams
                     - logs:PutLogEvents
                   Resource: "*"
+    S3PublicData: ${file(./src/resources/s3/serverless.yml):S3PublicData}
+    S3PublicDataPolicy: ${file(./src/resources/s3/serverless.yml):S3PublicDataPolicy}
 
 functions:
   define_auth_challenge:
@@ -606,7 +429,8 @@ functions:
           request:
             parameters:
               querystrings:
-                token: true
+                token: false
+                position_id: false
 
   put_position_status:
     handler: src/adapters/primary/position/put_position_status/index.handler
@@ -698,10 +522,6 @@ functions:
           method: put
           cors: true
           private: true
-          authorizer:
-            type: COGNITO_USER_POOLS
-            authorizerId:
-              Ref: ApiGatewayAuthorizer
 
   start_profile_filter_process:
     handler: src/adapters/primary/profile/filter/start.lambda_handler
@@ -837,30 +657,25 @@ functions:
       - websocket:
           route: $default
 
-  # webSocketConnectPublic:
-  #   handler: src/adapters/primary/websocket/public_connect.handler
-  #   events:
-  #     - websocket:
-  #         route: $connect
-
-  # webSocketDisconnectPublic:
-  #   handler: src/adapters/primary/websocket/public_disconnect.handler
-  #   events:
-  #     - websocket:
-  #         route: $disconnect
-
-  # defaultMessageHandlerPublic:
-  #   handler: src/adapters/primary/websocket/public_default.handler
-  #   events:
-  #     - websocket:
-  #         route: $default
-
   get_position_configuration_list:
     handler: src/adapters/primary/position_configuration/get_position_configuration/index.handler
     events:
       - http:
           path: /position_configuration/list
           method: get
+          cors: true
+          private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+
+  delete_position_configuration:
+    handler: src/adapters/primary/position_configuration/delete_position_configuration/index.handler
+    events:
+      - http:
+          path: /position_configuration/{position_configuration_id}
+          method: delete
           cors: true
           private: true
           authorizer:

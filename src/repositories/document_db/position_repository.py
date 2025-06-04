@@ -27,3 +27,6 @@ class PositionRepository(IRepository[PositionEntity]):
 
     def delete(self, id: str):
         return self._adapter.delete(id)
+
+    def getByPositionConfigirationId(self, id: str):
+        return self._adapter.getByPositionConfigirationId(id)

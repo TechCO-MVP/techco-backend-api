@@ -41,7 +41,7 @@ class OpenAIAdapter(LLMService):
         self.delete_file(file_id)
         return self.get_thread_response(thread_run)
 
-    def initialize_assistant_thread(self, assistant_id: str) -> Run:
+    def initialize_assistant_thread(self, assistant_id: str, initial_message: str = "Hola!") -> Run:
         """
         Initialize the assistant with the given ID.
         the thread is initialized with a greeting message.
@@ -54,7 +54,7 @@ class OpenAIAdapter(LLMService):
                 "messages": [
                     {
                         "role": "user",
-                        "content": "Hola!",
+                        "content": initial_message,
                     }
                 ]
             },
@@ -238,7 +238,12 @@ class OpenAIAdapter(LLMService):
         logger.info(f"Response from OpenAI API: {get_messages.status_code} - {get_messages.text}")
 
         if get_messages.status_code == 200:
-            return get_messages.json()
+            messages = get_messages.json()
+            
+            if not messages.get("has_more"):
+                messages["data"].pop()
+
+            return messages
         else:
             error = (
                 f"Failed to get message history: {get_messages.status_code} - {get_messages.text}"

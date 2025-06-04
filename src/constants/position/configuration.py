@@ -5,16 +5,16 @@ from src.domain.position_configuration import (
     PHASE_TYPE,
     STATUS,
     Phase,
-    PositionConfigurationEntity
+    PositionConfigurationEntity,
 )
 
 
 def get_assistant_from_business(
-    position_configuration_dto: PositionConfigurationEntity, phase_type: PHASE_TYPE
+    position_configuration: PositionConfigurationEntity, phase_type: PHASE_TYPE
 ) -> str:
     """Get assistant."""
     business_repository = BusinessRepository()
-    business = business_repository.getById(position_configuration_dto.props.business_id)
+    business = business_repository.getById(position_configuration.props.business_id)
     if not business:
         raise ValueError("Business does not exist")
 
@@ -30,16 +30,98 @@ def get_assistant_from_business(
     return assistant.assistant_id
 
 
-def get_assistant_from_phase(
-    _: PositionConfigurationEntity, phase_type: PHASE_TYPE
-) -> str:
+def get_assistant_from_phase(_: PositionConfigurationEntity, phase_type: PHASE_TYPE) -> str:
     """Get assistant."""
     phase_type_assistant_mapping = {
         PHASE_TYPE.SOFT_SKILLS: "asst_eX6Zf5YPjXXktU6YohqrFXk6",
-        PHASE_TYPE.TECHNICAL_TEST: "asst_ZZM4FpbtxliIPenYEXRy07uD",
+        PHASE_TYPE.TECHNICAL_TEST: "asst_5R3qT8lExjOWwDOZtck7gJhd",
     }
 
     return phase_type_assistant_mapping.get(phase_type)
+
+
+def get_phase_data(
+    position_configuration: PositionConfigurationEntity, phase_type: PHASE_TYPE
+) -> dict:
+    """Get position data."""
+    index, phase = next(
+        (
+            (idx, phase)
+            for idx, phase in enumerate(position_configuration.props.phases)
+            if phase.type == phase_type
+        ),
+        (None, None),
+    )
+
+    if index is None:
+        raise ValueError(f"{phase_type} phase not found")
+
+    data = phase.data
+    if not data:
+        raise ValueError(f"{phase_type} phase data not found")
+
+    return data
+
+
+def get_initial_message_soft_skills(position_configuration: PositionConfigurationEntity) -> str:
+    """Get initial message for soft skills."""
+    business_repository = BusinessRepository()
+    business = business_repository.getById(position_configuration.props.business_id)
+    if not business:
+        raise ValueError("Business does not exist")
+
+    position_data = get_phase_data(position_configuration, PHASE_TYPE.DESCRIPTION)
+
+    responsabilities = ", ".join(position_data.get("responsabilities", []))
+    skills = ", ".join(skill.get("name", "") for skill in position_data.get("skills", []))
+
+    message = f"""
+    Hola!
+    Descripción de la empresa: {business.props.description}
+    Rol: {position_data.get("role", "No especificado")}
+    Seniority: {position_data.get("seniority", "No especificado")}
+    Descripción de la posición: {position_data.get("description", "No especificado")}
+    Responsabilidades: {responsabilities}
+    Habilidades: {skills}
+    """
+
+    return message
+
+
+def get_initial_message_technical_test(position_configuration: PositionConfigurationEntity) -> str:
+    """Get initial message for technical test."""
+    business_repository = BusinessRepository()
+    business = business_repository.getById(position_configuration.props.business_id)
+    if not business:
+        raise ValueError("Business does not exist")
+
+    position_data = get_phase_data(position_configuration, PHASE_TYPE.DESCRIPTION)
+
+    responsabilities = ", ".join(position_data.get("responsabilities", []))
+    skills = ", ".join(skill.get("name", "") for skill in position_data.get("skills", []))
+
+    soft_skills_data = get_phase_data(position_configuration, PHASE_TYPE.SOFT_SKILLS)
+
+    is_lead_position = soft_skills_data.get("is_lead_position", False)
+    how_much_autonomy = soft_skills_data.get("how_much_autonomy", "No especificado")
+    challenges_of_the_position = soft_skills_data.get(
+        "challenges_of_the_position", "No especificado"
+    )
+
+    message = f"""
+    Hola!
+    Descripción de la empresa: {business.props.description}
+    Rol: {position_data.get("role", "No especificado")}
+    Seniority: {position_data.get("seniority", "No especificado")}
+    Descripción de la posición: {position_data.get("description", "No especificado")}
+    Responsabilidades: {responsabilities}
+    Habilidades: {skills}
+    Es una posición de liderazgo: {"Sí" if is_lead_position else "No"}
+    Cuánto nivel de autonomía tiene la posición: {how_much_autonomy}
+    Cuáles son los desafíos de la posición: {challenges_of_the_position}
+    """
+
+    return message
 
 
 position_configuration = {
@@ -181,4 +263,10 @@ get_assistant_for_phase = {
     PHASE_TYPE.DESCRIPTION: get_assistant_from_business,
     PHASE_TYPE.SOFT_SKILLS: get_assistant_from_phase,
     PHASE_TYPE.TECHNICAL_TEST: get_assistant_from_phase,
+}
+
+get_initial_message_for_phase: dict[PHASE_TYPE, callable] = {
+    PHASE_TYPE.DESCRIPTION: lambda _: "Hola!",
+    PHASE_TYPE.SOFT_SKILLS: get_initial_message_soft_skills,
+    PHASE_TYPE.TECHNICAL_TEST: get_initial_message_technical_test,
 }

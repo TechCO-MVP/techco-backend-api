@@ -1,5 +1,8 @@
 from src.adapters.secondary.llm.open_ai_adapter import OpenAIAdapter
-from src.constants.position.configuration import get_assistant_for_phase
+from src.constants.position.configuration import (
+    get_assistant_for_phase,
+    get_initial_message_for_phase,
+)
 from src.domain.position_configuration import STATUS, TYPE, PositionConfigurationDTO
 from src.repositories.document_db.position_configuration_repository import (
     PositionConfigurationEntity,
@@ -108,8 +111,9 @@ def start_phase(
         assistant_id = get_assistant_for_phase[phase.type](
             position_configuration_entity, phase.type
         )
+        message = get_initial_message_for_phase[phase.type](position_configuration_entity)
         open_ai_adapter = OpenAIAdapter()
-        thread_run = open_ai_adapter.initialize_assistant_thread(assistant_id)
+        thread_run = open_ai_adapter.initialize_assistant_thread(assistant_id, message)
 
         phase.thread_id = thread_run.thread_id
         position_configuration_entity.props.phases[index] = phase

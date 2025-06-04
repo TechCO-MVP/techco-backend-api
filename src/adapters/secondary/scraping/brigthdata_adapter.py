@@ -38,6 +38,7 @@ class ScrapingProfileFilterProcessAdapter(IRepository[ProfileFilterProcessEntity
         logger.info("post scraping profile filter process data")
         entity_dto = entity.to_dto(flat=True)
         filters = entity_dto["process_filters"]
+        seniority = filters.get("seniority")
         logger.info(f"Entity: {filters}")
 
         base_filters = [
@@ -63,6 +64,10 @@ class ScrapingProfileFilterProcessAdapter(IRepository[ProfileFilterProcessEntity
             for k in base_filters
             if isinstance(k["name"], list)
         ]
+
+        for filter in nested_filters:
+            if filter["filters"][0]["value"] == seniority:
+                filter["filters"].append(fake_filter)
 
         flat_filters = [
             {"name": k["name"], "operator": k["operator"], "value": k["value"]}

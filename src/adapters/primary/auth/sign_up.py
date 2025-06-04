@@ -15,6 +15,7 @@ def sign_up():
     try:
         logger.info("Signing up user")
         body = app.current_event.json_body
+        logger.info("this is body: ", body)
         password = create_random_password()  # password not required so we can generate a random one
 
         cognito_client = boto3.client("cognito-idp")
@@ -25,7 +26,7 @@ def sign_up():
             Password=password,
             UserAttributes=[
                 {"Name": "email", "Value": body.get("email")},
-                {"Name": "name", "Value": body.get("name")},
+                {"Name": "name", "Value": body.get("full_name")},
             ],
         )
 

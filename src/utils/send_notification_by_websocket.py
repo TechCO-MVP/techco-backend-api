@@ -5,10 +5,11 @@ from botocore.exceptions import ClientError
 
 from src.services.graphql.graphql_service import get_client
 from src.repositories.pipefy.phase_repository import PhaseRepository
-from src.domain.notification import NotificationDTO, NotificationEntity
+from src.domain.notification import NotificationDTO, NotificationEntity, PHASE_TYPE
 from src.use_cases.notification.save_notification import post_notification_use_case
 from src.use_cases.notification.build_notification_response import build_notification_response_use_case
 from src.constants.index import TABLE_WEBSOCKET_CONNECTIONS, REGION_NAME, ENV, API_ID
+from src.constants.notification.configuration import mapping_phase_name
 
 logger = Logger()
 dynamodb = boto3.client("dynamodb")
@@ -22,14 +23,8 @@ def send_notification_by_websocket(notification: NotificationDTO):
     logger.info(f"Message content: {notification.message}")
     logger.info(f"save notificstion domain")
 
-    if notification.phase_id:
-        graphql_client = get_client()
-        phase_repository = PhaseRepository(graphql_client)
-        phase = phase_repository.get_phase_name_by_id(notification.phase_id)
-        notification.phase_name = phase.name
-        notification.phase_type = phase.type
-
-    inserted_notification, notification = post_notification_use_case(notification)
+    notification = get_phase_name_by_id(notification)
+    inserted_notification = post_notification_use_case(notification)
 
     notification_response = build_notification_response_use_case(NotificationEntity(props=notification))
     notification_response["_id"] = inserted_notification["body"]["notification"]["_id"]
@@ -67,3 +62,16 @@ def send_notification_by_websocket(notification: NotificationDTO):
     except ClientError as e:
         logger.error(f"Error sending message: {str(e)}")
         return False
+
+def get_phase_name_by_id(notification: NotificationDTO) -> NotificationDTO:
+    """Get the phase name and type by the phase id."""
+    if notification.phase_id:
+        graphql_client = get_client()
+        phase_repository = PhaseRepository(graphql_client)
+        phase = phase_repository.get_phase_name_by_id(notification.phase_id)
+        notification.phase_name = phase.get("phase",{}).get("name")
+        notification.phase_type = mapping_phase_name.get(
+            notification.phase_name, PHASE_TYPE.INFORMATIVE.value
+        )
+
+    return notification

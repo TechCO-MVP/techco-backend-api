@@ -29,6 +29,7 @@ def verify_auth_otp_code_signup():
         business_role = BusinessRole(role=Role.SUPER_ADMIN)
 
         user_dto = UserDTO(
+            full_name=body.get("full_name", ""),
             email=email,
             company_position=body.get("company_position", ""),
             business_id="",

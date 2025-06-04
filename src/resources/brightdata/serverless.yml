@@ -179,6 +179,13 @@ stateMachines:
               - Arn
           End: true
         Fail:
+          Type: Choice
+          Choices:
+            - Variable: "$.Cause"
+              StringMatches: "*'type': 'profiles_search'*"
+              Next: CreatePipeConfigurationForOpenPosition
+          Default: NotifyFailure
+        NotifyFailure:
           Type: Task
           Resource:
             Fn::GetAtt:

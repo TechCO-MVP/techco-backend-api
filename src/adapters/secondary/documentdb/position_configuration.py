@@ -36,7 +36,7 @@ class PositionConfigurationDBAdapter(IRepository[PositionConfigurationEntity]):
         logger.info(f"Getting all position_configuration entities with filter: {filter_params}")
 
         result = []
-        positions_configuration = list(collection.find(filter_params))
+        positions_configuration = list(collection.find(filter_params).sort("created_at", -1))
         if not positions_configuration:
             return []
 
@@ -95,6 +95,6 @@ class PositionConfigurationDBAdapter(IRepository[PositionConfigurationEntity]):
         """Delete a position_configuration entity from the database."""
         logger.info(f"Deleting position_configuration entity with id: {id}")
         collection = self._client[self._collection_name]
-        collection.update_one(
-            {"_id": ObjectId(id)}, {"$set": {"deleted_at": datetime.now()}}, session=self._session
+        collection.delete_one(
+            {"_id": ObjectId(id)}, session=self._session
         )
