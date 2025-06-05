@@ -8,7 +8,6 @@ from pydantic import BaseModel, Field, field_validator
 from src.domain.base_entity import BaseEntity
 from src.domain.profile import ProfileBrightDataDTO
 from src.domain.assistant import ASSISTANT_TYPE
-from src.domain.assistant import Assistant
 
 
 class HIRING_PROCESS_STATUS(str, Enum):
@@ -53,6 +52,7 @@ class PHASE_TYPE(str, Enum):
     FINAL_INTERVIEW = "FINAL_INTERVIEW"
     READY_TO_PUBLISH = "READY_TO_PUBLISH"
 
+
 class Phase(BaseModel):
     name: str
     thread_id: str
@@ -60,10 +60,12 @@ class Phase(BaseModel):
     data: dict
     type: PHASE_TYPE
 
+
 class Assistant(BaseModel):
     assistant_type: ASSISTANT_TYPE
     thread_id: str
     data: dict[str, Any] = {}
+
 
 class HiringProcessDTO(BaseModel):
     position_id: str = Field(..., alias="position_id")
