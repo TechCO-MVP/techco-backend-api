@@ -7,6 +7,7 @@ from pydantic import BaseModel, Field, ValidationError, model_validator
 from src.domain.base_entity import BaseEntity
 from src.domain.assistant import Assistant
 from src.domain.position_configuration import FLOW_TYPE
+from src.domain.business import PositionFlow
 
 
 class POSITION_STATUS(str, Enum):
@@ -83,6 +84,7 @@ class PositionDTO(BaseModel):
     salary: Optional[Salary] = None
     pipe_id: Optional[str] = None
     assistants: Dict[str, Assistant] = {}
+    position_flow: Optional[PositionFlow] = None
 
     @model_validator(mode="before")
     def validate_and_convert_fields(cls, values):
