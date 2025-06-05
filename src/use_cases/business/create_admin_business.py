@@ -5,6 +5,7 @@ import boto3
 
 from src.adapters.secondary.llm.open_ai_adapter import OpenAIAdapter
 from src.constants.index import CLIENT_ID, ENV, REGION_NAME
+from src.constants.assistants.index import ASSISTANTS_IDS
 from src.domain.assistant import ASSISTANT_TYPE
 from src.domain.business import BusinessDTO, BusinessEntity
 from src.domain.user import UserDTO, UserEntity
@@ -94,13 +95,19 @@ def create_assistants_for_business() -> Dict[str, Dict]:
 
     assistant_types = [
         ASSISTANT_TYPE.POSITION_ASSISTANT,
+        ASSISTANT_TYPE.TECHNICAL_ASSESSMENT_ASSISTANT,
+        ASSISTANT_TYPE.SOFT_ASSESSMENT_ASSISTANT,
     ]
 
     for assistant_type in assistant_types:
-        assistant = open_ai_adapter.create_assistant(unique_identifier, assistant_type)
+        if assistant_type == ASSISTANT_TYPE.POSITION_ASSISTANT:
+            assistant = open_ai_adapter.create_assistant(unique_identifier, assistant_type)
+            assistant_id = assistant.id
+        else:
+            assistant_id = ASSISTANTS_IDS[assistant_type]
 
         assistants[assistant_type] = {
-            "assistant_id": assistant.id,
+            "assistant_id": assistant_id,
             "assistant_type": assistant_type,
         }
 
