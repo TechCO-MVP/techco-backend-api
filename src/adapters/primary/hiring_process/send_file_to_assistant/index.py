@@ -1,4 +1,3 @@
-
 from datetime import datetime
 from typing import Dict, Any
 import base64
@@ -28,6 +27,9 @@ def send_file_to_assistant():
         
         # Obtener el body
         body = app.current_event.body
+        logger.info("Body type: %s", type(body))
+        logger.info("Body first 100 chars: %s", body[:100] if body else "No body")
+        
         content_type = app.current_event.headers.get('Content-Type', '')
         logger.info("Content-Type: %s", content_type)
         
@@ -46,6 +48,8 @@ def send_file_to_assistant():
         try:
             parts = body.split(f'--{boundary}')
             logger.info("Number of parts: %d", len(parts))
+            for i, part in enumerate(parts):
+                logger.info("Part %d first 100 chars: %s", i, part[:100] if part else "Empty part")
         except Exception as e:
             logger.error("Error splitting parts: %s", str(e))
             return Response(
@@ -79,16 +83,26 @@ def send_file_to_assistant():
                             file_type = part.split('Content-Type: ')[1].split('\r\n')[0]
                             logger.info("File type: %s", file_type)
                         
-                        # Obtener el contenido del archivo y convertirlo a bytes
-                        file_content = part.split('\r\n\r\n')[1].rstrip('\r\n')
-                        # Si el contenido está en base64, decodificarlo
-                        try:
-                            file_content = base64.b64decode(file_content)
-                        except:
-                            # Si no está en base64, convertirlo a bytes
-                            file_content = file_content.encode('utf-8')
+                        # Obtener el contenido del archivo
+                        file_parts = part.split('\r\n\r\n')
+                        if len(file_parts) > 1:
+                            file_content = file_parts[1]
+                            logger.info("File content type: %s", type(file_content))
+                            logger.info("File content length: %d", len(file_content))
+                            logger.info("File content first 100 chars: %s", file_content[:100] if file_content else "No content")
                             
-                        logger.info("File content length: %d", len(file_content))
+                            # Convertir a bytes si es necesario, pero sin codificación UTF-8
+                            if isinstance(file_content, str):
+                                # Decodificar base64 si el contenido está en base64
+                                try:
+                                    file_content = base64.b64decode(file_content)
+                                except:
+                                    # Si no es base64, mantener como bytes
+                                    file_content = file_content.encode('latin1')
+                            
+                            logger.info("File content after encoding length: %d", len(file_content))
+                        else:
+                            logger.error("No file content found in part")
                     except Exception as e:
                         logger.error("Error processing file part: %s", str(e))
                         continue
@@ -119,6 +133,7 @@ def send_file_to_assistant():
         bucket_name = f"{ENV}-techco-assessments-files-{REGION_NAME}"
         
         try:
+            logger.info("Uploading file to S3. Content length: %d", len(file_content))
             s3_client.put_object(
                 Bucket=bucket_name,
                 Key=file_key,
