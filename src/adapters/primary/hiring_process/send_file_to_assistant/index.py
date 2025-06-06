@@ -29,6 +29,14 @@ def send_file_to_assistant():
         
         # Obtener el body
         body = app.current_event.body
+        is_base64_encoded = app.current_event.raw_event.get("isBase64Encoded", False)
+
+        if is_base64_encoded:
+            body = base64.b64decode(body)
+        else:
+            if isinstance(body, str):
+                body = body.encode('utf-8')
+
         logger.info("Body type: %s", type(body))
         logger.info("Body first 100 chars: %s", body[:100] if body else "No body")
         
@@ -47,8 +55,6 @@ def send_file_to_assistant():
         logger.info("Boundary: %s", boundary)
         
         # Crear un objeto BytesIO con el body
-        if isinstance(body, str):
-            body = body.encode('utf-8')
         body_io = io.BytesIO(body)
         
         # Crear un objeto FieldStorage para manejar el multipart/form-data
