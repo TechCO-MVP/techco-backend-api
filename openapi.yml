@@ -1104,6 +1104,36 @@ paths:
               schema:
                 $ref: "#/components/schemas/Exception"
 
+  /hiring_process/assistant/response:
+    post:
+      summary: Get response from assistant
+      description: Get response from assistant based on the provided request.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AssistantResponseRequest"
+      responses:
+        "200":
+          description: Assistant response retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AssistantResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Exception response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exception"
+
 components:
   schemas:
     Role:
@@ -2722,7 +2752,7 @@ components:
           type: array
           items:
             type: string
-          example: [id_123456kjhsad_3124987_sdak, id_123456kjhsad_3124987_sdak] 
+          example: [id_123456kjhsad_3124987_sdak, id_123456kjhsad_3124987_sdak]
         status:
           type: string
           example: READ
@@ -3381,5 +3411,22 @@ components:
             data:
               type: boolean
               example: null
-              
-              
+    AssistantResponseRequest:
+      type: object
+      properties:
+        hiring_process_id:
+          type: string
+          example: "6777862efe77308365432a36"
+        run_id:
+          type: string
+          example: "6777862efe77308365432a36"
+        assistan_type:
+          type: string
+          enum:
+            - position_assistant
+            - technical_assessment_assistant
+            - soft_assessment_assistant
+      required:
+        - hiring_process_id
+        - run_id
+        - assistan_type
