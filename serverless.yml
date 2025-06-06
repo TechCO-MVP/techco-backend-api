@@ -115,6 +115,15 @@ provider:
             - !Sub "${WebSocketConnections.Arn}/index/user_id_index"
             - !GetAtt WebSocketConnectionsPublic.Arn
             - !Sub "${WebSocketConnectionsPublic.Arn}/index/hiring_process_id_index"
+        - Effect: Allow
+          Action:
+            - s3:PutObject
+            - s3:GetObject
+            - s3:DeleteObject
+            - s3:ListBucket
+          Resource:
+            - !Sub "arn:aws:s3:::${self:provider.stage}-techco-assessments-files-${self:provider.region}"
+            - !Sub "arn:aws:s3:::${self:provider.stage}-techco-assessments-files-${self:provider.region}/*"
 
 custom:
   userPoolName: ${self:provider.stage}-passwordless-user-pool
@@ -196,6 +205,8 @@ resources:
                   Resource: "*"
     S3PublicData: ${file(./src/resources/s3/serverless.yml):S3PublicData}
     S3PublicDataPolicy: ${file(./src/resources/s3/serverless.yml):S3PublicDataPolicy}
+    S3AssessmentsFiles: ${file(./src/resources/s3/serverless.yml):S3AssessmentsFiles}
+    S3AssessmentsFilesPolicy: ${file(./src/resources/s3/serverless.yml):S3AssessmentsFilesPolicy}
 
 functions:
   define_auth_challenge:
@@ -760,6 +771,15 @@ functions:
             type: COGNITO_USER_POOLS
             authorizerId:
               Ref: ApiGatewayAuthorizer
+  
+  send_file_to_assistant:
+    handler: src/adapters/primary/hiring_process/send_file_to_assistant.lambda_handler
+    events:
+      - http:
+          path: /hiring_process/send_file_to_assistant
+          method: post
+          cors: true
+          private: true
 
 stepFunctions:
   stateMachines: ${file(./src/resources/brightdata/serverless.yml):stateMachines}

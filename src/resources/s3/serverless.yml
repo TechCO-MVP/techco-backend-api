@@ -52,3 +52,62 @@ S3PublicDataPolicy:
             - - 'arn:aws:s3:::'
               - !Ref S3PublicData
               - '/*'
+
+// ... existing code ...
+
+S3AssessmentsFiles:
+  Type: AWS::S3::Bucket
+  Properties:
+    BucketName: ${self:provider.stage}-techco-assessments-files-${self:provider.region}
+    OwnershipControls:
+      Rules:
+        - ObjectOwnership: BucketOwnerPreferred
+    PublicAccessBlockConfiguration:
+      BlockPublicAcls: true
+      BlockPublicPolicy: true
+      IgnorePublicAcls: true
+      RestrictPublicBuckets: true
+    LifecycleConfiguration:
+      Rules:
+        - Id: DeleteOldFiles
+          Status: Enabled
+          ExpirationInDays: 30
+    CorsConfiguration:
+      CorsRules:
+        - AllowedHeaders:
+            - '*'
+          AllowedMethods:
+            - GET
+            - PUT
+            - POST
+            - DELETE
+          AllowedOrigins:
+            - '*'
+          MaxAge: 3000
+    Tags:
+      - Key: Environment
+        Value: ${self:provider.stage}
+      - Key: Name
+        Value: ${self:provider.stage}-techco-assessments-files
+
+S3AssessmentsFilesPolicy:
+  Type: AWS::S3::BucketPolicy
+  Properties:
+    Bucket: !Ref S3AssessmentsFiles
+    PolicyDocument:
+      Version: '2012-10-17'
+      Statement:
+        - Sid: AllowReadWriteAccess
+          Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action:
+            - 's3:GetObject'
+            - 's3:PutObject'
+            - 's3:DeleteObject'
+          Resource: !Join 
+            - ''
+            - - 'arn:aws:s3:::'
+              - !Ref S3AssessmentsFiles
+              - '/*'
+              
