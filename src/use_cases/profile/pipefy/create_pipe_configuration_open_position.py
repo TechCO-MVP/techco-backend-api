@@ -77,7 +77,7 @@ def create_pipe_configuration_open_position(
     # create pipe
     graphql_client = get_client()
     pipe_repository = PipeRepository(graphql_client)
-    pipe_template_id = get_pipe_id_by_flow_type(position.props.flow_type)
+    pipe_template_id = str(position.props.position_flow.pipe_id)
     pipes = pipe_repository.clone_pipe(pipe_template_id)
     pipe_id = pipes["clonePipes"]["pipes"][0]["id"]
 

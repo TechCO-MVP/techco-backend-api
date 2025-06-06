@@ -7,12 +7,17 @@ from src.domain.position import (
     POSITION_STATUS,
     Salary,
 )
-from src.domain.position_configuration import PHASE_TYPE, Phase, PositionConfigurationEntity
+from src.domain.position_configuration import (
+    PHASE_TYPE,
+    Phase,
+    PositionConfigurationEntity,
+)
 from src.repositories.document_db.position_configuration_repository import (
     PositionConfigurationRepository,
 )
 from src.repositories.document_db.position_repository import PositionRepository
 from src.repositories.document_db.user_repository import UserRepository
+from src.repositories.document_db.business_repository import BusinessRepository
 
 
 def create_position_use_case(
@@ -90,6 +95,15 @@ def create_position(
     """
     Create a position based on the given phase.
     """
+    business_id = position_configuration.props.business_id
+    if not business_id:
+        raise ValueError("Business ID is required in the position configuration")
+
+    business_repository = BusinessRepository()
+    business = business_repository.getById(business_id)
+    if not business:
+        raise ValueError("Business does not exist")
+
     data = phase.data
     if not data:
         raise ValueError("No data found in the description phase")
@@ -105,9 +119,15 @@ def create_position(
         salary_range=data.get("salary", {}).get("salary_range", None),
     )
 
+    position_flow = business.props.position_flows.get(position_configuration.props.flow_type)
+    if not position_flow:
+        raise ValueError(
+            f"Position flow for type {position_configuration.props.flow_type} not found in business"
+        )
+
     position_dto = PositionDTO(
         position_configuration_id=position_configuration.id,
-        business_id=position_configuration.props.business_id,
+        business_id=business_id,
         owner_position_user_id="",
         recruiter_user_id=data.get("recruiter_user_id"),
         responsible_users=data.get("responsible_users"),
@@ -125,6 +145,7 @@ def create_position(
         status=POSITION_STATUS.ACTIVE,
         benefits=data.get("benefits", []),
         salary=salary,
+        position_flow=position_flow,
     )
     return position_dto
 
