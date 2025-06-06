@@ -773,7 +773,7 @@ functions:
               Ref: ApiGatewayAuthorizer
   
   send_file_to_assistant:
-    handler: src/adapters/primary/hiring_process/send_file_to_assistant/index.lambda_handler
+    handler: src/adapters/primary/hiring_process/send_file_to_assistant/index.handler
     events:
       - http:
           path: /hiring_process/send_file_to_assistant
