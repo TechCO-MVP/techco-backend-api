@@ -95,17 +95,24 @@ def send_file_to_assistant():
                             logger.info("File content type: %s", type(file_content))
                             logger.info("File content length: %d", len(file_content))
                             
-                            # Preservar el contenido binario original
+                            # Manejar el contenido como bytes directamente
                             if isinstance(file_content, str):
-                                logger.info("Content is string, preserving binary data")
-                                # Convertir a bytes manteniendo los bytes originales
-                                file_content = file_content.encode('utf-8', errors='surrogateescape')
+                                logger.info("Content is string, converting to bytes")
+                                # Convertir a bytes sin interpretar el contenido
+                                file_content = bytes(file_content, 'latin1')
                                 logger.info("Converted to bytes, new length: %d", len(file_content))
                             else:
                                 logger.info("Content is already bytes, length: %d", len(file_content))
                             
                             logger.info("Final file content length: %d", len(file_content))
                             logger.info("First 100 bytes as hex: %s", file_content[:100].hex() if file_content else "No content")
+                            
+                            # Verificar que el contenido comienza con %PDF
+                            if file_content.startswith(b'%PDF'):
+                                logger.info("Content is a valid PDF file")
+                            else:
+                                logger.warning("Content does not start with %PDF")
+                                logger.info("First 10 bytes: %s", file_content[:10].hex())
                         else:
                             logger.error("No file content found in part")
                     except Exception as e:
