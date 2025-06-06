@@ -9,7 +9,7 @@ import boto3
 from aws_lambda_powertools import Logger
 from aws_lambda_powertools.event_handler import APIGatewayRestResolver, Response, content_types
 from aws_lambda_powertools.utilities.typing import LambdaContext
-from src.constants.index import ENV, REGION_NAME
+from src.constants.index import ENV, REGION_NAME, S3_ASSESSMENTS_FILES_BUCKET_NAME
 
 from src.use_cases.hiring_process.send_files_to_assistnat import send_file_to_assistant_use_case
 
