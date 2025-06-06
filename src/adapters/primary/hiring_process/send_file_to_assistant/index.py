@@ -2,6 +2,7 @@
 from datetime import datetime
 from typing import Dict, Any
 import base64
+import urllib.parse
 
 import boto3
 from aws_lambda_powertools import Logger
@@ -46,6 +47,7 @@ def send_file_to_assistant():
         file_content = None
         file_type = 'pdf'  # default
         hiring_process_id = None
+        original_filename = None
         
         for part in parts:
             if b'Content-Disposition: form-data; name="hiring_process_id"' in part:
@@ -53,8 +55,15 @@ def send_file_to_assistant():
             
             # Buscar el archivo
             if b'Content-Disposition: form-data; name="file"' in part:
+                # Extraer el nombre original del archivo
+                if b'filename=' in part:
+                    filename_part = part.split(b'filename=')[1].split(b'\r\n')[0]
+                    # Decodificar el nombre del archivo si está en formato URL
+                    original_filename = urllib.parse.unquote(filename_part.decode().strip('"'))
+                
                 if b'Content-Type:' in part:
                     file_type = part.split(b'Content-Type: ')[1].split(b'\r\n')[0].decode()
+                
                 file_content = part.split(b'\r\n\r\n')[1].rstrip(b'\r\n')
         
         if not file_content:
@@ -66,7 +75,9 @@ def send_file_to_assistant():
 
         # Crear nombre único para el archivo
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        file_key = f"{hiring_process_id}/{timestamp}.{file_type.split('/')[-1]}"
+        safe_filename = original_filename if original_filename else f"file_{timestamp}"
+        safe_filename = "".join(c for c in safe_filename if c.isalnum() or c in ('-', '_', '.'))
+        file_key = f"{hiring_process_id}/{timestamp}_{safe_filename}"
         
         # Subir el archivo a S3
         s3_client = boto3.client('s3')
