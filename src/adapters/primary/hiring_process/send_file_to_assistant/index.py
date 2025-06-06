@@ -31,7 +31,11 @@ def send_file_to_assistant():
             status_code=200,
             body={
                 "message": "File uploaded successfully",
-                "therad_id": thread_id
+                "body":{
+                    "data":{
+                        "thread_id": thread_id
+                    }
+                }
             },
             content_type=content_types.APPLICATION_JSON,
         )
