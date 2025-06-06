@@ -2,6 +2,8 @@ from datetime import datetime
 from typing import Dict, Any
 import base64
 import urllib.parse
+import cgi
+import io
 
 import boto3
 from aws_lambda_powertools import Logger
@@ -44,93 +46,52 @@ def send_file_to_assistant():
         boundary = content_type.split('boundary=')[-1]
         logger.info("Boundary: %s", boundary)
         
-        # Procesar el body multipart
-        try:
-            parts = body.split(f'--{boundary}')
-            logger.info("Number of parts: %d", len(parts))
-            for i, part in enumerate(parts):
-                logger.info("Part %d first 100 chars: %s", i, part[:100] if part else "Empty part")
-        except Exception as e:
-            logger.error("Error splitting parts: %s", str(e))
-            return Response(
-                status_code=400,
-                body={"message": "Error processing multipart form data"},
-                content_type=content_types.APPLICATION_JSON,
-            )
+        # Crear un objeto StringIO con el body
+        body_io = io.StringIO(body)
+        
+        # Crear un objeto FieldStorage para manejar el multipart/form-data
+        environ = {
+            'REQUEST_METHOD': 'POST',
+            'CONTENT_TYPE': content_type,
+            'CONTENT_LENGTH': str(len(body))
+        }
+        
+        form = cgi.FieldStorage(
+            fp=body_io,
+            environ=environ,
+            headers=app.current_event.headers,
+            keep_blank_values=True
+        )
         
         file_content = None
         file_type = 'pdf'
         hiring_process_id = None
         
-        for i, part in enumerate(parts):
-            try:
-                logger.info("Processing part %d", i)
+        # Procesar los campos del formulario
+        for key in form.keys():
+            logger.info("Processing form field: %s", key)
+            
+            if key == 'hiring_process_id':
+                hiring_process_id = form[key].value
+                logger.info("Found hiring_process_id: %s", hiring_process_id)
+            
+            elif key == 'file':
+                file_item = form[key]
+                logger.info("Found file: %s", file_item.filename)
                 
-                # Buscar el hiring_process_id
-                if 'Content-Disposition: form-data; name="hiring_process_id"' in part:
-                    try:
-                        hiring_process_id = part.split('\r\n\r\n')[1].strip()
-                        logger.info("Found hiring_process_id: %s", hiring_process_id)
-                    except Exception as e:
-                        logger.error("Error decoding hiring_process_id: %s", str(e))
-                        continue
-                
-                # Buscar el archivo
-                if 'Content-Disposition: form-data; name="file"' in part:
-                    logger.info("Found file part")
-                    try:
-                        if 'Content-Type:' in part:
-                            file_type = part.split('Content-Type: ')[1].split('\r\n')[0]
-                            logger.info("File type: %s", file_type)
-                        
-                        # Obtener el contenido del archivo
-                        file_parts = part.split('\r\n\r\n')
-                        logger.info("Number of file parts after split: %d", len(file_parts))
-                        for i, fp in enumerate(file_parts):
-                            logger.info("File part %d length: %d", i, len(fp) if fp else 0)
-                            logger.info("File part %d first 100 chars: %s", i, fp[:100] if fp else "Empty")
-                        
-                        if len(file_parts) > 1:
-                            file_content = file_parts[1]
-                            logger.info("File content type: %s", type(file_content))
-                            logger.info("File content length: %d", len(file_content))
-                            
-                            # Manejar el contenido como base64
-                            if isinstance(file_content, str):
-                                logger.info("Content is string, attempting base64 decode")
-                                try:
-                                    # Intentar decodificar base64
-                                    file_content = base64.b64decode(file_content)
-                                    logger.info("Successfully decoded base64 content. New length: %d", len(file_content))
-                                except Exception as e:
-                                    logger.error("Base64 decode failed: %s", str(e))
-                                    # Si falla base64, intentar con bytes directos
-                                    try:
-                                        file_content = file_content.encode('utf-8')
-                                        logger.info("Using UTF-8 encoding. New length: %d", len(file_content))
-                                    except Exception as e:
-                                        logger.error("UTF-8 encoding failed: %s", str(e))
-                                        raise
-                            else:
-                                logger.info("Content is already bytes, length: %d", len(file_content))
-                            
-                            logger.info("Final file content length: %d", len(file_content))
-                            logger.info("First 100 bytes as hex: %s", file_content[:100].hex() if file_content else "No content")
-                            
-                            # Verificar que el contenido comienza con %PDF
-                            if file_content.startswith(b'%PDF'):
-                                logger.info("Content is a valid PDF file")
-                            else:
-                                logger.warning("Content does not start with %PDF")
-                                logger.info("First 10 bytes: %s", file_content[:10].hex())
-                        else:
-                            logger.error("No file content found in part")
-                    except Exception as e:
-                        logger.error("Error processing file part: %s", str(e))
-                        continue
-            except Exception as e:
-                logger.error("Error processing part %d: %s", i, str(e))
-                continue
+                if file_item.file:
+                    file_content = file_item.file.read()
+                    file_type = file_item.type or 'application/pdf'
+                    logger.info("File content length: %d", len(file_content))
+                    logger.info("File type: %s", file_type)
+                    logger.info("First 100 bytes as hex: %s", file_content[:100].hex() if file_content else "No content")
+                    
+                    # Verificar que el contenido comienza con %PDF
+                    if file_content.startswith(b'%PDF'):
+                        logger.info("Content is a valid PDF file")
+                    else:
+                        logger.warning("Content does not start with %PDF")
+                        logger.info("First 10 bytes: %s", file_content[:10].hex())
 
         if not hiring_process_id:
             return Response(
@@ -183,12 +144,6 @@ def send_file_to_assistant():
             },
             content_type=content_types.APPLICATION_JSON,
         )
-
-    # except ValidationError as e:
-    #     logger.error(str(e))
-    #     return Response(
-    #         status_code=422, body={"message": str(e)}, content_type=content_types.APPLICATION_JSON
-    #     )
 
     except ValueError as e:
         logger.error(str(e))
