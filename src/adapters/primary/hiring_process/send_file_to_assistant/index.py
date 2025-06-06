@@ -95,12 +95,22 @@ def send_file_to_assistant():
                             logger.info("File content type: %s", type(file_content))
                             logger.info("File content length: %d", len(file_content))
                             
-                            # Manejar el contenido como bytes directamente
+                            # Manejar el contenido como base64
                             if isinstance(file_content, str):
-                                logger.info("Content is string, converting to bytes")
-                                # Convertir a bytes sin interpretar el contenido
-                                file_content = bytes(file_content, 'latin1')
-                                logger.info("Converted to bytes, new length: %d", len(file_content))
+                                logger.info("Content is string, attempting base64 decode")
+                                try:
+                                    # Intentar decodificar base64
+                                    file_content = base64.b64decode(file_content)
+                                    logger.info("Successfully decoded base64 content. New length: %d", len(file_content))
+                                except Exception as e:
+                                    logger.error("Base64 decode failed: %s", str(e))
+                                    # Si falla base64, intentar con bytes directos
+                                    try:
+                                        file_content = file_content.encode('utf-8')
+                                        logger.info("Using UTF-8 encoding. New length: %d", len(file_content))
+                                    except Exception as e:
+                                        logger.error("UTF-8 encoding failed: %s", str(e))
+                                        raise
                             else:
                                 logger.info("Content is already bytes, length: %d", len(file_content))
                             
