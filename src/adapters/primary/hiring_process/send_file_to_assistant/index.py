@@ -46,8 +46,10 @@ def send_file_to_assistant():
         boundary = content_type.split('boundary=')[-1]
         logger.info("Boundary: %s", boundary)
         
-        # Crear un objeto StringIO con el body
-        body_io = io.StringIO(body)
+        # Crear un objeto BytesIO con el body
+        if isinstance(body, str):
+            body = body.encode('utf-8')
+        body_io = io.BytesIO(body)
         
         # Crear un objeto FieldStorage para manejar el multipart/form-data
         environ = {
