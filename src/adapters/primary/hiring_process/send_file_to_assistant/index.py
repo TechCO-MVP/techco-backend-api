@@ -1,7 +1,9 @@
-
 from datetime import datetime
 from typing import Dict, Any
 import base64
+import urllib.parse
+import cgi
+import io
 
 import boto3
 from aws_lambda_powertools import Logger
@@ -19,44 +21,87 @@ app = APIGatewayRestResolver()
 def send_file_to_assistant():
     """send file to assistant"""
     try:
-
-        # Obtener el hiring_process_id
+        # Log del evento completo para debug
+        logger.info("Event received: %s", app.current_event.raw_event)
         
-        body = base64.b64decode(app.current_event.body)
+        # Log de los headers
+        logger.info("Headers: %s", app.current_event.headers)
+        
+        # Obtener el body
+        body = app.current_event.body
+        logger.info("Body type: %s", type(body))
+        logger.info("Body first 100 chars: %s", body[:100] if body else "No body")
+        
         content_type = app.current_event.headers.get('Content-Type', '')
+        logger.info("Content-Type: %s", content_type)
+        
+        # Extraer el boundary
+        if 'boundary=' not in content_type:
+            return Response(
+                status_code=400,
+                body={"message": "No boundary found in Content-Type"},
+                content_type=content_types.APPLICATION_JSON,
+            )
+            
         boundary = content_type.split('boundary=')[-1]
+        logger.info("Boundary: %s", boundary)
         
-
-        # Extraer el boundary del Content-Type
+        # Crear un objeto BytesIO con el body
+        if isinstance(body, str):
+            body = body.encode('utf-8')
+        body_io = io.BytesIO(body)
         
-        # Procesar el body multipart
-        # El body contendrá algo como:
-        # ------WebKitFormBoundary7MA4YWxkTrZu0gW
-        # Content-Disposition: form-data; name="file"; filename="example.pdf"
-        # Content-Type: application/pdf
-        #
-        # [contenido binario del archivo]
-        # ------WebKitFormBoundary7MA4YWxkTrZu0gW--
+        # Crear un objeto FieldStorage para manejar el multipart/form-data
+        environ = {
+            'REQUEST_METHOD': 'POST',
+            'CONTENT_TYPE': content_type,
+            'CONTENT_LENGTH': str(len(body))
+        }
         
-        # Extraer el contenido del archivo
-        # Primero, dividimos por el boundary
-        parts = body.split(f'--{boundary}'.encode())
+        form = cgi.FieldStorage(
+            fp=body_io,
+            environ=environ,
+            headers=app.current_event.headers,
+            keep_blank_values=True
+        )
         
-        # Buscamos la parte que contiene el archivo
         file_content = None
-        file_type = 'pdf'  # default
+        file_type = 'pdf'
         hiring_process_id = None
         
-        for part in parts:
-            if b'Content-Disposition: form-data; name="hiring_process_id"' in part:
-                hiring_process_id = part.split(b'\r\n\r\n')[1].decode().strip()
+        # Procesar los campos del formulario
+        for key in form.keys():
+            logger.info("Processing form field: %s", key)
             
-            # Buscar el archivo
-            if b'Content-Disposition: form-data; name="file"' in part:
-                if b'Content-Type:' in part:
-                    file_type = part.split(b'Content-Type: ')[1].split(b'\r\n')[0].decode()
-                file_content = part.split(b'\r\n\r\n')[1].rstrip(b'\r\n')
-        
+            if key == 'hiring_process_id':
+                hiring_process_id = form[key].value
+                logger.info("Found hiring_process_id: %s", hiring_process_id)
+            
+            elif key == 'file':
+                file_item = form[key]
+                logger.info("Found file: %s", file_item.filename)
+                
+                if file_item.file:
+                    file_content = file_item.file.read()
+                    file_type = file_item.type or 'application/pdf'
+                    logger.info("File content length: %d", len(file_content))
+                    logger.info("File type: %s", file_type)
+                    logger.info("First 100 bytes as hex: %s", file_content[:100].hex() if file_content else "No content")
+                    
+                    # Verificar que el contenido comienza con %PDF
+                    if file_content.startswith(b'%PDF'):
+                        logger.info("Content is a valid PDF file")
+                    else:
+                        logger.warning("Content does not start with %PDF")
+                        logger.info("First 10 bytes: %s", file_content[:10].hex())
+
+        if not hiring_process_id:
+            return Response(
+                status_code=400,
+                body={"message": "hiring_process_id is required in form-data"},
+                content_type=content_types.APPLICATION_JSON,
+            )
+
         if not file_content:
             return Response(
                 status_code=400,
@@ -72,12 +117,22 @@ def send_file_to_assistant():
         s3_client = boto3.client('s3')
         bucket_name = f"{ENV}-techco-assessments-files-{REGION_NAME}"
         
-        s3_client.put_object(
-            Bucket=bucket_name,
-            Key=file_key,
-            Body=file_content,
-            ContentType=file_type
-        )
+        try:
+            logger.info("Uploading file to S3. Content length: %d", len(file_content))
+            s3_client.put_object(
+                Bucket=bucket_name,
+                Key=file_key,
+                Body=file_content,
+                ContentType=file_type
+            )
+            logger.info("File uploaded successfully to S3")
+        except Exception as e:
+            logger.error("Error uploading to S3: %s", str(e))
+            return Response(
+                status_code=500,
+                body={"message": f"Error uploading to S3: {str(e)}"},
+                content_type=content_types.APPLICATION_JSON,
+            )
 
         # Generar la URL del archivo
         file_url = f"https://{bucket_name}.s3.{REGION_NAME}.amazonaws.com/{file_key}"
@@ -91,12 +146,6 @@ def send_file_to_assistant():
             },
             content_type=content_types.APPLICATION_JSON,
         )
-
-    # except ValidationError as e:
-    #     logger.error(str(e))
-    #     return Response(
-    #         status_code=422, body={"message": str(e)}, content_type=content_types.APPLICATION_JSON
-    #     )
 
     except ValueError as e:
         logger.error(str(e))
