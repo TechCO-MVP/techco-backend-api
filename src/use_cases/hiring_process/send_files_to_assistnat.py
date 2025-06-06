@@ -26,9 +26,9 @@ def send_file_to_assistant_use_case(body: dict, content_type: str, headers: dict
     temp_file_path = create_temp_file(file_key, file_data)
     messages = prepare_messages(message)
     open_ai_adapter = set_open_ai_adapter(hiring_process_id, assistant_name)
-    messages_thread = open_ai_adapter.generate_response(messages, temp_file_path)
+    thread_id = open_ai_adapter.generate_response(messages, temp_file_path, return_thread_id=True)
 
-    return file_key
+    return thread_id
 
 
 def save_file_to_s3(body: dict, content_type: str, headers: dict) -> tuple:
