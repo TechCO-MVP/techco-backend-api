@@ -21,39 +21,13 @@ def send_file_to_assistant():
     try:
 
         # Obtener el hiring_process_id
-        hiring_process_id = app.current_event.get_query_string_value("hiring_process_id")
-        if not hiring_process_id:
-            return Response(
-                status_code=400,
-                body={"message": "hiring_process_id is required as query parameter"},
-                content_type=content_types.APPLICATION_JSON,
-            )
-
-        # Verificar si el body está en base64 (API Gateway codifica el body en base64 cuando es binario)
-        if not app.current_event.is_base64_encoded:
-            return Response(
-                status_code=400,
-                body={"message": "Request must contain a file"},
-                content_type=content_types.APPLICATION_JSON,
-            )
-
-        # Obtener el body decodificado
+        
         body = base64.b64decode(app.current_event.body)
-        
-        # Obtener el Content-Type del header
         content_type = app.current_event.headers.get('Content-Type', '')
+        boundary = content_type.split('boundary=')[-1]
         
-        # Extraer el tipo de archivo del Content-Type
-        # El Content-Type será algo como: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
-        if 'multipart/form-data' not in content_type:
-            return Response(
-                status_code=400,
-                body={"message": "Content-Type must be multipart/form-data"},
-                content_type=content_types.APPLICATION_JSON,
-            )
 
         # Extraer el boundary del Content-Type
-        boundary = content_type.split('boundary=')[-1]
         
         # Procesar el body multipart
         # El body contendrá algo como:
@@ -71,19 +45,17 @@ def send_file_to_assistant():
         # Buscamos la parte que contiene el archivo
         file_content = None
         file_type = 'pdf'  # default
+        hiring_process_id = None
         
         for part in parts:
+            if b'Content-Disposition: form-data; name="hiring_process_id"' in part:
+                hiring_process_id = part.split(b'\r\n\r\n')[1].decode().strip()
+            
+            # Buscar el archivo
             if b'Content-Disposition: form-data; name="file"' in part:
-                # Extraer el tipo de archivo
                 if b'Content-Type:' in part:
                     file_type = part.split(b'Content-Type: ')[1].split(b'\r\n')[0].decode()
-                
-                # Extraer el contenido del archivo
-                # El contenido está después de dos saltos de línea
-                file_content = part.split(b'\r\n\r\n')[1]
-                # Eliminar el último salto de línea
-                file_content = file_content.rstrip(b'\r\n')
-                break
+                file_content = part.split(b'\r\n\r\n')[1].rstrip(b'\r\n')
         
         if not file_content:
             return Response(
