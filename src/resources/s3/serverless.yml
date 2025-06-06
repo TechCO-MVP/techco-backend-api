@@ -53,8 +53,6 @@ S3PublicDataPolicy:
               - !Ref S3PublicData
               - '/*'
 
-// ... existing code ...
-
 S3AssessmentsFiles:
   Type: AWS::S3::Bucket
   Properties:
