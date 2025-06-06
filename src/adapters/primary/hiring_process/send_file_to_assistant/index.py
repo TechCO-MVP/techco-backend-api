@@ -85,22 +85,27 @@ def send_file_to_assistant():
                         
                         # Obtener el contenido del archivo
                         file_parts = part.split('\r\n\r\n')
+                        logger.info("Number of file parts after split: %d", len(file_parts))
+                        for i, fp in enumerate(file_parts):
+                            logger.info("File part %d length: %d", i, len(fp) if fp else 0)
+                            logger.info("File part %d first 100 chars: %s", i, fp[:100] if fp else "Empty")
+                        
                         if len(file_parts) > 1:
                             file_content = file_parts[1]
                             logger.info("File content type: %s", type(file_content))
                             logger.info("File content length: %d", len(file_content))
-                            logger.info("File content first 100 chars: %s", file_content[:100] if file_content else "No content")
                             
-                            # Convertir a bytes si es necesario, pero sin codificación UTF-8
+                            # Preservar el contenido binario original
                             if isinstance(file_content, str):
-                                # Decodificar base64 si el contenido está en base64
-                                try:
-                                    file_content = base64.b64decode(file_content)
-                                except:
-                                    # Si no es base64, mantener como bytes
-                                    file_content = file_content.encode('latin1')
+                                logger.info("Content is string, preserving binary data")
+                                # Convertir a bytes manteniendo los bytes originales
+                                file_content = file_content.encode('utf-8', errors='surrogateescape')
+                                logger.info("Converted to bytes, new length: %d", len(file_content))
+                            else:
+                                logger.info("Content is already bytes, length: %d", len(file_content))
                             
-                            logger.info("File content after encoding length: %d", len(file_content))
+                            logger.info("Final file content length: %d", len(file_content))
+                            logger.info("First 100 bytes as hex: %s", file_content[:100].hex() if file_content else "No content")
                         else:
                             logger.error("No file content found in part")
                     except Exception as e:
