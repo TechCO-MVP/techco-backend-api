@@ -524,7 +524,7 @@ functions:
             type: COGNITO_USER_POOLS
             authorizerId:
               Ref: ApiGatewayAuthorizer
-  
+
   put_hiring_process_custom_fields_by_id:
     handler: src/adapters/primary/hiring_process/put_hiring_process__custom_fields/index.handler
     events:
@@ -771,7 +771,7 @@ functions:
             type: COGNITO_USER_POOLS
             authorizerId:
               Ref: ApiGatewayAuthorizer
-  
+
   send_file_to_assistant:
     handler: src/adapters/primary/hiring_process/send_file_to_assistant/index.handler
     events:
@@ -780,6 +780,16 @@ functions:
           method: post
           cors: true
           private: true
+
+  hiring_process_assistant_response:
+    handler: src/adapters/primary/hiring_process/assistant_response/index.handler
+    events:
+      - http:
+          path: /hiring_process/assistant/response
+          method: post
+          cors: true
+          private: true
+    timeout: 60
 
 stepFunctions:
   stateMachines: ${file(./src/resources/brightdata/serverless.yml):stateMachines}
