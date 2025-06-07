@@ -783,7 +783,7 @@ functions:
 
   send_file_to_assistant:
     handler: src/adapters/primary/hiring_process/send_file_to_assistant/index.handler
-    timeout: 600
+    timeout: 900
     events:
       - http:
           path: /hiring_process/send_file_to_assistant
@@ -791,7 +791,7 @@ functions:
           cors: true
           private: true
           # integration: lambda
-          # async: true
+          async: true
 
   check_file_processing_status:
     handler: src/adapters/primary/hiring_process/check_processing_status/index.handler
