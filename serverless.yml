@@ -26,6 +26,7 @@ provider:
   environment:
     ENV: ${self:provider.stage}
     REGION_NAME: ${self:provider.region}
+    SERVICE_NAME: ${self:service}
     COGNITO_USER_POOL_ID: !Ref CognitoUserPool
     COGNITO_USER_POOL_CLIENT_ID: !Ref CognitoPasswordlessUserPoolClient
     DOCUMENTDB_SECRET_NAME: ${self:resources.Resources.DocumentDBSecretPassword.Properties.Name}
@@ -136,7 +137,7 @@ provider:
           Action:
             - lambda:InvokeFunction
           Resource: 
-            - "arn:aws:lambda:${self:provider.region}:*:function:${self:provider.stage}-process-file-for-assistant"
+            - "arn:aws:lambda:${self:provider.region}:*:function:${self:service}-${self:provider.stage}-process-file-for-assistant"
 
 custom:
   userPoolName: ${self:provider.stage}-passwordless-user-pool
