@@ -781,6 +781,25 @@ functions:
             authorizerId:
               Ref: ApiGatewayAuthorizer
 
+  process_file_for_assistant:
+    handler: src/adapters/primary/hiring_process/process_file/index.handler
+    timeout: 900
+    memorySize: 1024
+    environment:
+      ENV: ${self:provider.stage}
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - s3:GetObject
+          - s3:PutObject
+        Resource: 
+          - "arn:aws:s3:::${self:provider.stage}-techco-assessments-files-${self:provider.region}/*"
+      - Effect: Allow
+        Action:
+          - dynamodb:UpdateItem
+        Resource: 
+          - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.stage}-file-processing-status"
+
   send_file_to_assistant:
     handler: src/adapters/primary/hiring_process/send_file_to_assistant/index.handler
     timeout: 30
@@ -805,25 +824,6 @@ functions:
           method: get
           cors: true
           private: true
-  
-  process_file_for_assistant:
-    handler: src/adapters/primary/hiring_process/process_file/index.handler
-    timeout: 900
-    memorySize: 1024
-    environment:
-      ENV: ${self:provider.stage}
-    iamRoleStatements:
-      - Effect: Allow
-        Action:
-          - s3:GetObject
-          - s3:PutObject
-        Resource: 
-          - "arn:aws:s3:::${self:provider.stage}-techco-assessments-files-${self:provider.region}/*"
-      - Effect: Allow
-        Action:
-          - dynamodb:UpdateItem
-        Resource: 
-          - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.stage}-file-processing-status"
 
   hiring_process_assistant_response:
     handler: src/adapters/primary/hiring_process/assistant_response/index.handler
