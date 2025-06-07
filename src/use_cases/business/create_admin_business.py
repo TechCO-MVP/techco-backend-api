@@ -12,6 +12,7 @@ from src.domain.user import UserDTO, UserEntity
 from src.repositories.document_db.business_repository import BusinessRepository
 from src.repositories.document_db.client import DocumentDBClient
 from src.repositories.document_db.user_repository import UserRepository
+from src.constants.business.configuration import base_position_flows
 
 
 def validate_business_dto(business_dto: BusinessDTO):
@@ -24,6 +25,7 @@ def validate_business_dto(business_dto: BusinessDTO):
 def create_business_and_user(business_dto: BusinessDTO, user_dto: UserDTO):
     assistants = create_assistants_for_business()
     business_dto.assistants = assistants
+    business_dto.position_flows = base_position_flows.copy()
 
     business_repository = BusinessRepository()
     business_entity = BusinessEntity(props=business_dto)
