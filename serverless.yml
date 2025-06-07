@@ -791,7 +791,7 @@ functions:
           cors: true
           private: true
           # integration: lambda
-          async: true
+          # async: true
 
   check_file_processing_status:
     handler: src/adapters/primary/hiring_process/check_processing_status/index.handler
