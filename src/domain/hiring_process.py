@@ -10,6 +10,11 @@ from src.domain.profile import ProfileBrightDataDTO
 from src.domain.assistant import ASSISTANT_TYPE
 
 
+class FILE_PROCESSING_STATUS(str, Enum):
+    IN_PROGRESS = "IN_PROGRESS"
+    COMPLETED = "COMPLETED"
+    FAILED = "FAILED"
+
 class HIRING_PROCESS_STATUS(str, Enum):
     STARTED = "STARTED"
     FINISHED = "FINISHED"
