@@ -137,7 +137,7 @@ provider:
           Action:
             - lambda:InvokeFunction
           Resource: 
-            - "arn:aws:lambda:${self:provider.region}:*:function:${self:service}-${self:provider.stage}-process-file-for-assistant"
+            - "arn:aws:lambda:${self:provider.region}:*:function:${self:service}-${self:provider.stage}-process_file_for_assistant"
 
 custom:
   userPoolName: ${self:provider.stage}-passwordless-user-pool
