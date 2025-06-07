@@ -40,7 +40,7 @@ class OpenAIAdapter(LLMService):
         thread_run = self.create_and_run_thread(messages, file_id)
         self.wait_for_completion(thread_run)
         self.delete_file(file_id)
-        return self.get_thread_response(thread_run) if not return_thread_id else thread_run.thread_id
+        return self.get_thread_response(thread_run) if not return_thread_id else thread_run.id
 
     def initialize_assistant_thread(self, assistant_id: str, initial_message: str = "Hola!") -> Run:
         """
