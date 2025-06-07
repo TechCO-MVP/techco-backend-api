@@ -46,7 +46,7 @@ def send_file_to_assistant():
         
         # Invocamos la Lambda de procesamiento de forma asíncrona
         lambda_client.invoke(
-            FunctionName=f"{SERVICE_NAME}-{ENV}-process-file-for-assistant",
+            FunctionName=f"{SERVICE_NAME}-{ENV}-process_file_for_assistant",
             InvocationType='Event',
             Payload=json.dumps({
                 'file_key': file_key,
