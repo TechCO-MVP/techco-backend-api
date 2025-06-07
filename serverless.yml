@@ -790,6 +790,12 @@ functions:
           method: post
           cors: true
           private: true
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - lambda:InvokeFunction
+        Resource: 
+          - "arn:aws:lambda:${self:provider.region}:*:function:${self:provider.stage}-process-file-for-assistant"
 
   check_file_processing_status:
     handler: src/adapters/primary/hiring_process/check_processing_status/index.handler
