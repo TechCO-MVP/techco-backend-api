@@ -19,6 +19,9 @@ app = APIGatewayRestResolver()
 def send_file_to_assistant():
     """send file to assistant"""
     try:
+        logger.info("=== Iniciando procesamiento de archivo ===")
+        logger.info(f"Raw event: {app.current_event.raw_event}")
+        logger.info(f"Headers: {app.current_event.headers}")
         body = app.current_event.body
         is_base64_encoded = app.current_event.raw_event.get("isBase64Encoded", False)
 
