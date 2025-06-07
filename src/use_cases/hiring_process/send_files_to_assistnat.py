@@ -10,25 +10,30 @@ from src.repositories.s3.filter_profile import S3StorageRepository
 from src.adapters.secondary.llm.open_ai_adapter import OpenAIAdapter
 from src.use_cases.hiring_process.get_hiring_process import get_hiring_process_use_case
 from src.use_cases.business.get_business_only_with_id import get_business_only_with_id_use_case
-from src.constants.position.configuration import assistant_phase_mapping, get_assistant_for_phase
 from src.domain.business import BusinessEntity
-from src.domain.hiring_process import HiringProcessEntity
+from src.domain.hiring_process import HiringProcessEntity, FILE_PROCESSING_STATUS
 from src.utils.files import create_temporal_file
+from src.use_cases.hiring_process.processing_status import save_processing_status
 
 
 logger = Logger()
 
-def send_file_to_assistant_use_case(body: dict, content_type: str, headers: dict) -> tuple:
+def send_file_to_assistant_use_case(body: dict, content_type: str, headers: dict, process_id: str) -> str:
     """put hiring process custom fileds by id use case."""
+    try:
+        file_key, hiring_process_id, message, assistant_name = save_file_to_s3(body, content_type, headers)
+        file_data = fetch_profiles_data(file_key)
+        temp_file_path = create_temp_file(file_key.split("/")[-1], file_data)
+        messages = prepare_messages(message)
+        open_ai_adapter = set_open_ai_adapter(hiring_process_id, assistant_name)
+        thread_id = open_ai_adapter.generate_response(messages, temp_file_path, return_run_id=True)
+        save_processing_status(process_id, thread_id, FILE_PROCESSING_STATUS.COMPLETED.value)
 
-    file_key, hiring_process_id, message, assistant_name = save_file_to_s3(body, content_type, headers)
-    file_data = fetch_profiles_data(file_key)
-    temp_file_path = create_temp_file(file_key, file_data)
-    messages = prepare_messages(message)
-    open_ai_adapter = set_open_ai_adapter(hiring_process_id, assistant_name)
-    thread_id = open_ai_adapter.generate_response(messages, temp_file_path, return_run_id=True)
-
-    return thread_id
+        return thread_id
+    except Exception as e:
+        logger.exception("An error occurred: %s", e)
+        save_processing_status(process_id, thread_id, FILE_PROCESSING_STATUS.FAILED)
+        raise ValueError(f"An error occurred: {str(e)}")
 
 
 def save_file_to_s3(body: dict, content_type: str, headers: dict) -> tuple:
