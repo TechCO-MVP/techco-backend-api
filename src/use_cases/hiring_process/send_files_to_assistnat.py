@@ -120,14 +120,7 @@ def prepare_messages(message: str) -> list:
 def set_open_ai_adapter(hiring_process_id: str, assistant_name: str) -> OpenAIAdapter:
     hiring_entity: HiringProcessEntity = get_hiring_process_use_case({"hiring_process_id": hiring_process_id})
     business_entity: BusinessEntity = get_business_only_with_id_use_case(hiring_entity.props.business_id)
-    assistand_name = assistant_phase_mapping.get(assistant_name)
-
-    if not assistand_name:
-        assistant_id = get_assistant_for_phase[assistant_name](None, assistant_name)
-        if not assistant_id:
-            raise ValueError(f"Assistant not found for phase type: {assistant_name}")
-    else:
-        assistant_id = business_entity.props.assistants[assistand_name].assistant_id
+    assistant_id = business_entity.props.assistants[assistant_name].assistant_id
 
     context = {"business_id": business_entity.id}
     open_ai_adapter = OpenAIAdapter(context)
