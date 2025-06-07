@@ -26,3 +26,4 @@ TOKEN_SERVICE_BRIGHTDATA_SECRET_NAME = environ.get("TOKEN_SERVICE_BRIGHTDATA", "
 TABLE_WEBSOCKET_CONNECTIONS = f"{ENV}-websocket-connections"
 TABLE_WEBSOCKET_CONNECTIONS_PUBLIC = f"{ENV}-websocket-connections-public"
 API_ID = environ.get("API_ID", "y7fav1lech")
+SERVICE_NAME = environ.get("SERVICE_NAME", "")
