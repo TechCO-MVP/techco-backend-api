@@ -1,18 +1,20 @@
 import base64
 import uuid
-import asyncio
+import json
+import boto3
 
-from concurrent.futures import ThreadPoolExecutor
+from src.constants.index import ENV
 from aws_lambda_powertools import Logger
 from aws_lambda_powertools.event_handler import APIGatewayRestResolver, Response, content_types
 from aws_lambda_powertools.utilities.typing import LambdaContext
 
-from src.use_cases.hiring_process.send_files_to_assistnat import send_file_to_assistant_use_case
+from src.use_cases.hiring_process.send_files_to_assistnat import save_file_to_s3
 from src.use_cases.hiring_process.processing_status import save_processing_status
 from src.domain.hiring_process import FILE_PROCESSING_STATUS
 
 logger = Logger()
 app = APIGatewayRestResolver()
+lambda_client = boto3.client('lambda')
 
 
 @app.post("/hiring_process/send_file_to_assistant")
@@ -40,11 +42,20 @@ def send_file_to_assistant():
         # Guardamos el estado inicial en DynamoDB
         save_processing_status(process_id, None, "IN_PROGRESS")
 
-        def process_async():
-            send_file_to_assistant_use_case(body, content_type, headers, process_id)
-            
-        executor = ThreadPoolExecutor(max_workers=1)
-        executor.submit(process_async)
+        file_key, hiring_process_id, message, assistant_name = save_file_to_s3(body, content_type, headers)
+        
+        # Invocamos la Lambda de procesamiento de forma asíncrona
+        lambda_client.invoke(
+            FunctionName=f"{ENV}-process-file-for-assistant",
+            InvocationType='Event',
+            Payload=json.dumps({
+                'file_key': file_key,
+                'hiring_process_id': hiring_process_id,
+                'message': message,
+                'assistant_name': assistant_name,
+                'process_id': process_id
+            })
+        )
 
         return Response(
             status_code=202,  # Accepted
