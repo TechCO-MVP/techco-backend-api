@@ -132,6 +132,11 @@ provider:
           Resource:
             - !Sub "arn:aws:s3:::${self:provider.stage}-techco-assessments-files-${self:provider.region}"
             - !Sub "arn:aws:s3:::${self:provider.stage}-techco-assessments-files-${self:provider.region}/*"
+        - Effect: Allow
+          Action:
+            - lambda:InvokeFunction
+          Resource: 
+            - "arn:aws:lambda:${self:provider.region}:*:function:${self:provider.stage}-process-file-for-assistant"
 
 custom:
   userPoolName: ${self:provider.stage}-passwordless-user-pool
@@ -785,20 +790,6 @@ functions:
     handler: src/adapters/primary/hiring_process/process_file/index.handler
     timeout: 900
     memorySize: 1024
-    environment:
-      ENV: ${self:provider.stage}
-    iamRoleStatements:
-      - Effect: Allow
-        Action:
-          - s3:GetObject
-          - s3:PutObject
-        Resource: 
-          - "arn:aws:s3:::${self:provider.stage}-techco-assessments-files-${self:provider.region}/*"
-      - Effect: Allow
-        Action:
-          - dynamodb:UpdateItem
-        Resource: 
-          - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.stage}-file-processing-status"
 
   send_file_to_assistant:
     handler: src/adapters/primary/hiring_process/send_file_to_assistant/index.handler
@@ -809,12 +800,6 @@ functions:
           method: post
           cors: true
           private: true
-    iamRoleStatements:
-      - Effect: Allow
-        Action:
-          - lambda:InvokeFunction
-        Resource: 
-          - "arn:aws:lambda:${self:provider.region}:*:function:${self:provider.stage}-process-file-for-assistant"
 
   check_file_processing_status:
     handler: src/adapters/primary/hiring_process/check_processing_status/index.handler
