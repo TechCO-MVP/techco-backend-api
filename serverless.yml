@@ -116,6 +116,8 @@ provider:
             - !Sub "${WebSocketConnections.Arn}/index/user_id_index"
             - !GetAtt WebSocketConnectionsPublic.Arn
             - !Sub "${WebSocketConnectionsPublic.Arn}/index/hiring_process_id_index"
+            - !GetAtt FileProcessingStatus.Arn
+            - !Sub "${FileProcessingStatus.Arn}/index/process_id_index"
         - Effect: Allow
           Action:
             - s3:PutObject
@@ -180,6 +182,7 @@ resources:
     EventBridgeToSQSRole: ${file(./src/resources/pipefy/serverless.yml):EventBridgeToSQSRole}
     WebSocketConnections: ${file(./src/resources/dynamoDB/serverless.yml):WebSocketConnections}
     WebSocketConnectionsPublic: ${file(./src/resources/dynamoDB/serverless.yml):WebSocketConnectionsPublic}
+    FileProcessingStatus: ${file(./src/resources/dynamoDB/serverless.yml):FileProcessingStatus}
     serverlessApiGatewayCloudWatchRole:
       Type: AWS::IAM::Role
       Properties:
@@ -775,10 +778,22 @@ functions:
 
   send_file_to_assistant:
     handler: src/adapters/primary/hiring_process/send_file_to_assistant/index.handler
+    timeout: 900
     events:
       - http:
           path: /hiring_process/send_file_to_assistant
           method: post
+          cors: true
+          private: true
+          integration: lambda
+          async: true
+
+  check_file_processing_status:
+    handler: src/adapters/primary/hiring_process/check_processing_status/index.handler
+    events:
+      - http:
+          path: /hiring_process/check_status/{process_id}
+          method: get
           cors: true
           private: true
 
