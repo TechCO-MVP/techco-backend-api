@@ -7,6 +7,11 @@ provider:
   runtime: python3.11
   stage: dev
   region: us-east-1
+  apiGateway:
+    binaryMediaTypes:
+      - 'multipart/form-data'
+      - 'application/pdf'
+      - 'application/octet-stream'
   timeout: 30
   versionFunctions: false
   vpc:
@@ -778,7 +783,7 @@ functions:
 
   send_file_to_assistant:
     handler: src/adapters/primary/hiring_process/send_file_to_assistant/index.handler
-    timeout: 900
+    timeout: 600
     events:
       - http:
           path: /hiring_process/send_file_to_assistant
