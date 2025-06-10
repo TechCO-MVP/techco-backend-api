@@ -26,13 +26,16 @@ def send_file_to_assistant_use_case(body: dict, content_type: str, headers: dict
         temp_file_path = create_temp_file(file_key.split("/")[-1], file_data)
         messages = prepare_messages(message)
         open_ai_adapter = set_open_ai_adapter(hiring_process_id, assistant_name)
-        thread_id = open_ai_adapter.generate_response(messages, temp_file_path, return_run_id=True)
-        save_processing_status(process_id, thread_id, FILE_PROCESSING_STATUS.COMPLETED.value)
+        run = open_ai_adapter.generate_response(messages, temp_file_path, return_run=True)
+        run_id = run.id
+        thread_id = run.thread_id
+
+        save_processing_status(process_id, thread_id, run_id, FILE_PROCESSING_STATUS.COMPLETED.value)
 
         return thread_id
     except Exception as e:
         logger.exception("An error occurred: %s", e)
-        save_processing_status(process_id, thread_id, FILE_PROCESSING_STATUS.FAILED)
+        save_processing_status(process_id, None, None, FILE_PROCESSING_STATUS.FAILED.value)
         raise ValueError(f"An error occurred: {str(e)}")
 
 
