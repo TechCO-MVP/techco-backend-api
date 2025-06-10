@@ -25,7 +25,7 @@ def hiring_process_assistant_response():
             raise ValueError("assistant_type is required")
 
         response = assistant_response_use_case(
-            body["hiring_process_id"], body["run_id"], body["assistant_type"]
+            body["hiring_process_id"], body["run_id"], body["thread_id"], body["assistant_type"]
         )
 
         return Response(
