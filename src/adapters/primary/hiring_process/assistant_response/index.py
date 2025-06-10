@@ -19,6 +19,8 @@ def hiring_process_assistant_response():
             raise ValueError("hiring_process_id is required")
         if not body.get("run_id"):
             raise ValueError("run_id is required")
+        if not body.get("thread_id"):
+            raise ValueError("thread_id is required")
         if not body.get("assistant_type"):
             raise ValueError("assistant_type is required")
 
@@ -57,6 +59,7 @@ def handler(event: dict, context: LambdaContext) -> dict:
         "body": {
             "hiring_process_id": "string",
             "run_id": "string",
+            "thread_id": "string",
             "assistan_type": "string"
         }
     }

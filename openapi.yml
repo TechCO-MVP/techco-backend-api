@@ -3420,6 +3420,9 @@ components:
         run_id:
           type: string
           example: "6777862efe77308365432a36"
+        thread_id:
+          type: string
+          example: "6777862efe77308365432a36"
         assistan_type:
           type: string
           enum:
@@ -3429,4 +3432,5 @@ components:
       required:
         - hiring_process_id
         - run_id
+        - thread_id
         - assistan_type
