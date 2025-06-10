@@ -11,7 +11,7 @@ logger = Logger()
 
 
 def assistant_response_use_case(
-    hiring_process_id: str, run_id: str, assistant_type: ASSISTANT_TYPE
+    hiring_process_id: str, run_id: str, thread_id: str, assistant_type: ASSISTANT_TYPE
 ) -> dict:
     """
     Use case to handle the assistant response in the hiring process.
@@ -19,6 +19,8 @@ def assistant_response_use_case(
     Args:
         hiring_process_id (str): The ID of the hiring process.
         run_id (str): The ID of the run for the assistant response.
+        thread_id (str): The ID of the thread for the assistant response.
+        assistant_type (ASSISTANT_TYPE): The type of assistant to use.
 
     Returns:
         dict: The response from the assistant.
@@ -48,7 +50,9 @@ def assistant_response_use_case(
 
     logger.info(f"Checking status for Run ID: {run_id}")
 
-    thread_run = open_ai_adapter.client.beta.threads.runs.retrieve(run_id=run_id)
+    thread_run = open_ai_adapter.client.beta.threads.runs.retrieve(
+        run_id=run_id, thread_id=thread_id
+    )
     response = json.loads(open_ai_adapter.run_and_process_thread(thread_run))
 
     return response
