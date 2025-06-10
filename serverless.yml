@@ -7,6 +7,11 @@ provider:
   runtime: python3.11
   stage: dev
   region: us-east-1
+  apiGateway:
+    binaryMediaTypes:
+      - 'multipart/form-data'
+      - 'application/pdf'
+      - 'application/octet-stream'
   timeout: 30
   versionFunctions: false
   vpc:
@@ -21,6 +26,7 @@ provider:
   environment:
     ENV: ${self:provider.stage}
     REGION_NAME: ${self:provider.region}
+    SERVICE_NAME: ${self:service}
     COGNITO_USER_POOL_ID: !Ref CognitoUserPool
     COGNITO_USER_POOL_CLIENT_ID: !Ref CognitoPasswordlessUserPoolClient
     DOCUMENTDB_SECRET_NAME: ${self:resources.Resources.DocumentDBSecretPassword.Properties.Name}
@@ -32,6 +38,7 @@ provider:
     S3_RAW_PROFILE_DATA_IA_BUCKET_NAME: !Ref S3RawProfileDataIA
     S3_DEPURATED_PROFILE_DATA_IA_BUCKET_NAME: !Ref S3DepuratedProfileDataIA
     S3_REFINED_PROFILE_DATA_IA_BUCKET_NAME: !Ref S3RefinedProfileDataIA
+    S3_ASSESSMENTS_FILES_BUCKET_NAME: !Ref S3AssessmentsFiles
     OPEN_AI_API_KEY_SECRET_NAME: openai_api_key_dev
     OPEN_AI_ASSISTANT_ID: asst_XKxSpnp03caySq26J2e80VPJ
     SQS_USER_NOTIFICATIONS_NAME: !Ref SQSUserNotificatons
@@ -115,6 +122,8 @@ provider:
             - !Sub "${WebSocketConnections.Arn}/index/user_id_index"
             - !GetAtt WebSocketConnectionsPublic.Arn
             - !Sub "${WebSocketConnectionsPublic.Arn}/index/hiring_process_id_index"
+            - !GetAtt FileProcessingStatus.Arn
+            - !Sub "${FileProcessingStatus.Arn}/index/process_id_index"
         - Effect: Allow
           Action:
             - s3:PutObject
@@ -124,6 +133,11 @@ provider:
           Resource:
             - !Sub "arn:aws:s3:::${self:provider.stage}-techco-assessments-files-${self:provider.region}"
             - !Sub "arn:aws:s3:::${self:provider.stage}-techco-assessments-files-${self:provider.region}/*"
+        - Effect: Allow
+          Action:
+            - lambda:InvokeFunction
+          Resource: 
+            - "arn:aws:lambda:${self:provider.region}:*:function:${self:service}-${self:provider.stage}-process_file_for_assistant"
 
 custom:
   userPoolName: ${self:provider.stage}-passwordless-user-pool
@@ -179,6 +193,7 @@ resources:
     EventBridgeToSQSRole: ${file(./src/resources/pipefy/serverless.yml):EventBridgeToSQSRole}
     WebSocketConnections: ${file(./src/resources/dynamoDB/serverless.yml):WebSocketConnections}
     WebSocketConnectionsPublic: ${file(./src/resources/dynamoDB/serverless.yml):WebSocketConnectionsPublic}
+    FileProcessingStatus: ${file(./src/resources/dynamoDB/serverless.yml):FileProcessingStatus}
     serverlessApiGatewayCloudWatchRole:
       Type: AWS::IAM::Role
       Properties:
@@ -605,6 +620,7 @@ functions:
 
   create_pipe_configuration_open_position:
     handler: src/adapters/primary/pipefy/create_pipe_configuration_for_open_position.lambda_handler
+    timeout: 120
 
   create_cards_for_profiles:
     handler: src/adapters/primary/pipefy/create_cards_for_profiles.lambda_handler
@@ -772,12 +788,27 @@ functions:
             authorizerId:
               Ref: ApiGatewayAuthorizer
 
+  process_file_for_assistant:
+    handler: src/adapters/primary/hiring_process/process_file/index.handler
+    timeout: 900
+    memorySize: 1024
+
   send_file_to_assistant:
     handler: src/adapters/primary/hiring_process/send_file_to_assistant/index.handler
+    timeout: 30
     events:
       - http:
           path: /hiring_process/send_file_to_assistant
           method: post
+          cors: true
+          private: true
+
+  check_file_processing_status:
+    handler: src/adapters/primary/hiring_process/check_processing_status/index.handler
+    events:
+      - http:
+          path: /hiring_process/check_status/{process_id}
+          method: get
           cors: true
           private: true
 

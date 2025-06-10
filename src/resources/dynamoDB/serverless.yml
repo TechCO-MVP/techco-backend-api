@@ -45,3 +45,18 @@ WebSocketConnectionsPublic:
     TimeToLiveSpecification:
         AttributeName: "expires_at"
         Enabled: true
+
+FileProcessingStatus:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.stage}-file-processing-status
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: process_id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: process_id
+            KeyType: HASH
+        TimeToLiveSpecification:
+          AttributeName: expires_at
+          Enabled: true
