@@ -19,6 +19,7 @@ keys_remover = [
     "similar_profiles",
     "default_avatar",
     "memorialized_account",
+    "linkedin_id"
 ]
 
 

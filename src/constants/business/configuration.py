@@ -276,13 +276,13 @@ base_position_flows: dict[FLOW_TYPE, PositionFlow] = {
                             "title": "¡Entrevista final agendada con éxito!",
                             "subtitle": "Tu entrevista ha quedado programada para la fecha y hora que elegiste.",
                             "description": "Te enviaremos recordatorios para que estés completamente preparado y puedas llegar con tranquilidad.\n\nEstamos muy emocionados de llegar a esta etapa contigo y de conocer tus ideas finales para sumar al equipo. ¡Esta es la oportunidad para brillar y mostrar todo tu potencial!",
-                            "button_text": "",
+                            "button_text": "statement_pipefy",
                         },
                         "interviewer_data": {
                             "title": "¡Entrevista final confirmada!",
                             "subtitle": "Es el momento clave para decidir si es el match perfecto.",
                             "description": "No olvides agendar la reunión en tu calendario para no perderte nada.\n\n¡Vamos con todo en esta última etapa!\nTu candidato ya agendó la entrevista final para:",
-                            "button_text": "",
+                            "button_text": "statement_pipefy",
                         },
                     },
                     {
@@ -343,6 +343,22 @@ base_position_flows: dict[FLOW_TYPE, PositionFlow] = {
             {
                 "name": "Descartados",
                 "phases": [
+                    {
+                        "name": "Acción no completada",
+                        "phase_classification": PHASE_CLASSIFICATION.CALL_TO_ACTION,
+                        "candidate_data": {
+                            "title": "¡Hola!",
+                            "subtitle": "Vimos que no pudiste completar esta etapa del proceso dentro del tiempo esperado.\nEntendemos que pueden surgir imprevistos o que los horarios disponibles no se ajustaran a tu agenda.",
+                            "description": "Si aún te interesa continuar, te invitamos a escribirle directamente a la persona que ha estado acompañando tu proceso.\nElla podrá ayudarte a revisar si es posible reprogramar o encontrar una alternativa.\n\n¡Gracias por tu interés y esperamos saber de ti pronto!",
+                            "button_text": "",
+                        },
+                        "interviewer_data": {
+                            "title": "El candidato no completó esta etapa del proceso",
+                            "subtitle": "En algunos casos, por diferentes motivos, un candidato no logra avanzar a tiempo.\nEsto puede deberse a temas personales, falta de disponibilidad o que los horarios propuestos no se ajustaban a su agenda.",
+                            "description": "¿Te gustaría darle una nueva oportunidad para completar esta etapa?\n\nGracias por seguir cada paso con atención y empatía.\n¡Seguimos contigo en la búsqueda del mejor talento!",
+                            "button_text": "",
+                        },
+                    },
                     {
                         "name": "Abandonaron el proceso",
                         "phase_classification": PHASE_CLASSIFICATION.CALL_TO_ACTION,
@@ -631,13 +647,13 @@ base_position_flows: dict[FLOW_TYPE, PositionFlow] = {
                             "title": "¡Entrevista final agendada con éxito!",
                             "subtitle": "Tu entrevista ha quedado programada para la fecha y hora que elegiste.",
                             "description": "Te enviaremos recordatorios para que estés completamente preparado y puedas llegar con tranquilidad.\n\nEstamos muy emocionados de llegar a esta etapa contigo y de conocer tus ideas finales para sumar al equipo. ¡Esta es la oportunidad para brillar y mostrar todo tu potencial!",
-                            "button_text": "",
+                            "button_text": "statement_pipefy",
                         },
                         "interviewer_data": {
                             "title": "¡Entrevista final confirmada!",
                             "subtitle": "Es el momento clave para decidir si es el match perfecto.",
                             "description": "No olvides agendar la reunión en tu calendario para no perderte nada.\n\n¡Vamos con todo en esta última etapa!\nTu candidato ya agendó la entrevista final para:",
-                            "button_text": "",
+                            "button_text": "statement_pipefy",
                         },
                     },
                     {
@@ -698,6 +714,22 @@ base_position_flows: dict[FLOW_TYPE, PositionFlow] = {
             {
                 "name": "Descartados",
                 "phases": [
+                    {
+                        "name": "Acción no completada",
+                        "phase_classification": PHASE_CLASSIFICATION.CALL_TO_ACTION,
+                        "candidate_data": {
+                            "title": "¡Hola!",
+                            "subtitle": "Vimos que no pudiste completar esta etapa del proceso dentro del tiempo esperado.\nEntendemos que pueden surgir imprevistos o que los horarios disponibles no se ajustaran a tu agenda.",
+                            "description": "Si aún te interesa continuar, te invitamos a escribirle directamente a la persona que ha estado acompañando tu proceso.\nElla podrá ayudarte a revisar si es posible reprogramar o encontrar una alternativa.\n\n¡Gracias por tu interés y esperamos saber de ti pronto!",
+                            "button_text": "",
+                        },
+                        "interviewer_data": {
+                            "title": "El candidato no completó esta etapa del proceso",
+                            "subtitle": "En algunos casos, por diferentes motivos, un candidato no logra avanzar a tiempo.\nEsto puede deberse a temas personales, falta de disponibilidad o que los horarios propuestos no se ajustaban a su agenda.",
+                            "description": "¿Te gustaría darle una nueva oportunidad para completar esta etapa?\n\nGracias por seguir cada paso con atención y empatía.\n¡Seguimos contigo en la búsqueda del mejor talento!",
+                            "button_text": "",
+                        },
+                    },
                     {
                         "name": "Abandonaron el proceso",
                         "phase_classification": PHASE_CLASSIFICATION.CALL_TO_ACTION,
@@ -872,13 +904,13 @@ base_position_flows: dict[FLOW_TYPE, PositionFlow] = {
                             "title": "¡Entrevista final agendada con éxito!",
                             "subtitle": "Tu entrevista ha quedado programada para la fecha y hora que elegiste.",
                             "description": "Te enviaremos recordatorios para que estés completamente preparado y puedas llegar con tranquilidad.\n\nEstamos muy emocionados de llegar a esta etapa contigo y de conocer tus ideas finales para sumar al equipo. ¡Esta es la oportunidad para brillar y mostrar todo tu potencial!",
-                            "button_text": "",
+                            "button_text": "statement_pipefy",
                         },
                         "interviewer_data": {
                             "title": "¡Entrevista final confirmada!",
                             "subtitle": "Es el momento clave para decidir si es el match perfecto.",
                             "description": "No olvides agendar la reunión en tu calendario para no perderte nada.\n\n¡Vamos con todo en esta última etapa!\nTu candidato ya agendó la entrevista final para:",
-                            "button_text": "",
+                            "button_text": "statement_pipefy",
                         },
                     },
                     {
@@ -939,6 +971,22 @@ base_position_flows: dict[FLOW_TYPE, PositionFlow] = {
             {
                 "name": "Descartados",
                 "phases": [
+                    {
+                        "name": "Acción no completada",
+                        "phase_classification": PHASE_CLASSIFICATION.CALL_TO_ACTION,
+                        "candidate_data": {
+                            "title": "¡Hola!",
+                            "subtitle": "Vimos que no pudiste completar esta etapa del proceso dentro del tiempo esperado.\nEntendemos que pueden surgir imprevistos o que los horarios disponibles no se ajustaran a tu agenda.",
+                            "description": "Si aún te interesa continuar, te invitamos a escribirle directamente a la persona que ha estado acompañando tu proceso.\nElla podrá ayudarte a revisar si es posible reprogramar o encontrar una alternativa.\n\n¡Gracias por tu interés y esperamos saber de ti pronto!",
+                            "button_text": "",
+                        },
+                        "interviewer_data": {
+                            "title": "El candidato no completó esta etapa del proceso",
+                            "subtitle": "En algunos casos, por diferentes motivos, un candidato no logra avanzar a tiempo.\nEsto puede deberse a temas personales, falta de disponibilidad o que los horarios propuestos no se ajustaban a su agenda.",
+                            "description": "¿Te gustaría darle una nueva oportunidad para completar esta etapa?\n\nGracias por seguir cada paso con atención y empatía.\n¡Seguimos contigo en la búsqueda del mejor talento!",
+                            "button_text": "",
+                        },
+                    },
                     {
                         "name": "Abandonaron el proceso",
                         "phase_classification": PHASE_CLASSIFICATION.CALL_TO_ACTION,
