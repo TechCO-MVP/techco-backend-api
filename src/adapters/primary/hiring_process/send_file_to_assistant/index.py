@@ -8,7 +8,7 @@ from aws_lambda_powertools import Logger
 from aws_lambda_powertools.event_handler import APIGatewayRestResolver, Response, content_types
 from aws_lambda_powertools.utilities.typing import LambdaContext
 
-from src.use_cases.hiring_process.send_files_to_assistnat import save_file_to_s3
+from src.use_cases.hiring_process.save_file_to_s3 import save_file_to_s3_use_case
 from src.use_cases.hiring_process.processing_status import save_processing_status
 from src.domain.hiring_process import FILE_PROCESSING_STATUS
 
@@ -38,7 +38,7 @@ def send_file_to_assistant():
         
         save_processing_status(process_id, None, None, "IN_PROGRESS")
 
-        file_key, hiring_process_id, message, assistant_name = save_file_to_s3(body, content_type, headers)
+        file_key, hiring_process_id, message, assistant_name = save_file_to_s3_use_case(body, content_type, headers)
         
         lambda_client.invoke(
             FunctionName=f"{SERVICE_NAME}-{ENV}-process_file_for_assistant",
