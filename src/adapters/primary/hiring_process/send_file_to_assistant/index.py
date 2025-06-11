@@ -8,7 +8,7 @@ from aws_lambda_powertools import Logger
 from aws_lambda_powertools.event_handler import APIGatewayRestResolver, Response, content_types
 from aws_lambda_powertools.utilities.typing import LambdaContext
 
-from src.use_cases.hiring_process.send_files_to_assistnat import save_file_to_s3
+from src.use_cases.hiring_process.save_file_to_s3 import save_file_to_s3_use_case
 from src.use_cases.hiring_process.processing_status import save_processing_status
 from src.domain.hiring_process import FILE_PROCESSING_STATUS
 
@@ -21,7 +21,6 @@ lambda_client = boto3.client('lambda')
 def send_file_to_assistant():
     """send file to assistant"""
     try:
-        logger.info("=== Iniciando procesamiento de archivo ===")
         logger.info(f"Raw event: {app.current_event.raw_event}")
         logger.info(f"Headers: {app.current_event.headers}")
         body = app.current_event.body
@@ -35,16 +34,12 @@ def send_file_to_assistant():
 
         content_type = app.current_event.headers.get('Content-Type', '')
         headers = app.current_event.headers
-        
-        # Generamos un ID único para el proceso
         process_id = str(uuid.uuid4())
         
-        # Guardamos el estado inicial en DynamoDB
-        save_processing_status(process_id, None, "IN_PROGRESS")
+        save_processing_status(process_id, None, None, "IN_PROGRESS")
 
-        file_key, hiring_process_id, message, assistant_name = save_file_to_s3(body, content_type, headers)
+        file_key, hiring_process_id, message, assistant_name = save_file_to_s3_use_case(body, content_type, headers)
         
-        # Invocamos la Lambda de procesamiento de forma asíncrona
         lambda_client.invoke(
             FunctionName=f"{SERVICE_NAME}-{ENV}-process_file_for_assistant",
             InvocationType='Event',
@@ -58,7 +53,7 @@ def send_file_to_assistant():
         )
 
         return Response(
-            status_code=202,  # Accepted
+            status_code=202,
             body={
                 "message": "File processing started",
                 "process_id": process_id,

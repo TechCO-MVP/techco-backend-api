@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from src.constants.index import ENV
 
 
-def save_processing_status(process_id: str, thread_id: str, status: str):
+def save_processing_status(process_id: str, thread_id: str, run_id: str, status: str):
     """Save the processing status to DynamoDB"""
     dynamodb = boto3.resource('dynamodb')
     table = dynamodb.Table(f"{ENV}-file-processing-status")
@@ -16,6 +16,7 @@ def save_processing_status(process_id: str, thread_id: str, status: str):
         Item={
             'process_id': process_id,
             'thread_id': thread_id,
+            'run_id': run_id,
             'status': status,
             'created_at': datetime.now().isoformat(),
             'expires_at': expires_at
