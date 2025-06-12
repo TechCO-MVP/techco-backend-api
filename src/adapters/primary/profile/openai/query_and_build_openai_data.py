@@ -32,5 +32,7 @@ def lambda_handler(event: dict, context: LambdaContext) -> dict:
 
         return query_profiles_ai_use_case(process_id, profile_filter_process)
     except Exception as e:
+        e.args[0]["event"] = event
+        e.args[0]["process_id"] = process_id
         logger.error(f"Error querying open ai: {e}")
         raise e
