@@ -113,10 +113,8 @@ stateMachines:
               - Arn
           Retry:
             - ErrorEquals: ["States.ALL"]
-              # IntervalSeconds: 150
-              IntervalSeconds: 10
-              # MaxAttempts: 4
-              MaxAttempts: 1
+              IntervalSeconds: 150
+              MaxAttempts: 4
           Catch:
             - ErrorEquals: ["States.ALL"]
               Next: Fail
@@ -141,6 +139,9 @@ stateMachines:
             Fn::GetAtt:
               - query_and_build_openai_data
               - Arn
+          Catch:
+            - ErrorEquals: ["States.ALL"]
+              Next: Fail
           Next: AddLinkPostionForm
         AddLinkPostionForm:
           Type: Task
