@@ -3,6 +3,9 @@ from aws_lambda_powertools import Logger
 from src.use_cases.profile.pipefy.create_pipe_configuration_open_position import (
     create_pipe_configuration_open_position,
 )
+from src.use_cases.profile.pipefy.extract_event_from_error import (
+    extract_event_from_error,
+)
 
 logger = Logger()
 
@@ -13,6 +16,9 @@ def lambda_handler(event: dict, _):
 
         logger.info("Creating pipe configuration for open position")
         logger.info(event)
+
+        if event.get("Error") and event.get("Cause"):
+            event = extract_event_from_error(event)
 
         process_id: str = event.get("_id", None)
         if not process_id:
