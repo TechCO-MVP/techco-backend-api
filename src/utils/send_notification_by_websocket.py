@@ -10,7 +10,7 @@ from src.domain.notification import NotificationDTO, NotificationEntity, PHASE_T
 from src.use_cases.notification.save_notification import post_notification_use_case
 from src.use_cases.notification.build_notification_response import build_notification_response_use_case
 from src.constants.index import TABLE_WEBSOCKET_CONNECTIONS, REGION_NAME, ENV, API_ID
-from src.constants.notification.configuration import mapping_phase_name
+
 
 logger = Logger()
 dynamodb = boto3.client("dynamodb")
