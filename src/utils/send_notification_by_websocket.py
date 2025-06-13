@@ -24,7 +24,7 @@ def send_notification_by_websocket(notification: NotificationDTO):
     logger.info(f"Message content: {notification.message}")
     logger.info(f"save notificstion domain")
 
-    # notification = get_phase_name_by_id(notification)
+    notification = get_phase_name_by_id(notification)
     notification = get_phase_type_from_business(notification)
     inserted_notification = post_notification_use_case(notification)
 
@@ -65,41 +65,36 @@ def send_notification_by_websocket(notification: NotificationDTO):
         logger.error(f"Error sending message: {str(e)}")
         return False
 
-# def get_phase_name_by_id(notification: NotificationDTO) -> NotificationDTO:
-#     """Get the phase name and type by the phase id."""
-#     if notification.phase_id:
-#         graphql_client = get_client()
-#         phase_repository = PhaseRepository(graphql_client)
-#         phase = phase_repository.get_phase_name_by_id(notification.phase_id)
-#         notification.phase_name = phase.get("phase",{}).get("name")
-#         notification.phase_type = mapping_phase_name.get(
-#             notification.phase_name, PHASE_TYPE.INFORMATIVE.value
-#         )
+def get_phase_name_by_id(notification: NotificationDTO) -> NotificationDTO:
+    """Get the phase name and type by the phase id."""
+    if notification.phase_id:
+        graphql_client = get_client()
+        phase_repository = PhaseRepository(graphql_client)
+        phase = phase_repository.get_phase_name_by_id(notification.phase_id)
+        notification.phase_name = phase.get("phase",{}).get("name")
 
-#     return notification
+    return notification
 
 def get_phase_type_from_business(notification: NotificationDTO) -> NotificationDTO:
     """Get the phase type from the business position flows."""
+    if not notification.phase_id:
+        return notification
+    
     try:
-        # Obtener el business
         business_repository = BusinessRepository()
         business = business_repository.getById(notification.business_id)
         
         if not business:
             raise ValueError("Business does not exist")
             
-        # Buscar en todos los flujos del business
         for flow in business.props.position_flows.values():
-            # Buscar en los grupos del flujo
             for group in flow.groups:
-                if group.name == notification.phase_name:
-                    # Encontrar la fase que coincide con el nombre
-                    for phase in group.phases:
-                        if phase.name == notification.phase_name:
-                            phase_type = phase.phase_classification.value                            
-        # Si no se encuentra, retornar el valor por defecto
-        phase_type = PHASE_TYPE.INFORMATIVE.value
-        notification.phase_type = phase_type
+                for phase in group.phases:
+                    if phase.name == notification.phase_name:
+                        notification.phase_type = phase.phase_classification.value
+                        return notification
+        
+        notification.phase_type = PHASE_TYPE.INFORMATIVE.value
 
         return notification
         
