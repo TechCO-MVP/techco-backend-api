@@ -21,6 +21,7 @@ stateMachines:
               - Arn
           Next: ProcessAssessment
         ProcessAssessment:
+          Type: Task
           Resource:
             Fn::GetAtt:
               - hiring_process_assessment_handler
