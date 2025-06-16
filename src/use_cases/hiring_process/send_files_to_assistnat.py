@@ -13,9 +13,10 @@ from src.use_cases.hiring_process.processing_status import save_processing_statu
 
 logger = Logger()
 
+
 def send_file_to_assistant_use_case(
-        file_key: str, hiring_process_id: str, message: str, assistant_name: str, process_id: str
-    ) -> tuple[str, str]:
+    file_key: str, hiring_process_id: str, message: str, assistant_name: str, process_id: str
+) -> tuple[str, str]:
     """put hiring process custom fileds by id use case."""
     try:
         file_data = fetch_profiles_data(file_key)
@@ -26,7 +27,9 @@ def send_file_to_assistant_use_case(
         run_id = run.id
         thread_id = run.thread_id
 
-        save_processing_status(process_id, thread_id, run_id, FILE_PROCESSING_STATUS.COMPLETED.value)
+        save_processing_status(
+            process_id, thread_id, run_id, FILE_PROCESSING_STATUS.COMPLETED.value
+        )
 
         return run_id, thread_id
     except Exception as e:
@@ -56,8 +59,12 @@ def prepare_messages(message: str) -> list:
 
 
 def set_open_ai_adapter(hiring_process_id: str, assistant_name: str) -> OpenAIAdapter:
-    hiring_entity: HiringProcessEntity = get_hiring_process_use_case({"hiring_process_id": hiring_process_id})
-    business_entity: BusinessEntity = get_business_only_with_id_use_case(hiring_entity.props.business_id)
+    hiring_entity: HiringProcessEntity = get_hiring_process_use_case(
+        {"hiring_process_id": hiring_process_id}
+    )
+    business_entity: BusinessEntity = get_business_only_with_id_use_case(
+        hiring_entity.props.business_id
+    )
     assistant_id = business_entity.props.assistants[assistant_name].assistant_id
 
     context = {"business_id": business_entity.id}

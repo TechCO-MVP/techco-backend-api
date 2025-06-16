@@ -9,9 +9,9 @@ provider:
   region: us-east-1
   apiGateway:
     binaryMediaTypes:
-      - 'multipart/form-data'
-      - 'application/pdf'
-      - 'application/octet-stream'
+      - "multipart/form-data"
+      - "application/pdf"
+      - "application/octet-stream"
   timeout: 30
   versionFunctions: false
   vpc:
@@ -35,6 +35,7 @@ provider:
     DOCUMENTDB_DATABASE: techco
     UI_URI: "https://develop.dzkuw34ypddf5.amplifyapp.com/es/signin"
     PROFILE_FILTER_PROCESS_ARN: arn:aws:states:${self:provider.region}:#{AWS::AccountId}:stateMachine:ProfileFilterProcess-${self:provider.stage}
+    ASSESMENT_CHECK_PROCESS_ARN: arn:aws:states:${self:provider.region}:#{AWS::AccountId}:stateMachine:AssessmentCheckProcess-${self:provider.stage}
     S3_RAW_PROFILE_DATA_IA_BUCKET_NAME: !Ref S3RawProfileDataIA
     S3_DEPURATED_PROFILE_DATA_IA_BUCKET_NAME: !Ref S3DepuratedProfileDataIA
     S3_REFINED_PROFILE_DATA_IA_BUCKET_NAME: !Ref S3RefinedProfileDataIA
@@ -136,7 +137,7 @@ provider:
         - Effect: Allow
           Action:
             - lambda:InvokeFunction
-          Resource: 
+          Resource:
             - "arn:aws:lambda:${self:provider.region}:*:function:${self:service}-${self:provider.stage}-process_file_for_assistant"
 
 custom:
@@ -822,8 +823,14 @@ functions:
           private: true
     timeout: 60
 
+  hiring_process_assessment_handler:
+    handler: src/adapters/primary/hiring_process/assistant_response_handler/index.handler
+    timeout: 180
+
 stepFunctions:
-  stateMachines: ${file(./src/resources/brightdata/serverless.yml):stateMachines}
+  stateMachines:
+    profileFilterProcess: ${file(./src/resources/brightdata/serverless.yml):stateMachines.profileFilterProcess}
+    assesmentCheckProcess: ${file(./src/resources/app/serverless.yml):stateMachines.assesmentCheckProcess}
 
 plugins:
   - serverless-offline

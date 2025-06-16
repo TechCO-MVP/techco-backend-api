@@ -1,9 +1,10 @@
+import os
 import base64
 import uuid
 import json
 import boto3
 
-from src.constants.index import ENV, SERVICE_NAME
+
 from aws_lambda_powertools import Logger
 from aws_lambda_powertools.event_handler import APIGatewayRestResolver, Response, content_types
 from aws_lambda_powertools.utilities.typing import LambdaContext
@@ -14,7 +15,6 @@ from src.domain.hiring_process import FILE_PROCESSING_STATUS
 
 logger = Logger()
 app = APIGatewayRestResolver()
-lambda_client = boto3.client('lambda')
 
 
 @app.post("/hiring_process/send_file_to_assistant")
@@ -30,26 +30,30 @@ def send_file_to_assistant():
             body = base64.b64decode(body)
         else:
             if isinstance(body, str):
-                body = body.encode('utf-8')
+                body = body.encode("utf-8")
 
-        content_type = app.current_event.headers.get('Content-Type', '')
+        content_type = app.current_event.headers.get("Content-Type", "")
         headers = app.current_event.headers
         process_id = str(uuid.uuid4())
-        
+
         save_processing_status(process_id, None, None, "IN_PROGRESS")
 
-        file_key, hiring_process_id, message, assistant_name = save_file_to_s3_use_case(body, content_type, headers)
-        
-        lambda_client.invoke(
-            FunctionName=f"{SERVICE_NAME}-{ENV}-process_file_for_assistant",
-            InvocationType='Event',
-            Payload=json.dumps({
-                'file_key': file_key,
-                'hiring_process_id': hiring_process_id,
-                'message': message,
-                'assistant_name': assistant_name,
-                'process_id': process_id
-            })
+        file_key, hiring_process_id, message, assistant_name = save_file_to_s3_use_case(
+            body, content_type, headers
+        )
+
+        stepfunctions_client = boto3.client("stepfunctions")
+        stepfunctions_client.start_execution(
+            stateMachineArn=os.environ.get("PROFILE_FILTER_PROCESS_ARN"),
+            input=json.dumps(
+                {
+                    "file_key": file_key,
+                    "hiring_process_id": hiring_process_id,
+                    "message": message,
+                    "assistant_name": assistant_name,
+                    "process_id": process_id,
+                }
+            ),
         )
 
         return Response(
@@ -57,7 +61,7 @@ def send_file_to_assistant():
             body={
                 "message": "File processing started",
                 "process_id": process_id,
-                "status": FILE_PROCESSING_STATUS.IN_PROGRESS.value
+                "status": FILE_PROCESSING_STATUS.IN_PROGRESS.value,
             },
             content_type=content_types.APPLICATION_JSON,
         )

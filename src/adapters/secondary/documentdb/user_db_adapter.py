@@ -37,18 +37,10 @@ class UserDocumentDBAdapter(IRepository[UserEntity]):
         logger.info(f"Getting all user entities with filter: {params}")
 
         collection = self._client[self._collection_name]
-        query = {
-            "roles": {
-                "$elemMatch": {
-                    "business_id": params["business_id"]
-                }
-            }
-        }
-    
+        query = {"roles": {"$elemMatch": {"business_id": params["business_id"]}}}
+
         if "exclude_business_id" in params:
-            query["roles.business_id"] = {
-                "$ne": params["exclude_business_id"]
-            }
+            query["roles.business_id"] = {"$ne": params["exclude_business_id"]}
 
         users_data = collection.find(query)
         users_entities = []
@@ -153,7 +145,9 @@ class UserDocumentDBAdapter(IRepository[UserEntity]):
         """Get admin user by business_id."""
         logger.info(f"Getting admin user by business_id: {business_id}")
         collection = self._client[self._collection_name]
-        result = collection.find_one({"roles.business_id": business_id, "roles.role": Role.SUPER_ADMIN.value})
+        result = collection.find_one(
+            {"roles.business_id": business_id, "roles.role": Role.SUPER_ADMIN.value}
+        )
 
         if not result:
             logger.warning("User with business_id %s not found.", business_id)
