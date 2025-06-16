@@ -42,9 +42,10 @@ def send_file_to_assistant():
             body, content_type, headers
         )
 
+        logger.info("Starting file processing for hiring process ID: %s", hiring_process_id)
         stepfunctions_client = boto3.client("stepfunctions")
         stepfunctions_client.start_execution(
-            stateMachineArn=os.environ.get("PROFILE_FILTER_PROCESS_ARN"),
+            stateMachineArn=os.environ.get("ASSESMENT_CHECK_PROCESS_ARN"),
             input=json.dumps(
                 {
                     "file_key": file_key,
