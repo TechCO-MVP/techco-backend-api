@@ -1,5 +1,5 @@
 from aws_lambda_powertools import Logger
-from aws_lambda_powertools.event_handler import APIGatewayRestResolver, Response, content_types
+from aws_lambda_powertools.event_handler import APIGatewayRestResolver
 from aws_lambda_powertools.utilities.typing import LambdaContext
 
 from src.use_cases.hiring_process.assistant_response_handler import (
@@ -16,7 +16,7 @@ def hiring_process_assistant_response_handler(event: dict, context: LambdaContex
         hiring_process_id = event.get("hiring_process_id")
         run_id = event.get("run_id")
         thread_id = event.get("thread_id")
-        assistant_type = event.get("assistant_type")
+        assistant_name = event.get("assistant_name")
 
         if not hiring_process_id:
             raise ValueError("hiring_process_id is required")
@@ -24,29 +24,20 @@ def hiring_process_assistant_response_handler(event: dict, context: LambdaContex
             raise ValueError("run_id is required")
         if not thread_id:
             raise ValueError("thread_id is required")
-        if not assistant_type:
-            raise ValueError("assistant_type is required")
+        if not assistant_name:
+            raise ValueError("assistant_name is required")
 
         response = assistant_response_handler_use_case(
-            hiring_process_id, run_id, thread_id, assistant_type
+            hiring_process_id, run_id, thread_id, assistant_name
         )
 
         return {
             **event,
             **response,
         }
-    except ValueError as e:
-        logger.error(str(e))
-        return Response(
-            status_code=400, body={"message": str(e)}, content_type=content_types.APPLICATION_JSON
-        )
     except Exception as e:
         logger.exception("An error occurred: %s", e)
-        return Response(
-            status_code=500,
-            body={"message": "An error occurred: %s" % e},
-            content_type=content_types.APPLICATION_JSON,
-        )
+        raise e
 
 
 @logger.inject_lambda_context
