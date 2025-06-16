@@ -80,7 +80,9 @@ provider:
         - Effect: Allow
           Action:
             - states:StartExecution
-          Resource: ${self:provider.environment.PROFILE_FILTER_PROCESS_ARN}
+          Resource:
+            - ${self:provider.environment.PROFILE_FILTER_PROCESS_ARN}
+            - ${self:provider.environment.ASSESMENT_CHECK_PROCESS_ARN}
         - Effect: Allow
           Action:
             - s3:PutObject
