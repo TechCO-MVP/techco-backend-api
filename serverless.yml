@@ -35,7 +35,7 @@ provider:
     DOCUMENTDB_DATABASE: techco
     UI_URI: "https://develop.dzkuw34ypddf5.amplifyapp.com/es/signin"
     PROFILE_FILTER_PROCESS_ARN: arn:aws:states:${self:provider.region}:#{AWS::AccountId}:stateMachine:ProfileFilterProcess-${self:provider.stage}
-    ASSESMENT_CHECK_PROCESS_ARN: arn:aws:states:${self:provider.region}:#{AWS::AccountId}:stateMachine:AssessmentCheckProcess-${self:provider.stage}
+    ASSESMENT_CHECK_PROCESS_ARN: arn:aws:states:${self:provider.region}:#{AWS::AccountId}:stateMachine:assesmentCheckProcess-${self:provider.stage}
     S3_RAW_PROFILE_DATA_IA_BUCKET_NAME: !Ref S3RawProfileDataIA
     S3_DEPURATED_PROFILE_DATA_IA_BUCKET_NAME: !Ref S3DepuratedProfileDataIA
     S3_REFINED_PROFILE_DATA_IA_BUCKET_NAME: !Ref S3RefinedProfileDataIA
