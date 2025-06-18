@@ -183,16 +183,24 @@ base_position_flows: dict[FLOW_TYPE, PositionFlow] = {
                         "name": "Resultado primer entrevista",
                         "phase_classification": PHASE_CLASSIFICATION.CALL_TO_ACTION,
                         "candidate_data": {
-                            "title": "¡Ya pasó tu entrevista!",
-                            "subtitle": "Ya pasó la fecha y hora que habías agendado, así que suponemos que tuviste la oportunidad de conversar con nuestro equipo.",
-                            "description": "De ser así, en este momento estamos revisando cómo te fue en la entrevista para definir los próximos pasos.\nSi avanzas en el proceso, muy pronto te estaremos contactando para invitarte a uno de los últimos pasos: la evaluación técnica.",
-                            "button_text": "",
+                            "sections": [
+                                {
+                                    "title": "¡Ya pasó tu entrevista!",
+                                    "subtitle": "Ya pasó la fecha y hora que habías agendado, así que suponemos que tuviste la oportunidad de conversar con nuestro equipo.",
+                                    "description": "De ser así, en este momento estamos revisando cómo te fue en la entrevista para definir los próximos pasos.\nSi avanzas en el proceso, muy pronto te estaremos contactando para invitarte a uno de los últimos pasos: la evaluación técnica.",
+                                    "button_text": "",
+                                },
+                            ]
                         },
                         "interviewer_data": {
-                            "title": "¡Cuéntanos cómo te fue con el candidato!",
-                            "subtitle": "¿Cumplió tus expectativas y quieres que continúe al Assessment técnico?",
-                            "description": "Cuéntanos en el formulario de la derecha.\nApenas nos confirmes, le avisaremos que puede continuar con el Assessment técnico. ¡Así seguimos avanzando sin perder ritmo!",
-                            "button_text": "",
+                            "sections": [
+                                {
+                                    "title": "¡Cuéntanos cómo te fue con el candidato!",
+                                    "subtitle": "¿Cumplió tus expectativas y quieres que continúe al Assessment técnico?",
+                                    "description": "Cuéntanos en el formulario de la derecha.\nApenas nos confirmes, le avisaremos que puede continuar con el Assessment técnico. ¡Así seguimos avanzando sin perder ritmo!",
+                                    "button_text": "",
+                                },
+                            ]
                         },
                     },
                 ],
@@ -257,48 +265,72 @@ base_position_flows: dict[FLOW_TYPE, PositionFlow] = {
                         "name": "Entrevista final solicitada",
                         "phase_classification": PHASE_CLASSIFICATION.INFORMATIVE,
                         "candidate_data": {
-                            "title": "¡Felicitaciones!",
-                            "subtitle": "Tu evaluación técnica fue excelente y estamos muy emocionados de seguir adelante contigo.",
-                            "description": "Queremos invitarte a la entrevista final del proceso, donde podremos conocernos mejor y conversar sobre lo que podría venir.\n\nPara que sea cómodo para ti, elige el día y la hora que mejor te convenga.\nTen en cuenta que esta entrevista tendrá una duración aproximada de 45 minutos.",
-                            "button_text": "Agendar",
+                            "sections": [
+                                {
+                                    "title": "¡Felicitaciones!",
+                                    "subtitle": "Tu evaluación técnica fue excelente y estamos muy emocionados de seguir adelante contigo.",
+                                    "description": "Queremos invitarte a la entrevista final del proceso, donde podremos conocernos mejor y conversar sobre lo que podría venir.\n\nPara que sea cómodo para ti, elige el día y la hora que mejor te convenga.\nTen en cuenta que esta entrevista tendrá una duración aproximada de 45 minutos.",
+                                    "button_text": "Agendar",
+                                }
+                            ]
                         },
                         "interviewer_data": {
-                            "title": "¡Tu candidato está a un paso de la entrevista final!",
-                            "subtitle": "Ya recibió tus opciones de horario y ahora estamos esperando a que escoja el que mejor le funcione.",
-                            "description": "Muy pronto podrás tener esa conversación clave que te ayudará a tomar la decisión final.\n\n¡Estamos muy cerca! Te avisaremos apenas confirme la cita.",
-                            "button_text": "",
+                            "sections": [
+                                {
+                                    "title": "¡Tu candidato está a un paso de la entrevista final!",
+                                    "subtitle": "Ya recibió tus opciones de horario y ahora estamos esperando a que escoja el que mejor le funcione.",
+                                    "description": "Muy pronto podrás tener esa conversación clave que te ayudará a tomar la decisión final.\n\n¡Estamos muy cerca! Te avisaremos apenas confirme la cita.",
+                                    "button_text": "",
+                                }
+                            ]
                         },
                     },
                     {
                         "name": "Entrevista final programada",
                         "phase_classification": PHASE_CLASSIFICATION.INFORMATIVE,
                         "candidate_data": {
-                            "title": "¡Entrevista final agendada con éxito!",
-                            "subtitle": "Tu entrevista ha quedado programada para la fecha y hora que elegiste.",
-                            "description": "Te enviaremos recordatorios para que estés completamente preparado y puedas llegar con tranquilidad.\n\nEstamos muy emocionados de llegar a esta etapa contigo y de conocer tus ideas finales para sumar al equipo. ¡Esta es la oportunidad para brillar y mostrar todo tu potencial!",
-                            "button_text": "statement_pipefy",
+                            "sections": [
+                                {
+                                    "title": "¡Entrevista final agendada con éxito!",
+                                    "subtitle": "Tu entrevista ha quedado programada para la fecha y hora que elegiste.",
+                                    "description": "Te enviaremos recordatorios para que estés completamente preparado y puedas llegar con tranquilidad.\n\nEstamos muy emocionados de llegar a esta etapa contigo y de conocer tus ideas finales para sumar al equipo. ¡Esta es la oportunidad para brillar y mostrar todo tu potencial!",
+                                    "button_text": "statement_pipefy",
+                                }
+                            ]
                         },
                         "interviewer_data": {
-                            "title": "¡Entrevista final confirmada!",
-                            "subtitle": "Es el momento clave para decidir si es el match perfecto.",
-                            "description": "No olvides agendar la reunión en tu calendario para no perderte nada.\n\n¡Vamos con todo en esta última etapa!\nTu candidato ya agendó la entrevista final para:",
-                            "button_text": "statement_pipefy",
+                            "sections": [
+                                {
+                                    "title": "¡Entrevista final confirmada!",
+                                    "subtitle": "Es el momento clave para decidir si es el match perfecto.",
+                                    "description": "No olvides agendar la reunión en tu calendario para no perderte nada.\n\n¡Vamos con todo en esta última etapa!\nTu candidato ya agendó la entrevista final para:",
+                                    "button_text": "statement_pipefy",
+                                }
+                            ]
                         },
                     },
                     {
                         "name": "Resultado entrevista final",
                         "phase_classification": PHASE_CLASSIFICATION.CALL_TO_ACTION,
                         "candidate_data": {
-                            "title": "¡Tu entrevista final ya fue!",
-                            "subtitle": "La fecha y hora que habías agendado ya pasó, y esperamos que hayas tenido una buena conversación con nuestro equipo.",
-                            "description": "En este momento estamos evaluando tu desempeño para tomar la decisión final.\nMuy pronto te contactaremos para compartirte el resultado y, si pasaste, los pasos a seguir.\n\n¡Gracias por haber llegado hasta aquí y por todo el interés que has demostrado en ser parte de nuestro equipo!",
-                            "button_text": "",
+                            "sections": [
+                                {
+                                    "title": "¡Tu entrevista final ya fue!",
+                                    "subtitle": "La fecha y hora que habías agendado ya pasó, y esperamos que hayas tenido una buena conversación con nuestro equipo.",
+                                    "description": "En este momento estamos evaluando tu desempeño para tomar la decisión final.\nMuy pronto te contactaremos para compartirte el resultado y, si pasaste, los pasos a seguir.\n\n¡Gracias por haber llegado hasta aquí y por todo el interés que has demostrado en ser parte de nuestro equipo!",
+                                    "button_text": "",
+                                }
+                            ]
                         },
                         "interviewer_data": {
-                            "title": "¡Terminó la entrevista final!",
-                            "subtitle": "¡Qué emoción! El candidato completó la entrevista final, y ahora viene la decisión más importante.",
-                            "description": "Cuéntanos en el formulario de la derecha qué quieres hacer:\n\n¿Te encantó? Márcalo como Seleccionado y cerremos el proceso.\n¿Tienes dudas? Envíalo a la lista de finalistas para decidir después.\n¿No hizo match? Puedes descartarlo fácilmente.\n\n¡Tú tienes la última palabra!",
-                            "button_text": "",
+                            "sections": [
+                                {
+                                    "title": "¡Terminó la entrevista final!",
+                                    "subtitle": "¡Qué emoción! El candidato completó la entrevista final, y ahora viene la decisión más importante.",
+                                    "description": "Cuéntanos en el formulario de la derecha qué quieres hacer:\n\n¿Te encantó? Márcalo como Seleccionado y cerremos el proceso.\n¿Tienes dudas? Envíalo a la lista de finalistas para decidir después.\n¿No hizo match? Puedes descartarlo fácilmente.\n\n¡Tú tienes la última palabra!",
+                                    "button_text": "",
+                                }
+                            ]
                         },
                     },
                 ],
@@ -310,32 +342,48 @@ base_position_flows: dict[FLOW_TYPE, PositionFlow] = {
                         "name": "Finalistas",
                         "phase_classification": PHASE_CLASSIFICATION.CALL_TO_ACTION,
                         "candidate_data": {
-                            "title": "¡Tu entrevista final ya fue!",
-                            "subtitle": "La fecha y hora que habías agendado ya pasó, y esperamos que hayas tenido una buena conversación con nuestro equipo.",
-                            "description": "En este momento estamos evaluando tu desempeño para tomar la decisión final.\nMuy pronto te contactaremos para compartirte el resultado y si pasaste, los pasos a seguir.\n\n¡Gracias por haber llegado hasta aquí y por todo el interés que has demostrado en ser parte de nuestro equipo!",
-                            "button_text": "",
+                            "sections": [
+                                {
+                                    "title": "¡Tu entrevista final ya fue!",
+                                    "subtitle": "La fecha y hora que habías agendado ya pasó, y esperamos que hayas tenido una buena conversación con nuestro equipo.",
+                                    "description": "En este momento estamos evaluando tu desempeño para tomar la decisión final.\nMuy pronto te contactaremos para compartirte el resultado y si pasaste, los pasos a seguir.\n\n¡Gracias por haber llegado hasta aquí y por todo el interés que has demostrado en ser parte de nuestro equipo!",
+                                    "button_text": "",
+                                }
+                            ]
                         },
                         "interviewer_data": {
-                            "title": "¡Tu candidato está en la fase de finalistas!",
-                            "subtitle": "Aún no has tomado la decisión final… y lo entendemos, no siempre es fácil cuando hay buenos perfiles sobre la mesa.",
-                            "description": "Este candidato llegó lejos por una razón: tiene algo que lo hace una gran opción.\nDesde este punto, tú decides qué sigue:\n\n¿Quieres que se quede con el puesto? Márcalo como Seleccionado.\n¿Crees que no es el indicado? También puedes descartarlo.\n\n¡Estás a solo un clic de tomar la última palabra!",
-                            "button_text": "",
+                            "sections": [
+                                {
+                                    "title": "¡Tu candidato está en la fase de finalistas!",
+                                    "subtitle": "Aún no has tomado la decisión final… y lo entendemos, no siempre es fácil cuando hay buenos perfiles sobre la mesa.",
+                                    "description": "Este candidato llegó lejos por una razón: tiene algo que lo hace una gran opción.\nDesde este punto, tú decides qué sigue:\n\n¿Quieres que se quede con el puesto? Márcalo como Seleccionado.\n¿Crees que no es el indicado? También puedes descartarlo.\n\n¡Estás a solo un clic de tomar la última palabra!",
+                                    "button_text": "",
+                                }
+                            ]
                         },
                     },
                     {
                         "name": "Candidato seleccionado",
                         "phase_classification": PHASE_CLASSIFICATION.INFORMATIVE,
                         "candidate_data": {
-                            "title": "¡Felicitaciones!",
-                            "subtitle": "Estamos muy emocionados de compartirte que has sido seleccionado para esta oportunidad.",
-                            "description": "Nos encantaría que aceptes nuestra oferta y formes parte de este nuevo proyecto con nosotros.\n\nMuy pronto te contactaremos para darte todos los detalles y acompañarte en los próximos pasos. ¡Estamos ansiosos por lo que viene!",
-                            "button_text": "",
+                            "sections": [
+                                {
+                                    "title": "¡Felicitaciones!",
+                                    "subtitle": "Estamos muy emocionados de compartirte que has sido seleccionado para esta oportunidad.",
+                                    "description": "Nos encantaría que aceptes nuestra oferta y formes parte de este nuevo proyecto con nosotros.\n\nMuy pronto te contactaremos para darte todos los detalles y acompañarte en los próximos pasos. ¡Estamos ansiosos por lo que viene!",
+                                    "button_text": "",
+                                }
+                            ]
                         },
                         "interviewer_data": {
-                            "title": "¡Felicitaciones! escogiste un candidato",
-                            "subtitle": "Te deseamos lo mejor en esta nueva etapa.",
-                            "description": "¡Gran elección!\n\nPodés estar tranquilo: hiciste un gran trabajo. Esta contratación fue objetiva, sin sesgos y con toda la información que necesitabas para tomar la mejor decisión.\n\n¿Tienes otra vacante?\nNo dudes en crearla con Tici. Estamos acá para ayudarte a encontrar al mejor talento, siempre.",
-                            "button_text": "",
+                            "sections": [
+                                {
+                                    "title": "¡Felicitaciones! escogiste un candidato",
+                                    "subtitle": "Te deseamos lo mejor en esta nueva etapa.",
+                                    "description": "¡Gran elección!\n\nPodés estar tranquilo: hiciste un gran trabajo. Esta contratación fue objetiva, sin sesgos y con toda la información que necesitabas para tomar la mejor decisión.\n\n¿Tienes otra vacante?\nNo dudes en crearla con Tici. Estamos acá para ayudarte a encontrar al mejor talento, siempre.",
+                                    "button_text": "",
+                                }
+                            ]
                         },
                     },
                 ],
@@ -347,32 +395,48 @@ base_position_flows: dict[FLOW_TYPE, PositionFlow] = {
                         "name": "Acción no completada",
                         "phase_classification": PHASE_CLASSIFICATION.CALL_TO_ACTION,
                         "candidate_data": {
-                            "title": "¡Hola!",
-                            "subtitle": "Vimos que no pudiste completar esta etapa del proceso dentro del tiempo esperado.\nEntendemos que pueden surgir imprevistos o que los horarios disponibles no se ajustaran a tu agenda.",
-                            "description": "Si aún te interesa continuar, te invitamos a escribirle directamente a la persona que ha estado acompañando tu proceso.\nElla podrá ayudarte a revisar si es posible reprogramar o encontrar una alternativa.\n\n¡Gracias por tu interés y esperamos saber de ti pronto!",
-                            "button_text": "",
+                            "sections": [
+                                {
+                                    "title": "¡Hola!",
+                                    "subtitle": "Vimos que no pudiste completar esta etapa del proceso dentro del tiempo esperado.\nEntendemos que pueden surgir imprevistos o que los horarios disponibles no se ajustaran a tu agenda.",
+                                    "description": "Si aún te interesa continuar, te invitamos a escribirle directamente a la persona que ha estado acompañando tu proceso.\nElla podrá ayudarte a revisar si es posible reprogramar o encontrar una alternativa.\n\n¡Gracias por tu interés y esperamos saber de ti pronto!",
+                                    "button_text": "",
+                                }
+                            ]
                         },
                         "interviewer_data": {
-                            "title": "El candidato no completó esta etapa del proceso",
-                            "subtitle": "En algunos casos, por diferentes motivos, un candidato no logra avanzar a tiempo.\nEsto puede deberse a temas personales, falta de disponibilidad o que los horarios propuestos no se ajustaban a su agenda.",
-                            "description": "¿Te gustaría darle una nueva oportunidad para completar esta etapa?\n\nGracias por seguir cada paso con atención y empatía.\n¡Seguimos contigo en la búsqueda del mejor talento!",
-                            "button_text": "",
+                            "sections": [
+                                {
+                                    "title": "El candidato no completó esta etapa del proceso",
+                                    "subtitle": "En algunos casos, por diferentes motivos, un candidato no logra avanzar a tiempo.\nEsto puede deberse a temas personales, falta de disponibilidad o que los horarios propuestos no se ajustaban a su agenda.",
+                                    "description": "¿Te gustaría darle una nueva oportunidad para completar esta etapa?\n\nGracias por seguir cada paso con atención y empatía.\n¡Seguimos contigo en la búsqueda del mejor talento!",
+                                    "button_text": "",
+                                }
+                            ]
                         },
                     },
                     {
                         "name": "Abandonaron el proceso",
                         "phase_classification": PHASE_CLASSIFICATION.CALL_TO_ACTION,
                         "candidate_data": {
-                            "title": "Decidiste dar un paso al costado",
-                            "subtitle": "Sabemos que tomar este tipo de decisiones no siempre es fácil, y respetamos completamente tu elección de no continuar en el proceso.",
-                            "description": "Gracias por el interés que mostraste hasta aquí y por haber compartido un poco de tu historia con nosotros.\nOjalá podamos encontrarnos en otra oportunidad. ¡Te esperamos en futuras convocatorias!",
-                            "button_text": "",
+                            "sections": [
+                                {
+                                    "title": "Decidiste dar un paso al costado",
+                                    "subtitle": "Sabemos que tomar este tipo de decisiones no siempre es fácil, y respetamos completamente tu elección de no continuar en el proceso.",
+                                    "description": "Gracias por el interés que mostraste hasta aquí y por haber compartido un poco de tu historia con nosotros.\nOjalá podamos encontrarnos en otra oportunidad. ¡Te esperamos en futuras convocatorias!",
+                                    "button_text": "",
+                                }
+                            ]
                         },
                         "interviewer_data": {
-                            "title": "El candidato decidió no continuar",
-                            "subtitle": "A veces, aunque el proceso fluya bien, pueden surgir razones personales o profesionales por las que un candidato prefiere no seguir adelante.",
-                            "description": "Gracias por seguir cada etapa con atención y respeto.\n¡Seguimos contigo en la búsqueda del mejor talento!\n\nEn este caso, la persona decidió salir del proceso por el siguiente motivo:",
-                            "button_text": "",
+                            "sections": [
+                                {
+                                    "title": "El candidato decidió no continuar",
+                                    "subtitle": "A veces, aunque el proceso fluya bien, pueden surgir razones personales o profesionales por las que un candidato prefiere no seguir adelante.",
+                                    "description": "Gracias por seguir cada etapa con atención y respeto.\n¡Seguimos contigo en la búsqueda del mejor talento!\n\nEn este caso, la persona decidió salir del proceso por el siguiente motivo:",
+                                    "button_text": "",
+                                }
+                            ]
                         },
                     },
                     {
@@ -628,48 +692,72 @@ base_position_flows: dict[FLOW_TYPE, PositionFlow] = {
                         "name": "Entrevista final solicitada",
                         "phase_classification": PHASE_CLASSIFICATION.INFORMATIVE,
                         "candidate_data": {
-                            "title": "¡Felicitaciones!",
-                            "subtitle": "Tu evaluación técnica fue excelente y estamos muy emocionados de seguir adelante contigo.",
-                            "description": "Queremos invitarte a la entrevista final del proceso, donde podremos conocernos mejor y conversar sobre lo que podría venir.\n\nPara que sea cómodo para ti, elige el día y la hora que mejor te convenga.\nTen en cuenta que esta entrevista tendrá una duración aproximada de 45 minutos.",
-                            "button_text": "Agendar",
+                            "sections": [
+                                {
+                                    "title": "¡Felicitaciones!",
+                                    "subtitle": "Tu evaluación técnica fue excelente y estamos muy emocionados de seguir adelante contigo.",
+                                    "description": "Queremos invitarte a la entrevista final del proceso, donde podremos conocernos mejor y conversar sobre lo que podría venir.\n\nPara que sea cómodo para ti, elige el día y la hora que mejor te convenga.\nTen en cuenta que esta entrevista tendrá una duración aproximada de 45 minutos.",
+                                    "button_text": "Agendar",
+                                }
+                            ]
                         },
                         "interviewer_data": {
-                            "title": "¡Tu candidato está a un paso de la entrevista final!",
-                            "subtitle": "Ya recibió tus opciones de horario y ahora estamos esperando a que escoja el que mejor le funcione.",
-                            "description": "Muy pronto podrás tener esa conversación clave que te ayudará a tomar la decisión final.\n\n¡Estamos muy cerca! Te avisaremos apenas confirme la cita.",
-                            "button_text": "",
+                            "sections": [
+                                {
+                                    "title": "¡Tu candidato está a un paso de la entrevista final!",
+                                    "subtitle": "Ya recibió tus opciones de horario y ahora estamos esperando a que escoja el que mejor le funcione.",
+                                    "description": "Muy pronto podrás tener esa conversación clave que te ayudará a tomar la decisión final.\n\n¡Estamos muy cerca! Te avisaremos apenas confirme la cita.",
+                                    "button_text": "",
+                                }
+                            ]
                         },
                     },
                     {
                         "name": "Entrevista final programada",
                         "phase_classification": PHASE_CLASSIFICATION.INFORMATIVE,
                         "candidate_data": {
-                            "title": "¡Entrevista final agendada con éxito!",
-                            "subtitle": "Tu entrevista ha quedado programada para la fecha y hora que elegiste.",
-                            "description": "Te enviaremos recordatorios para que estés completamente preparado y puedas llegar con tranquilidad.\n\nEstamos muy emocionados de llegar a esta etapa contigo y de conocer tus ideas finales para sumar al equipo. ¡Esta es la oportunidad para brillar y mostrar todo tu potencial!",
-                            "button_text": "statement_pipefy",
+                            "sections": [
+                                {
+                                    "title": "¡Entrevista final agendada con éxito!",
+                                    "subtitle": "Tu entrevista ha quedado programada para la fecha y hora que elegiste.",
+                                    "description": "Te enviaremos recordatorios para que estés completamente preparado y puedas llegar con tranquilidad.\n\nEstamos muy emocionados de llegar a esta etapa contigo y de conocer tus ideas finales para sumar al equipo. ¡Esta es la oportunidad para brillar y mostrar todo tu potencial!",
+                                    "button_text": "statement_pipefy",
+                                }
+                            ]
                         },
                         "interviewer_data": {
-                            "title": "¡Entrevista final confirmada!",
-                            "subtitle": "Es el momento clave para decidir si es el match perfecto.",
-                            "description": "No olvides agendar la reunión en tu calendario para no perderte nada.\n\n¡Vamos con todo en esta última etapa!\nTu candidato ya agendó la entrevista final para:",
-                            "button_text": "statement_pipefy",
+                            "sections": [
+                                {
+                                    "title": "¡Entrevista final confirmada!",
+                                    "subtitle": "Es el momento clave para decidir si es el match perfecto.",
+                                    "description": "No olvides agendar la reunión en tu calendario para no perderte nada.\n\n¡Vamos con todo en esta última etapa!\nTu candidato ya agendó la entrevista final para:",
+                                    "button_text": "statement_pipefy",
+                                }
+                            ]
                         },
                     },
                     {
                         "name": "Resultado entrevista final",
                         "phase_classification": PHASE_CLASSIFICATION.CALL_TO_ACTION,
                         "candidate_data": {
-                            "title": "¡Tu entrevista final ya fue!",
-                            "subtitle": "La fecha y hora que habías agendado ya pasó, y esperamos que hayas tenido una buena conversación con nuestro equipo.",
-                            "description": "En este momento estamos evaluando tu desempeño para tomar la decisión final.\nMuy pronto te contactaremos para compartirte el resultado y, si pasaste, los pasos a seguir.\n\n¡Gracias por haber llegado hasta aquí y por todo el interés que has demostrado en ser parte de nuestro equipo!",
-                            "button_text": "",
+                            "sections": [
+                                {
+                                    "title": "¡Tu entrevista final ya fue!",
+                                    "subtitle": "La fecha y hora que habías agendado ya pasó, y esperamos que hayas tenido una buena conversación con nuestro equipo.",
+                                    "description": "En este momento estamos evaluando tu desempeño para tomar la decisión final.\nMuy pronto te contactaremos para compartirte el resultado y, si pasaste, los pasos a seguir.\n\n¡Gracias por haber llegado hasta aquí y por todo el interés que has demostrado en ser parte de nuestro equipo!",
+                                    "button_text": "",
+                                }
+                            ]
                         },
                         "interviewer_data": {
-                            "title": "¡Terminó la entrevista final!",
-                            "subtitle": "¡Qué emoción! El candidato completó la entrevista final, y ahora viene la decisión más importante.",
-                            "description": "Cuéntanos en el formulario de la derecha qué quieres hacer:\n\n¿Te encantó? Márcalo como Seleccionado y cerremos el proceso.\n¿Tienes dudas? Envíalo a la lista de finalistas para decidir después.\n¿No hizo match? Puedes descartarlo fácilmente.\n\n¡Tú tienes la última palabra!",
-                            "button_text": "",
+                            "sections": [
+                                {
+                                    "title": "¡Terminó la entrevista final!",
+                                    "subtitle": "¡Qué emoción! El candidato completó la entrevista final, y ahora viene la decisión más importante.",
+                                    "description": "Cuéntanos en el formulario de la derecha qué quieres hacer:\n\n¿Te encantó? Márcalo como Seleccionado y cerremos el proceso.\n¿Tienes dudas? Envíalo a la lista de finalistas para decidir después.\n¿No hizo match? Puedes descartarlo fácilmente.\n\n¡Tú tienes la última palabra!",
+                                    "button_text": "",
+                                }
+                            ]
                         },
                     },
                 ],
@@ -885,48 +973,72 @@ base_position_flows: dict[FLOW_TYPE, PositionFlow] = {
                         "name": "Entrevista final solicitada",
                         "phase_classification": PHASE_CLASSIFICATION.INFORMATIVE,
                         "candidate_data": {
-                            "title": "¡Felicitaciones!",
-                            "subtitle": "Tu evaluación técnica fue excelente y estamos muy emocionados de seguir adelante contigo.",
-                            "description": "Queremos invitarte a la entrevista final del proceso, donde podremos conocernos mejor y conversar sobre lo que podría venir.\n\nPara que sea cómodo para ti, elige el día y la hora que mejor te convenga.\nTen en cuenta que esta entrevista tendrá una duración aproximada de 45 minutos.",
-                            "button_text": "Agendar",
+                            "sections": [
+                                {
+                                    "title": "¡Felicitaciones!",
+                                    "subtitle": "Tu evaluación técnica fue excelente y estamos muy emocionados de seguir adelante contigo.",
+                                    "description": "Queremos invitarte a la entrevista final del proceso, donde podremos conocernos mejor y conversar sobre lo que podría venir.\n\nPara que sea cómodo para ti, elige el día y la hora que mejor te convenga.\nTen en cuenta que esta entrevista tendrá una duración aproximada de 45 minutos.",
+                                    "button_text": "Agendar",
+                                }
+                            ]
                         },
                         "interviewer_data": {
-                            "title": "¡Tu candidato está a un paso de la entrevista final!",
-                            "subtitle": "Ya recibió tus opciones de horario y ahora estamos esperando a que escoja el que mejor le funcione.",
-                            "description": "Muy pronto podrás tener esa conversación clave que te ayudará a tomar la decisión final.\n\n¡Estamos muy cerca! Te avisaremos apenas confirme la cita.",
-                            "button_text": "",
+                            "sections": [
+                                {
+                                    "title": "¡Tu candidato está a un paso de la entrevista final!",
+                                    "subtitle": "Ya recibió tus opciones de horario y ahora estamos esperando a que escoja el que mejor le funcione.",
+                                    "description": "Muy pronto podrás tener esa conversación clave que te ayudará a tomar la decisión final.\n\n¡Estamos muy cerca! Te avisaremos apenas confirme la cita.",
+                                    "button_text": "",
+                                }
+                            ]
                         },
                     },
                     {
                         "name": "Entrevista final programada",
                         "phase_classification": PHASE_CLASSIFICATION.INFORMATIVE,
                         "candidate_data": {
-                            "title": "¡Entrevista final agendada con éxito!",
-                            "subtitle": "Tu entrevista ha quedado programada para la fecha y hora que elegiste.",
-                            "description": "Te enviaremos recordatorios para que estés completamente preparado y puedas llegar con tranquilidad.\n\nEstamos muy emocionados de llegar a esta etapa contigo y de conocer tus ideas finales para sumar al equipo. ¡Esta es la oportunidad para brillar y mostrar todo tu potencial!",
-                            "button_text": "statement_pipefy",
+                            "sections": [
+                                {
+                                    "title": "¡Entrevista final agendada con éxito!",
+                                    "subtitle": "Tu entrevista ha quedado programada para la fecha y hora que elegiste.",
+                                    "description": "Te enviaremos recordatorios para que estés completamente preparado y puedas llegar con tranquilidad.\n\nEstamos muy emocionados de llegar a esta etapa contigo y de conocer tus ideas finales para sumar al equipo. ¡Esta es la oportunidad para brillar y mostrar todo tu potencial!",
+                                    "button_text": "statement_pipefy",
+                                }
+                            ]
                         },
                         "interviewer_data": {
-                            "title": "¡Entrevista final confirmada!",
-                            "subtitle": "Es el momento clave para decidir si es el match perfecto.",
-                            "description": "No olvides agendar la reunión en tu calendario para no perderte nada.\n\n¡Vamos con todo en esta última etapa!\nTu candidato ya agendó la entrevista final para:",
-                            "button_text": "statement_pipefy",
+                            "sections": [
+                                {
+                                    "title": "¡Entrevista final confirmada!",
+                                    "subtitle": "Es el momento clave para decidir si es el match perfecto.",
+                                    "description": "No olvides agendar la reunión en tu calendario para no perderte nada.\n\n¡Vamos con todo en esta última etapa!\nTu candidato ya agendó la entrevista final para:",
+                                    "button_text": "statement_pipefy",
+                                }
+                            ]
                         },
                     },
                     {
                         "name": "Resultado entrevista final",
                         "phase_classification": PHASE_CLASSIFICATION.CALL_TO_ACTION,
                         "candidate_data": {
-                            "title": "¡Tu entrevista final ya fue!",
-                            "subtitle": "La fecha y hora que habías agendado ya pasó, y esperamos que hayas tenido una buena conversación con nuestro equipo.",
-                            "description": "En este momento estamos evaluando tu desempeño para tomar la decisión final.\nMuy pronto te contactaremos para compartirte el resultado y, si pasaste, los pasos a seguir.\n\n¡Gracias por haber llegado hasta aquí y por todo el interés que has demostrado en ser parte de nuestro equipo!",
-                            "button_text": "",
+                            "sections": [
+                                {
+                                    "title": "¡Tu entrevista final ya fue!",
+                                    "subtitle": "La fecha y hora que habías agendado ya pasó, y esperamos que hayas tenido una buena conversación con nuestro equipo.",
+                                    "description": "En este momento estamos evaluando tu desempeño para tomar la decisión final.\nMuy pronto te contactaremos para compartirte el resultado y, si pasaste, los pasos a seguir.\n\n¡Gracias por haber llegado hasta aquí y por todo el interés que has demostrado en ser parte de nuestro equipo!",
+                                    "button_text": "",
+                                }
+                            ]
                         },
                         "interviewer_data": {
-                            "title": "¡Terminó la entrevista final!",
-                            "subtitle": "¡Qué emoción! El candidato completó la entrevista final, y ahora viene la decisión más importante.",
-                            "description": "Cuéntanos en el formulario de la derecha qué quieres hacer:\n\n¿Te encantó? Márcalo como Seleccionado y cerremos el proceso.\n¿Tienes dudas? Envíalo a la lista de finalistas para decidir después.\n¿No hizo match? Puedes descartarlo fácilmente.\n\n¡Tú tienes la última palabra!",
-                            "button_text": "",
+                            "sections": [
+                                {
+                                    "title": "¡Terminó la entrevista final!",
+                                    "subtitle": "¡Qué emoción! El candidato completó la entrevista final, y ahora viene la decisión más importante.",
+                                    "description": "Cuéntanos en el formulario de la derecha qué quieres hacer:\n\n¿Te encantó? Márcalo como Seleccionado y cerremos el proceso.\n¿Tienes dudas? Envíalo a la lista de finalistas para decidir después.\n¿No hizo match? Puedes descartarlo fácilmente.\n\n¡Tú tienes la última palabra!",
+                                    "button_text": "",
+                                }
+                            ]
                         },
                     },
                 ],
@@ -938,32 +1050,48 @@ base_position_flows: dict[FLOW_TYPE, PositionFlow] = {
                         "name": "Finalistas",
                         "phase_classification": PHASE_CLASSIFICATION.CALL_TO_ACTION,
                         "candidate_data": {
-                            "title": "¡Tu entrevista final ya fue!",
-                            "subtitle": "La fecha y hora que habías agendado ya pasó, y esperamos que hayas tenido una buena conversación con nuestro equipo.",
-                            "description": "En este momento estamos evaluando tu desempeño para tomar la decisión final.\nMuy pronto te contactaremos para compartirte el resultado y si pasaste, los pasos a seguir.\n\n¡Gracias por haber llegado hasta aquí y por todo el interés que has demostrado en ser parte de nuestro equipo!",
-                            "button_text": "",
+                            "sections": [
+                                {
+                                    "title": "¡Tu entrevista final ya fue!",
+                                    "subtitle": "La fecha y hora que habías agendado ya pasó, y esperamos que hayas tenido una buena conversación con nuestro equipo.",
+                                    "description": "En este momento estamos evaluando tu desempeño para tomar la decisión final.\nMuy pronto te contactaremos para compartirte el resultado y si pasaste, los pasos a seguir.\n\n¡Gracias por haber llegado hasta aquí y por todo el interés que has demostrado en ser parte de nuestro equipo!",
+                                    "button_text": "",
+                                }
+                            ]
                         },
                         "interviewer_data": {
-                            "title": "¡Tu candidato está en la fase de finalistas!",
-                            "subtitle": "Aún no has tomado la decisión final… y lo entendemos, no siempre es fácil cuando hay buenos perfiles sobre la mesa.",
-                            "description": "Este candidato llegó lejos por una razón: tiene algo que lo hace una gran opción.\nDesde este punto, tú decides qué sigue:\n\n¿Quieres que se quede con el puesto? Márcalo como Seleccionado.\n¿Crees que no es el indicado? También puedes descartarlo.\n\n¡Estás a solo un clic de tomar la última palabra!",
-                            "button_text": "",
+                            "sections": [
+                                {
+                                    "title": "¡Tu candidato está en la fase de finalistas!",
+                                    "subtitle": "Aún no has tomado la decisión final… y lo entendemos, no siempre es fácil cuando hay buenos perfiles sobre la mesa.",
+                                    "description": "Este candidato llegó lejos por una razón: tiene algo que lo hace una gran opción.\nDesde este punto, tú decides qué sigue:\n\n¿Quieres que se quede con el puesto? Márcalo como Seleccionado.\n¿Crees que no es el indicado? También puedes descartarlo.\n\n¡Estás a solo un clic de tomar la última palabra!",
+                                    "button_text": "",
+                                }
+                            ]
                         },
                     },
                     {
                         "name": "Candidato seleccionado",
                         "phase_classification": PHASE_CLASSIFICATION.INFORMATIVE,
                         "candidate_data": {
-                            "title": "¡Felicitaciones!",
-                            "subtitle": "Estamos muy emocionados de compartirte que has sido seleccionado para esta oportunidad.",
-                            "description": "Nos encantaría que aceptes nuestra oferta y formes parte de este nuevo proyecto con nosotros.\n\nMuy pronto te contactaremos para darte todos los detalles y acompañarte en los próximos pasos. ¡Estamos ansiosos por lo que viene!",
-                            "button_text": "",
+                            "sections": [
+                                {
+                                    "title": "¡Felicitaciones!",
+                                    "subtitle": "Estamos muy emocionados de compartirte que has sido seleccionado para esta oportunidad.",
+                                    "description": "Nos encantaría que aceptes nuestra oferta y formes parte de este nuevo proyecto con nosotros.\n\nMuy pronto te contactaremos para darte todos los detalles y acompañarte en los próximos pasos. ¡Estamos ansiosos por lo que viene!",
+                                    "button_text": "",
+                                }
+                            ]
                         },
                         "interviewer_data": {
-                            "title": "¡Felicitaciones! escogiste un candidato",
-                            "subtitle": "Te deseamos lo mejor en esta nueva etapa.",
-                            "description": "¡Gran elección!\n\nPodés estar tranquilo: hiciste un gran trabajo. Esta contratación fue objetiva, sin sesgos y con toda la información que necesitabas para tomar la mejor decisión.\n\n¿Tienes otra vacante?\nNo dudes en crearla con Tici. Estamos acá para ayudarte a encontrar al mejor talento, siempre.",
-                            "button_text": "",
+                            "sections": [
+                                {
+                                    "title": "¡Felicitaciones! escogiste un candidato",
+                                    "subtitle": "Te deseamos lo mejor en esta nueva etapa.",
+                                    "description": "¡Gran elección!\n\nPodés estar tranquilo: hiciste un gran trabajo. Esta contratación fue objetiva, sin sesgos y con toda la información que necesitabas para tomar la mejor decisión.\n\n¿Tienes otra vacante?\nNo dudes en crearla con Tici. Estamos acá para ayudarte a encontrar al mejor talento, siempre.",
+                                    "button_text": "",
+                                }
+                            ]
                         },
                     },
                 ],
@@ -975,32 +1103,48 @@ base_position_flows: dict[FLOW_TYPE, PositionFlow] = {
                         "name": "Acción no completada",
                         "phase_classification": PHASE_CLASSIFICATION.CALL_TO_ACTION,
                         "candidate_data": {
-                            "title": "¡Hola!",
-                            "subtitle": "Vimos que no pudiste completar esta etapa del proceso dentro del tiempo esperado.\nEntendemos que pueden surgir imprevistos o que los horarios disponibles no se ajustaran a tu agenda.",
-                            "description": "Si aún te interesa continuar, te invitamos a escribirle directamente a la persona que ha estado acompañando tu proceso.\nElla podrá ayudarte a revisar si es posible reprogramar o encontrar una alternativa.\n\n¡Gracias por tu interés y esperamos saber de ti pronto!",
-                            "button_text": "",
+                            "sections": [
+                                {
+                                    "title": "¡Hola!",
+                                    "subtitle": "Vimos que no pudiste completar esta etapa del proceso dentro del tiempo esperado.\nEntendemos que pueden surgir imprevistos o que los horarios disponibles no se ajustaran a tu agenda.",
+                                    "description": "Si aún te interesa continuar, te invitamos a escribirle directamente a la persona que ha estado acompañando tu proceso.\nElla podrá ayudarte a revisar si es posible reprogramar o encontrar una alternativa.\n\n¡Gracias por tu interés y esperamos saber de ti pronto!",
+                                    "button_text": "",
+                                }
+                            ]
                         },
                         "interviewer_data": {
-                            "title": "El candidato no completó esta etapa del proceso",
-                            "subtitle": "En algunos casos, por diferentes motivos, un candidato no logra avanzar a tiempo.\nEsto puede deberse a temas personales, falta de disponibilidad o que los horarios propuestos no se ajustaban a su agenda.",
-                            "description": "¿Te gustaría darle una nueva oportunidad para completar esta etapa?\n\nGracias por seguir cada paso con atención y empatía.\n¡Seguimos contigo en la búsqueda del mejor talento!",
-                            "button_text": "",
+                            "sections": [
+                                {
+                                    "title": "El candidato no completó esta etapa del proceso",
+                                    "subtitle": "En algunos casos, por diferentes motivos, un candidato no logra avanzar a tiempo.\nEsto puede deberse a temas personales, falta de disponibilidad o que los horarios propuestos no se ajustaban a su agenda.",
+                                    "description": "¿Te gustaría darle una nueva oportunidad para completar esta etapa?\n\nGracias por seguir cada paso con atención y empatía.\n¡Seguimos contigo en la búsqueda del mejor talento!",
+                                    "button_text": "",
+                                }
+                            ]
                         },
                     },
                     {
                         "name": "Abandonaron el proceso",
                         "phase_classification": PHASE_CLASSIFICATION.CALL_TO_ACTION,
                         "candidate_data": {
-                            "title": "Decidiste dar un paso al costado",
-                            "subtitle": "Sabemos que tomar este tipo de decisiones no siempre es fácil, y respetamos completamente tu elección de no continuar en el proceso.",
-                            "description": "Gracias por el interés que mostraste hasta aquí y por haber compartido un poco de tu historia con nosotros.\nOjalá podamos encontrarnos en otra oportunidad. ¡Te esperamos en futuras convocatorias!",
-                            "button_text": "",
+                            "sections": [
+                                {
+                                    "title": "Decidiste dar un paso al costado",
+                                    "subtitle": "Sabemos que tomar este tipo de decisiones no siempre es fácil, y respetamos completamente tu elección de no continuar en el proceso.",
+                                    "description": "Gracias por el interés que mostraste hasta aquí y por haber compartido un poco de tu historia con nosotros.\nOjalá podamos encontrarnos en otra oportunidad. ¡Te esperamos en futuras convocatorias!",
+                                    "button_text": "",
+                                }
+                            ]
                         },
                         "interviewer_data": {
-                            "title": "El candidato decidió no continuar",
-                            "subtitle": "A veces, aunque el proceso fluya bien, pueden surgir razones personales o profesionales por las que un candidato prefiere no seguir adelante.",
-                            "description": "Gracias por seguir cada etapa con atención y respeto.\n¡Seguimos contigo en la búsqueda del mejor talento!\n\nEn este caso, la persona decidió salir del proceso por el siguiente motivo:",
-                            "button_text": "",
+                            "sections": [
+                                {
+                                    "title": "El candidato decidió no continuar",
+                                    "subtitle": "A veces, aunque el proceso fluya bien, pueden surgir razones personales o profesionales por las que un candidato prefiere no seguir adelante.",
+                                    "description": "Gracias por seguir cada etapa con atención y respeto.\n¡Seguimos contigo en la búsqueda del mejor talento!\n\nEn este caso, la persona decidió salir del proceso por el siguiente motivo:",
+                                    "button_text": "",
+                                }
+                            ]
                         },
                     },
                     {
