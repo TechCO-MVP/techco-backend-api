@@ -1,7 +1,8 @@
 from aws_lambda_powertools import Logger
 
 from src.domain.profile import PROCESS_TYPE
-from src.domain.notification import NotificationDTO, NotificationType, NotificationStatus, PHASE_TYPE
+from src.domain.notification import NotificationDTO, NotificationType, NotificationStatus
+from src.domain.business import PHASE_CLASSIFICATION
 from src.repositories.document_db.position_repository import PositionRepository
 from src.utils.send_notification_by_websocket import send_notification_by_websocket
 
@@ -51,9 +52,9 @@ def send_message_to_websocket_by_position_id(event):
             notification_type=NotificationType.PROFILE_FILTER_PROCESS,
             status=NotificationStatus.NEW,
             position_id=position.id,
-            phase_type=PHASE_TYPE.ACTION_CALL.value
+            phase_type=PHASE_CLASSIFICATION.CALL_TO_ACTION.value
                 if event["type"] == PROCESS_TYPE.PROFILES_SEARCH.value
-                else PHASE_TYPE.INFORMATIVE.value,
+                else PHASE_CLASSIFICATION.INFORMATIVE.value,
         )
         
         send_notification_by_websocket(notification)

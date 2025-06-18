@@ -86,7 +86,7 @@ class PositionDTO(BaseModel):
     work_mode: WORK_MODE
     status: POSITION_STATUS = POSITION_STATUS.DRAFT
     benefits: Optional[List[str]] = Field(default_factory=list)
-    salary: Optional[Salary] = None
+    salary: Optional[Salary] = Field(default=None)
     pipe_id: Optional[str] = None
     assistants: Dict[str, Assistant] = {}
     position_flow: Optional[PositionFlow] = None
