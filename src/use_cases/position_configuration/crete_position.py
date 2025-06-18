@@ -11,6 +11,7 @@ from src.domain.position_configuration import (
     PHASE_TYPE,
     Phase,
     PositionConfigurationEntity,
+    STATUS
 )
 from src.repositories.document_db.position_configuration_repository import (
     PositionConfigurationRepository,
@@ -85,6 +86,11 @@ def create_position_use_case(
 
     if not position_entity:
         raise ValueError("Position entity was not able to be created")
+
+    position_configuration_entity.props.status = STATUS.COMPLETED
+    position_configuration_repository.update(
+        position_configuration_id, position_configuration_entity
+    )
 
     return position_entity
 
