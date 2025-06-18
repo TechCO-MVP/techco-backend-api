@@ -6,7 +6,8 @@ from botocore.exceptions import ClientError
 from src.services.graphql.graphql_service import get_client
 from src.repositories.document_db.business_repository import BusinessRepository
 from src.repositories.pipefy.phase_repository import PhaseRepository
-from src.domain.notification import NotificationDTO, NotificationEntity, PHASE_TYPE
+from src.domain.business import PHASE_CLASSIFICATION
+from src.domain.notification import NotificationDTO, NotificationEntity
 from src.use_cases.notification.save_notification import post_notification_use_case
 from src.use_cases.notification.build_notification_response import build_notification_response_use_case
 from src.constants.index import TABLE_WEBSOCKET_CONNECTIONS, REGION_NAME, ENV, API_ID
@@ -94,11 +95,11 @@ def get_phase_type_from_business(notification: NotificationDTO) -> NotificationD
                         notification.phase_type = phase.phase_classification.value
                         return notification
         
-        notification.phase_type = PHASE_TYPE.INFORMATIVE.value
+        notification.phase_type = PHASE_CLASSIFICATION.INFORMATIVE.value
 
         return notification
         
     except Exception as e:
         logger.error(f"Error getting phase type from business: {str(e)}")
-        notification.phase_type = PHASE_TYPE.INFORMATIVE.value
+        notification.phase_type = PHASE_CLASSIFICATION.INFORMATIVE.value
         return notification
