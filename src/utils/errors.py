@@ -18,3 +18,13 @@ def format_validation_error(error: ValidationError) -> list[str]:
         errors.append(readable_error)
 
     return errors
+
+def normalize_exception(e: Exception) -> Exception:
+    """Normalize an exception to always have a dictionary as the first argument"""
+    if e.args and isinstance(e.args[0], str):
+        e.args = ({"message": e.args[0]},)
+    elif e.args and isinstance(e.args[0], dict):
+        pass
+    else:
+        e.args = ({"message": str(e)},)
+    return e

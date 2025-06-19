@@ -7,6 +7,7 @@ from src.domain.profile import ProfileFilterProcessEntity
 from src.use_cases.profile.validate_status_profile_query import (
     validate_status_profile_query_use_case,
 )
+from src.utils.errors import normalize_exception
 
 logger = Logger()
 
@@ -77,8 +78,9 @@ def lambda_handler(event, context: LambdaContext) -> dict:
 
         return profile_process_entity.to_dto(flat=True)
     except Exception as e:
+        normalized_exception = normalize_exception(e)
         process_dto = profile_process_entity.to_dto(flat=True)
-        e.args[0]["event"] = process_dto
-        e.args[0]["process_id"] = process_dto.get("_id")
-        logger.error(e)
-        raise e
+        normalized_exception.args[0]["event"] = process_dto
+        normalized_exception.args[0]["process_id"] = process_dto.get("_id")
+        logger.error(normalized_exception)
+        raise normalized_exception

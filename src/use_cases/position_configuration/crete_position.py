@@ -125,6 +125,9 @@ def create_position(
         salary_range=data.get("salary", {}).get("salary_range", None),
     )
 
+    if salary.salary is None and salary.salary_range is None:
+        salary = None
+
     position_flow = business.props.position_flows.get(position_configuration.props.flow_type)
     if not position_flow:
         raise ValueError(
