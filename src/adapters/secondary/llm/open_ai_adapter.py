@@ -39,7 +39,7 @@ class OpenAIAdapter(LLMService):
         sleep(80)  # Wait for the file to be indexed
         thread_run = self.create_and_run_thread(messages, file_id)
         self.wait_for_completion(thread_run)
-        self.delete_file(file_id)
+        # self.delete_file(file_id) we do not delete the file here, as it might cause errors
         return self.get_thread_response(thread_run) if not return_run else thread_run
 
     def initialize_assistant_thread(self, assistant_id: str, initial_message: str = "Hola!") -> Run:
@@ -240,7 +240,7 @@ class OpenAIAdapter(LLMService):
 
         if get_messages.status_code == 200:
             messages = get_messages.json()
-            
+
             if not messages.get("has_more"):
                 messages["data"].pop()
 
