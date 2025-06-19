@@ -57,7 +57,7 @@ def assistant_response_handler_use_case(
 
 def calculate_technical_test_grade(technical_test_response: dict) -> float:
     """Calculate the grade for the technical test based on the response."""
-    dimensions = technical_test_response.get("dimensions", [])
+    dimensions = technical_test_response.get("dimensiones", [])
     total_score = sum(dimension.get("calificacion", 0) for dimension in dimensions)
     return round(total_score / len(dimensions), 2) if dimensions else 0.0
 
