@@ -30,7 +30,10 @@ mutation updateCardField($input: UpdateCardFieldInput!) {
         card {
             id
             fields {
-                id
+                field {
+                    id
+                    label
+                }
                 value
             }
         }
