@@ -3,6 +3,7 @@ from aws_lambda_powertools.utilities.typing import LambdaContext
 
 from src.domain.profile import ProfileFilterProcessDTO, ProfileFilterProcessQueryDTO
 from src.use_cases.profile.filter_profiles_ai_use_case import query_profiles_ai_use_case
+from src.utils.errors import normalize_exception
 
 logger = Logger()
 
@@ -32,7 +33,8 @@ def lambda_handler(event: dict, context: LambdaContext) -> dict:
 
         return query_profiles_ai_use_case(process_id, profile_filter_process)
     except Exception as e:
-        e.args[0]["event"] = event
-        e.args[0]["process_id"] = process_id
-        logger.error(f"Error querying open ai: {e}")
-        raise e
+        normalized_exception = normalize_exception(e)
+        normalized_exception.args[0]["event"] = event
+        normalized_exception.args[0]["process_id"] = process_id
+        logger.error(normalized_exception)
+        raise normalized_exception
