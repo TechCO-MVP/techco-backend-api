@@ -1,8 +1,13 @@
+from aws_lambda_powertools import Logger
+
 from src.domain.assistant import ASSISTANT_TYPE
 from src.repositories.document_db.hiring_process_repository import HiringProcessRepository
 from src.repositories.pipefy.card_repository import CardRepository
 from src.services.graphql.graphql_service import get_client
 from src.use_cases.hiring_process.assistant_response import assistant_response_use_case
+
+
+logger = Logger()
 
 
 def assistant_response_handler_use_case(
@@ -28,7 +33,9 @@ def assistant_response_handler_use_case(
     hiring_repository.update(hiring_process_id, hiring_process_entity)
 
     # calculate calification as avg of all scores
-    assesment_result = response.get("assessment_result", {})
+    logger.info(f"Calculating grade for assistant type: {assistant_type}")
+    logger.info(f"Response from assistant: {response}")
+    assesment_result = response.get("assesment_result", {})
     if assistant_type == ASSISTANT_TYPE.TECHNICAL_ASSESSMENT_ASSISTANT:
         grade = calculate_technical_test_grade(assesment_result)
     else:
@@ -70,4 +77,5 @@ def calculate_cultural_fit_grade(cultural_fit_response: dict) -> float:
         for behavior in behaviors
         for dimension in behavior.get("dimensions", [])
     )
-    return round(total_score / len(behaviors), 2) if behaviors else 0.0
+    total_dimensions = sum(len(behavior.get("dimensions", [])) for behavior in behaviors)
+    return round(total_score / total_dimensions, 2) if total_dimensions else 0.0
