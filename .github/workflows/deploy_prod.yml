@@ -52,4 +52,6 @@ jobs:
         run: poetry run sls package
 
       - name: Deploy
+        env:
+          TECHCO_DOMAIN: ${{ secrets.TECHCO_DOMAIN_PROD }}
         run: poetry run sls deploy --stage prod
