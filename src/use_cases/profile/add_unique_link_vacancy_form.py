@@ -30,8 +30,9 @@ def add_links_form(event: ProfileFilterProcessEntity) -> ProfileFilterProcessEnt
         vancancy_name = friendly_string(event.props.process_filters.role)
         business_entity = business_repository.getById(event.props.business_id)
         business_name = friendly_string(business_entity.props.name)
+        domain = os.getenv("TECHCO_DOMAIN")
         profile.link_vacancy_form = (
-            f"https://www.evoly.ofertas/{business_name}/{vancancy_name}?token={token}"
+            f"{domain}/{business_name}/{vancancy_name}?token={token}"
         )
     return event
 
