@@ -32,6 +32,7 @@ def get_position_by_token_use_case(params: dict) -> list[dict]:
     position = position_repository.getById(token_data["id"])
     hiring_params = {
         "business_id": token_data["business_id"],
+        "position_id": token_data["id"],
         "profile.linkedin_num_id": token_data["linkedin_num_id"]
     }
     hiring = hiring_repository.getByLinkedinNumId(hiring_params)
