@@ -3,17 +3,18 @@ from aws_lambda_powertools.event_handler import APIGatewayRestResolver, Response
 from aws_lambda_powertools.utilities.typing import LambdaContext
 from pydantic import ValidationError
 
-from src.domain.role import Role
+# from src.domain.role import Role
 from src.domain.user import GetUserQueryParams
 from src.use_cases.user.get_user import get_user_use_case
-from src.utils.authorization import role_required
+
+# from src.utils.authorization import role_required
 
 logger = Logger()
 app = APIGatewayRestResolver()
 
 
 @app.get("/user/list")
-@role_required(app, [Role.SUPER_ADMIN, Role.BUSINESS_ADMIN])
+# @role_required(app, [Role.SUPER_ADMIN, Role.BUSINESS_ADMIN, Role.POSITION_OWNER])
 def get_user():
     """Get user."""
     try:
