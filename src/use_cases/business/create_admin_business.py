@@ -3,7 +3,6 @@ from typing import Dict
 
 import boto3
 
-from src.adapters.secondary.llm.open_ai_adapter import OpenAIAdapter
 from src.constants.index import CLIENT_ID, ENV, REGION_NAME
 from src.constants.assistants.index import ASSISTANTS_IDS
 from src.domain.assistant import ASSISTANT_TYPE
@@ -91,8 +90,6 @@ def crete_admin_business_use_case(
 
 
 def create_assistants_for_business() -> Dict[str, Dict]:
-    unique_identifier = str(uuid.uuid4())
-    open_ai_adapter = OpenAIAdapter()
     assistants = {}
 
     assistant_types = [
@@ -102,11 +99,7 @@ def create_assistants_for_business() -> Dict[str, Dict]:
     ]
 
     for assistant_type in assistant_types:
-        if assistant_type == ASSISTANT_TYPE.POSITION_ASSISTANT:
-            assistant = open_ai_adapter.create_assistant(unique_identifier, assistant_type)
-            assistant_id = assistant.id
-        else:
-            assistant_id = ASSISTANTS_IDS[assistant_type]
+        assistant_id = ASSISTANTS_IDS[assistant_type]
 
         assistants[assistant_type] = {
             "assistant_id": assistant_id,
