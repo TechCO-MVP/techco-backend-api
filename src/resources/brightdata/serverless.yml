@@ -118,6 +118,10 @@ stateMachines:
           Catch:
             - ErrorEquals: ["States.ALL"]
               Next: Fail
+          Next: WaitBeforeGetData
+        WaitBeforeGetData:
+          Type: Wait
+          Seconds: 600
           Next: GetSnapshotData
         GetSnapshotData:
           Type: Task
