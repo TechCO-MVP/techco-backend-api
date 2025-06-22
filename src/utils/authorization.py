@@ -3,7 +3,7 @@ import boto3
 from functools import wraps
 from typing import List
 from aws_lambda_powertools import Logger
-from aws_lambda_powertools.event_handler import APIGatewayRestResolver, Response
+from aws_lambda_powertools.event_handler import APIGatewayRestResolver, Response, content_types
 from botocore.exceptions import ClientError
 
 
@@ -25,6 +25,7 @@ def role_required(
         @wraps(func)
         def wrapper(*args, **kwargs):
             try:
+                logger.debug("Checking user roles for authorization")
                 authorizer = app.current_event.request_context.authorizer
 
                 if not authorizer or "claims" not in authorizer:
@@ -56,6 +57,7 @@ def role_required(
 
                 return func(*args, **kwargs)
             except Exception as e:
+                logger.info("An error occurred while checking user roles for authorization")
                 logger.exception("An error occurred", exc_info=e)
                 return _unauthorized_response("Unauthorized")
 
@@ -70,7 +72,9 @@ def is_super_admin(user_entity: UserEntity):
 
 
 def _unauthorized_response(message: str) -> Response:
-    return Response(status_code=403, body={"message": message})
+    return Response(
+        status_code=403, body={"message": message}, content_type=content_types.APPLICATION_JSON
+    )
 
 
 def _get_business_id(app: APIGatewayRestResolver, business_id_location: str) -> str:
