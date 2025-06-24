@@ -41,4 +41,5 @@ def build_response(business: BusinessEntity, position: PositionEntity) -> Dict[s
         "position_assessments": position.props.assessments or [],
         "position_flow": position.props.position_flow or None,
         "position_seniority": position.props.seniority or None,
+        "position_education": position.props.education or None,
     }

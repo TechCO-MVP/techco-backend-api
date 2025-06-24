@@ -80,6 +80,7 @@ class PositionDTO(BaseModel):
     city: str
     description: str
     responsabilities: List[str] = Field(..., min_length=1)
+    education: List[str] = Field(default_factory=list)
     skills: List[Skill] = Field(..., min_length=1)
     languages: List[Languages] = Field(..., min_length=1)
     hiring_priority: LEVEL
