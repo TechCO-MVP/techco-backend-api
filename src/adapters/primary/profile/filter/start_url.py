@@ -18,8 +18,6 @@ app = APIGatewayRestResolver()
 def start_profile_search_by_url():
     try:
         logger.info("Starting filter profile by url")
-        user = app.current_event.request_context.authorizer["claims"]
-        user_email = user["email"]
 
         body: dict = app.current_event.json_body
 
@@ -40,7 +38,7 @@ def start_profile_search_by_url():
 
         # call use case to start filter profile
         result = start_filter_profile_url_use_case(
-            user_email, position_id, business_id, url_profiles
+            position_id, business_id, url_profiles
         )
 
         return Response(
