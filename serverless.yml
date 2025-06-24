@@ -573,7 +573,7 @@ functions:
           path: /profile/filter/start/url
           method: post
           cors: true
-          private: true
+          # private: true
           # authorizer:
           #   type: COGNITO_USER_POOLS
           #   authorizerId:
