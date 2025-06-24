@@ -574,10 +574,10 @@ functions:
           method: post
           cors: true
           private: true
-          authorizer:
-            type: COGNITO_USER_POOLS
-            authorizerId:
-              Ref: ApiGatewayAuthorizer
+          # authorizer:
+          #   type: COGNITO_USER_POOLS
+          #   authorizerId:
+          #     Ref: ApiGatewayAuthorizer
 
   error_processing_profile_filter_process:
     handler: src/adapters/primary/profile/error_profile_filter_process.lambda_handler
