@@ -71,7 +71,7 @@ class PositionDTO(BaseModel):
     position_configuration_id: str = Field(default="", alias="position_configuration_id")
     business_id: str = Field(default="", alias="business_id")
     owner_position_user_id: str
-    recruiter_user_id: str
+    recruiter_user_id: Optional[str] = ""
     responsible_users: List[PositionStakeholders] = Field(default_factory=list)
     flow_type: FLOW_TYPE
     role: str
@@ -80,9 +80,9 @@ class PositionDTO(BaseModel):
     city: str
     description: str
     responsabilities: List[str] = Field(..., min_length=1)
-    education: List[str] = Field(default_factory=list)
+    education: Optional[List[str]] = Field(default_factory=list)
     skills: List[Skill] = Field(..., min_length=1)
-    languages: List[Languages] = Field(..., min_length=1)
+    languages: Optional[List[Languages]] = Field(default_factory=list)
     hiring_priority: LEVEL
     work_mode: WORK_MODE
     status: POSITION_STATUS = POSITION_STATUS.DRAFT

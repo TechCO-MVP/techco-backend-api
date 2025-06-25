@@ -48,10 +48,10 @@ def build_message_to_websocket(hiring_process: HiringProcessEntity):
     """
     position_repository = PositionRepository()
     position = position_repository.getById(hiring_process.props.position_id)
-    user_to_notify = [
-        position.props.owner_position_user_id,
-        position.props.recruiter_user_id,
-        ]
+    user_to_notify = [position.props.owner_position_user_id]
+    if position.props.recruiter_user_id:
+        user_to_notify.append(position.props.recruiter_user_id)
+    
     responsible_users = [user.user_id for user in position.props.responsible_users]
     user_to_notify.extend(responsible_users)
     
