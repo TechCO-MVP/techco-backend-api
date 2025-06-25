@@ -18,7 +18,10 @@ def put_position_status_use_case(position_status_dto: UpdatePositionStatusDTO) -
 def validate_user_can_edit(position: PositionEntity, user_id: str) -> bool:
     """Validate if the user can edit the position."""
     user_can_edit = False
-    list_users = [position.props.owner_position_user_id, position.props.recruiter_user_id]
+    list_users = [position.props.owner_position_user_id]
+
+    if position.props.recruiter_user_id:
+        list_users.append(position.props.recruiter_user_id)
     
     for stakeholder in position.props.responsible_users:
         if stakeholder.user_id == user_id and stakeholder.can_edit:

@@ -115,10 +115,14 @@ def create_position(
         raise ValueError("No data found in the description phase")
 
     skills = [Skill(name=skill.get("name"), required=False) for skill in data.get("skills", [])]
-    languages = [
-        Languages(name=language.get("name"), level=language.get("level"))
-        for language in data.get("languages", [])
-    ]
+    if data.get("languages"):
+        languages = [
+            Languages(name=language.get("name"), level=language.get("level"))
+            for language in data.get("languages", [])
+        ]
+    else:
+        languages = []
+        
     salary = Salary(
         currency=data.get("salary", {}).get("currency"),
         salary=data.get("salary", {}).get("salary", None),
@@ -138,7 +142,7 @@ def create_position(
         position_configuration_id=position_configuration.id,
         business_id=business_id,
         owner_position_user_id="",
-        recruiter_user_id=data.get("recruiter_user_id"),
+        recruiter_user_id=data.get("recruiter_user_id", ""),
         responsible_users=data.get("responsible_users"),
         flow_type=position_configuration.props.flow_type,
         role=data.get("role"),
