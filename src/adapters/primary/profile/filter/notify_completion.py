@@ -43,12 +43,17 @@ def send_message_to_websocket_by_position_id(event):
         ]
     responsible_users = [user.user_id for user in position.props.responsible_users]
     user_to_notify.extend(responsible_users)
+
+    if event["type"] == PROCESS_TYPE.PROFILES_SEARCH.value:
+        notification_message = f"¡Listo tu tablero de seguimiento! Ya puedes hacer seguimiento a la vacante {event['process_filters']['role']} desde tu nuevo tablero."
+    else:
+        notification_message = f"Tu vacante {event['process_filters']['role']} está llamando la atención. ¡Se ha postulado un nuevo candidato."
     
     for user in set(user_to_notify):
         notification = NotificationDTO(
             user_id=user,
             business_id=event["business_id"],
-            message=f"El proceso de seleccion para la vacante {event['process_filters']['role']} se completo satisfactoriamente",
+            message=notification_message,
             notification_type=NotificationType.PROFILE_FILTER_PROCESS,
             status=NotificationStatus.NEW,
             position_id=position.id,
