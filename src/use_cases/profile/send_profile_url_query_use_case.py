@@ -14,7 +14,8 @@ def send_profile_url_query_use_case(
     Returns:
         str: The snapshot ID of the profile filter process.
     """
-    urls = profile_filter_entity.props.process_filters.url_profiles
+    url_prifiles = profile_filter_entity.props.process_filters.url_profiles
+    urls = [url_profile.url for url_profile in url_prifiles]
 
     bright_data_dataset_repository = BrightDataDatasetRepository()
     snapshot_id = bright_data_dataset_repository.search_by_url(urls)

@@ -22,6 +22,11 @@ class PROCESS_TYPE(str, Enum):
     PROFILES_URL_SEARCH = "profiles_url_search"
 
 
+class URLProfile(BaseModel):
+    url: str = Field(..., alias="url")
+    email: str = Field(..., alias="email")
+
+
 class ProfileFilterProcessQueryDTO(BaseModel):
     role: str
     seniority: str
@@ -33,7 +38,7 @@ class ProfileFilterProcessQueryDTO(BaseModel):
     business_id: str = Field(default="", alias="business_id")
     position_id: str = Field(default="", alias="position_id")
     snapshot_id: Optional[str] = ""
-    url_profiles: Optional[List[str]] = []
+    url_profiles: Optional[List[URLProfile]] = []
 
     @field_validator("url_profiles", mode="before")
     def validate_url_profiles(cls, v):

@@ -28,6 +28,12 @@ def create_cards_for_profiles_use_case(process_id: str, position_id: str, busine
 
     pipe_id = position.props.pipe_id
     profiles = profile_filter_process.props.profiles
+    url_profiles = profile_filter_process.props.process_filters.url_profiles
+
+    for idx, profile in enumerate(profiles):
+        profile.email = url_profiles[idx].email if url_profiles else None
+        profile.source = profile_filter_process.props.type.value
+
     updated_profiles = create_cards_for_profiles(profiles, pipe_id, position_id, business_id)
 
     profile_filter_process.props.profiles = updated_profiles

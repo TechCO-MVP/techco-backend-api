@@ -156,3 +156,5 @@ class ProfileBrightDataDTO(BaseModel):
     profile_evaluation: Optional[ProfileEvaluation] = None
     link_vacancy_form: Optional[str] = None
     card_id: Optional[int] = None
+    email: Optional[str] = None
+    source: Optional[str] = None
