@@ -7,12 +7,7 @@ from src.domain.position import (
     POSITION_STATUS,
     Salary,
 )
-from src.domain.position_configuration import (
-    PHASE_TYPE,
-    Phase,
-    PositionConfigurationEntity,
-    STATUS
-)
+from src.domain.position_configuration import PHASE_TYPE, Phase, PositionConfigurationEntity, STATUS
 from src.repositories.document_db.position_configuration_repository import (
     PositionConfigurationRepository,
 )
@@ -122,9 +117,9 @@ def create_position(
         ]
     else:
         languages = []
-        
+
     salary = Salary(
-        currency=data.get("salary", {}).get("currency"),
+        currency=data.get("salary", {}).get("currency", None),
         salary=data.get("salary", {}).get("salary", None),
         salary_range=data.get("salary", {}).get("salary_range", None),
     )

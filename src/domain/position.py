@@ -46,7 +46,7 @@ class Range(BaseModel):
 
 
 class Salary(BaseModel):
-    currency: str
+    currency: Optional[str] = None
     salary: Optional[str] = None
     salary_range: Optional[Range] = None
 
