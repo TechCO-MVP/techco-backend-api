@@ -26,6 +26,13 @@ class URLProfile(BaseModel):
     url: str = Field(..., alias="url")
     email: str = Field(..., alias="email")
 
+    @field_validator("url")
+    def validate_url(cls, v):
+        pattern = re.compile(r"^https://www\.linkedin\.com/in/.*$")
+        if not pattern.match(v):
+            raise ValueError(f"Invalid URL format: {v}")
+        return v
+
 
 class ProfileFilterProcessQueryDTO(BaseModel):
     role: str
@@ -39,16 +46,6 @@ class ProfileFilterProcessQueryDTO(BaseModel):
     position_id: str = Field(default="", alias="position_id")
     snapshot_id: Optional[str] = ""
     url_profiles: Optional[List[URLProfile]] = []
-
-    @field_validator("url_profiles", mode="before")
-    def validate_url_profiles(cls, v):
-        if not v:
-            return v
-        for url in v:
-            pattern = re.compile(r"^https://www\.linkedin\.com/in/.*$")
-            if not pattern.match(url):
-                raise ValueError(f"Invalid URL format: {url}")
-        return v
 
 
 class ProfileFilterProcessDTO(BaseModel):
