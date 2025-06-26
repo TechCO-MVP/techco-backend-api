@@ -78,6 +78,8 @@ def lambda_handler(event, context: LambdaContext) -> dict:
 
         return profile_process_entity.to_dto(flat=True)
     except Exception as e:
+        profile_process_entity = from_dto_to_entity(ProfileFilterProcessEntity, event)
+
         normalized_exception = normalize_exception(e)
         process_dto = profile_process_entity.to_dto(flat=True)
         normalized_exception.args[0]["event"] = process_dto
