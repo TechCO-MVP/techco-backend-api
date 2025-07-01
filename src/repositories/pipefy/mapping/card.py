@@ -4,6 +4,7 @@ from typing import Any
 from src.constants.index import DEFAULT_PIPE_TEMPLATE_ID
 from src.domain.profile_evaluation import PROFILE_GROUP
 from src.domain.profile_brightdata import ProfileBrightDataDTO, ExperienceProfile
+from src.domain.profile import PROCESS_TYPE
 
 
 def get_role_alignment(data: ProfileBrightDataDTO) -> str:
@@ -25,7 +26,7 @@ def get_current_position(data: ProfileBrightDataDTO) -> ExperienceProfile:
 
 def get_prop_from_current_position(data: ProfileBrightDataDTO, prop: str) -> Any:
     current_experience = get_current_position(data)
-    return current_experience.model_json_schema().get(prop, "") if current_experience else ""
+    return getattr(current_experience, prop) if current_experience else ""
 
 
 def is_currently_employed(data: ProfileBrightDataDTO) -> str:
@@ -132,8 +133,22 @@ CARD_START_FORM_MAPPING = {
                 "field_id": "305713420_334105217_dateworkended",
                 "field_value": lambda data: get_experience_end_date(data),
             },
-            {"field_id": "305713420_334105217_candidateemail", "field_value": ""},
-            {"field_id": "305713420_334105217_candidatesource", "field_value": "Talent Connect"},
+            {
+                "field_id": "305713420_334105217_urloftheinvitationtotheprocess",
+                "field_value": lambda data: data.link_vacancy_form,
+            },
+            {
+                "field_id": "305713420_334105217_candidateemail",
+                "field_value": lambda data: data.email,
+            },
+            {
+                "field_id": "305713420_334105217_candidatesource",
+                "field_value": lambda data: (
+                    "Talent Connect"
+                    if data.source == PROCESS_TYPE.PROFILES_SEARCH.value
+                    else "A través de la URL de la vacante"
+                ),
+            },
         ]
     }
 }

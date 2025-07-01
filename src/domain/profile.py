@@ -7,6 +7,7 @@ from pydantic import BaseModel, Field, field_validator
 
 from src.domain.base_entity import BaseEntity
 from src.domain.profile_brightdata import ProfileBrightDataDTO
+from src.domain.position import Skill
 
 
 class PROCESS_STATUS(str, Enum):
@@ -21,9 +22,16 @@ class PROCESS_TYPE(str, Enum):
     PROFILES_URL_SEARCH = "profiles_url_search"
 
 
-class Skill(BaseModel):
-    name: str
-    required: bool
+class URLProfile(BaseModel):
+    url: str = Field(..., alias="url")
+    email: str = Field(..., alias="email")
+
+    @field_validator("url")
+    def validate_url(cls, v):
+        pattern = re.compile(r"^https://www\.linkedin\.com/in/.*$")
+        if not pattern.match(v):
+            raise ValueError(f"Invalid URL format: {v}")
+        return v
 
 
 class ProfileFilterProcessQueryDTO(BaseModel):
@@ -37,17 +45,7 @@ class ProfileFilterProcessQueryDTO(BaseModel):
     business_id: str = Field(default="", alias="business_id")
     position_id: str = Field(default="", alias="position_id")
     snapshot_id: Optional[str] = ""
-    url_profiles: Optional[List[str]] = []
-
-    @field_validator("url_profiles", mode="before")
-    def validate_url_profiles(cls, v):
-        if not v:
-            return v
-        for url in v:
-            pattern = re.compile(r"^https://www\.linkedin\.com/in/.*$")
-            if not pattern.match(url):
-                raise ValueError(f"Invalid URL format: {url}")
-        return v
+    url_profiles: Optional[List[URLProfile]] = []
 
 
 class ProfileFilterProcessDTO(BaseModel):
@@ -55,6 +53,7 @@ class ProfileFilterProcessDTO(BaseModel):
     type: PROCESS_TYPE = PROCESS_TYPE.PROFILES_SEARCH
     execution_arn: Optional[str] = None
     user_id: str
+    pipe_id: Optional[str] = None
     position_id: str = Field(default="", alias="position_id")
     business_id: str = Field(default="", alias="business_id")
     process_filters: ProfileFilterProcessQueryDTO

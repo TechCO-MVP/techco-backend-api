@@ -28,7 +28,7 @@ def lambda_handler(event, context: LambdaContext) -> dict:
             "seniority": "Senior",
             "country_code": "CO",
             "city": "ogot",
-            "description": "Experienced software engineer with expertise in Python and cloud technologies.",
+            "description": "Experienced software engineer with expertise in Python.",
             "responsabilities": [
             "Design and develop scalable and maintainable software solutions.",
             "Collaborate with cross-functional teams to deliver high-quality products.",
@@ -85,11 +85,8 @@ def lambda_handler(event, context: LambdaContext) -> dict:
 
         profile_process_entity = from_dto_to_entity(ProfileFilterProcessEntity, event)
         event_links = add_unique_link_vacancy_form(profile_process_entity)
-        
+
         return event_links
     except Exception as e:
         logger.exception(e)
-        return {
-            "status": "Error",
-            "errorInfo": e
-        }
+        return {"status": "Error", "errorInfo": e}

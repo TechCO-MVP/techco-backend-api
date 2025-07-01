@@ -5,8 +5,13 @@ configValidationMode: error
 provider:
   name: aws
   runtime: python3.11
-  stage: dev
+  stage: ${opt:stage, 'dev'}
   region: us-east-1
+  apiGateway:
+    binaryMediaTypes:
+      - "multipart/form-data"
+      - "application/pdf"
+      - "application/octet-stream"
   timeout: 30
   versionFunctions: false
   vpc:
@@ -21,23 +26,29 @@ provider:
   environment:
     ENV: ${self:provider.stage}
     REGION_NAME: ${self:provider.region}
+    SERVICE_NAME: ${self:service}
+    TECHCO_DOMAIN: ${env:TECHCO_DOMAIN}
     COGNITO_USER_POOL_ID: !Ref CognitoUserPool
     COGNITO_USER_POOL_CLIENT_ID: !Ref CognitoPasswordlessUserPoolClient
     DOCUMENTDB_SECRET_NAME: ${self:resources.Resources.DocumentDBSecretPassword.Properties.Name}
     DOCUMENTDB_ENDPOINT: !GetAtt DocumentDBCluster.Endpoint
     DOCUMENTDB_PORT: 27017
     DOCUMENTDB_DATABASE: techco
-    UI_URI: "https://develop.dzkuw34ypddf5.amplifyapp.com"
+    UI_URI: "https://develop.dzkuw34ypddf5.amplifyapp.com/es/signin"
     PROFILE_FILTER_PROCESS_ARN: arn:aws:states:${self:provider.region}:#{AWS::AccountId}:stateMachine:ProfileFilterProcess-${self:provider.stage}
+    ASSESMENT_CHECK_PROCESS_ARN: arn:aws:states:${self:provider.region}:#{AWS::AccountId}:stateMachine:assesmentCheckProcess-${self:provider.stage}
     S3_RAW_PROFILE_DATA_IA_BUCKET_NAME: !Ref S3RawProfileDataIA
     S3_DEPURATED_PROFILE_DATA_IA_BUCKET_NAME: !Ref S3DepuratedProfileDataIA
     S3_REFINED_PROFILE_DATA_IA_BUCKET_NAME: !Ref S3RefinedProfileDataIA
+    S3_ASSESSMENTS_FILES_BUCKET_NAME: !Ref S3AssessmentsFiles
     OPEN_AI_API_KEY_SECRET_NAME: openai_api_key_dev
     OPEN_AI_ASSISTANT_ID: asst_XKxSpnp03caySq26J2e80VPJ
     SQS_USER_NOTIFICATIONS_NAME: !Ref SQSUserNotificatons
     PIPEFY_API_KEY_SECRET_NAME: pipefy_api_key
     PIPEFY_ORGANIZATION_ID: "301603037"
     PIPE_TEMPLATE_ID: "305713420"
+    MEDIUM_PROFILE_PIPE_TEMPLATE_ID: "306379995"
+    LOW_PROFILE_PIPE_TEMPLATE_ID: "306376951"
     API_URL: "https://zcich4tlm3.execute-api.us-east-1.amazonaws.com/dev"
     API_GATEWAY_API_KEY_SECRET_NAME: api-key-apigtw-dev
     TOKEN_SERVICE_BRIGHTDATA: TOKEN_BRIGHTDATA_V2
@@ -70,7 +81,9 @@ provider:
         - Effect: Allow
           Action:
             - states:StartExecution
-          Resource: ${self:provider.environment.PROFILE_FILTER_PROCESS_ARN}
+          Resource:
+            - ${self:provider.environment.PROFILE_FILTER_PROCESS_ARN}
+            - ${self:provider.environment.ASSESMENT_CHECK_PROCESS_ARN}
         - Effect: Allow
           Action:
             - s3:PutObject
@@ -79,6 +92,10 @@ provider:
           Resource:
             - arn:aws:s3:::dev-raw-profile-data-infrequent-access
             - arn:aws:s3:::dev-raw-profile-data-infrequent-access/*
+            - arn:aws:s3:::dev-depurated-profile-data-infrequent-access
+            - arn:aws:s3:::dev-depurated-profile-data-infrequent-access/*
+            - arn:aws:s3:::dev-refined-profile-data-infrequent-access
+            - arn:aws:s3:::dev-refined-profile-data-infrequent-access/*
         - Effect: Allow
           Action:
             - sqs:SendMessage
@@ -98,6 +115,33 @@ provider:
           Action:
             - secretsmanager:GetSecretValue
           Resource: "*"
+        - Effect: Allow
+          Action:
+            - dynamodb:PutItem
+            - dynamodb:DeleteItem
+            - dynamodb:GetItem
+            - dynamodb:Query
+          Resource:
+            - !GetAtt WebSocketConnections.Arn
+            - !Sub "${WebSocketConnections.Arn}/index/user_id_index"
+            - !GetAtt WebSocketConnectionsPublic.Arn
+            - !Sub "${WebSocketConnectionsPublic.Arn}/index/hiring_process_id_index"
+            - !GetAtt FileProcessingStatus.Arn
+            - !Sub "${FileProcessingStatus.Arn}/index/process_id_index"
+        - Effect: Allow
+          Action:
+            - s3:PutObject
+            - s3:GetObject
+            - s3:DeleteObject
+            - s3:ListBucket
+          Resource:
+            - !Sub "arn:aws:s3:::${self:provider.stage}-techco-assessments-files-${self:provider.region}"
+            - !Sub "arn:aws:s3:::${self:provider.stage}-techco-assessments-files-${self:provider.region}/*"
+        - Effect: Allow
+          Action:
+            - lambda:InvokeFunction
+          Resource:
+            - "arn:aws:lambda:${self:provider.region}:*:function:${self:service}-${self:provider.stage}-process_file_for_assistant"
 
 custom:
   userPoolName: ${self:provider.stage}-passwordless-user-pool
@@ -151,6 +195,9 @@ resources:
     PipefyCardMoveQueue: ${file(./src/resources/pipefy/serverless.yml):PipefyCardMoveQueue}
     PipefyFieldUpdateQueue: ${file(./src/resources/pipefy/serverless.yml):PipefyFieldUpdateQueue}
     EventBridgeToSQSRole: ${file(./src/resources/pipefy/serverless.yml):EventBridgeToSQSRole}
+    WebSocketConnections: ${file(./src/resources/dynamoDB/serverless.yml):WebSocketConnections}
+    WebSocketConnectionsPublic: ${file(./src/resources/dynamoDB/serverless.yml):WebSocketConnectionsPublic}
+    FileProcessingStatus: ${file(./src/resources/dynamoDB/serverless.yml):FileProcessingStatus}
     serverlessApiGatewayCloudWatchRole:
       Type: AWS::IAM::Role
       Properties:
@@ -175,6 +222,10 @@ resources:
                     - logs:DescribeLogStreams
                     - logs:PutLogEvents
                   Resource: "*"
+    S3PublicData: ${file(./src/resources/s3/serverless.yml):S3PublicData}
+    S3PublicDataPolicy: ${file(./src/resources/s3/serverless.yml):S3PublicDataPolicy}
+    S3AssessmentsFiles: ${file(./src/resources/s3/serverless.yml):S3AssessmentsFiles}
+    S3AssessmentsFilesPolicy: ${file(./src/resources/s3/serverless.yml):S3AssessmentsFilesPolicy}
 
 functions:
   define_auth_challenge:
@@ -365,7 +416,7 @@ functions:
               Ref: ApiGatewayAuthorizer
 
   update_user_data:
-    handler: src/adapters/primary/user/update_user_status/index.handler
+    handler: src/adapters/primary/user/update_user_data/index.handler
     events:
       - http:
           path: /user/data
@@ -396,7 +447,6 @@ functions:
             parameters:
               querystrings:
                 business_id: true
-                user_id: true
 
   get_position_by_token:
     handler: src/adapters/primary/position/get_position_token/index.handler
@@ -409,13 +459,53 @@ functions:
           request:
             parameters:
               querystrings:
-                token: true
+                token: false
+                position_id: false
 
   put_position_status:
     handler: src/adapters/primary/position/put_position_status/index.handler
     events:
       - http:
           path: /position/status
+          method: put
+          cors: true
+          private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+
+  get_notification_list:
+    handler: src/adapters/primary/notifications/get_notification/index.handler
+    events:
+      - http:
+          path: /notification/list
+          method: get
+          cors: true
+          private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+
+  post_notification:
+    handler: src/adapters/primary/notifications/post_notification/index.handler
+    events:
+      - http:
+          path: /notification/create
+          method: post
+          cors: true
+          private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+
+  put_notification_status:
+    handler: src/adapters/primary/notifications/put_notification_status/index.handler
+    events:
+      - http:
+          path: /notification/status
           method: put
           cors: true
           private: true
@@ -441,6 +531,28 @@ functions:
               querystrings:
                 hiring_process_id: true
 
+  put_hiring_process_by_id:
+    handler: src/adapters/primary/hiring_process/put_hiring_process/index.handler
+    events:
+      - http:
+          path: /hiring_process/update
+          method: put
+          cors: true
+          private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+
+  put_hiring_process_custom_fields_by_id:
+    handler: src/adapters/primary/hiring_process/put_hiring_process__custom_fields/index.handler
+    events:
+      - http:
+          path: /hiring_process/custom_fields/update
+          method: put
+          cors: true
+          private: true
+
   start_profile_filter_process:
     handler: src/adapters/primary/profile/filter/start.lambda_handler
     events:
@@ -461,11 +573,11 @@ functions:
           path: /profile/filter/start/url
           method: post
           cors: true
-          private: true
-          authorizer:
-            type: COGNITO_USER_POOLS
-            authorizerId:
-              Ref: ApiGatewayAuthorizer
+          # private: true
+          # authorizer:
+          #   type: COGNITO_USER_POOLS
+          #   authorizerId:
+          #     Ref: ApiGatewayAuthorizer
 
   error_processing_profile_filter_process:
     handler: src/adapters/primary/profile/error_profile_filter_process.lambda_handler
@@ -512,6 +624,10 @@ functions:
 
   create_pipe_configuration_open_position:
     handler: src/adapters/primary/pipefy/create_pipe_configuration_for_open_position.lambda_handler
+    timeout: 120
+
+  create_cards_for_profiles:
+    handler: src/adapters/primary/pipefy/create_cards_for_profiles.lambda_handler
 
   pipefy_webhook:
     handler: src/adapters/primary/pipefy/webhook.lambda_handler
@@ -548,8 +664,176 @@ functions:
             authorizerId:
               Ref: ApiGatewayAuthorizer
 
+  webSocketAuthorizer:
+    handler: src/adapters/primary/websocket/authorizer.handler
+
+  webSocketConnect:
+    handler: src/adapters/primary/websocket/connect.handler
+    events:
+      - websocket:
+          route: $connect
+          authorizer:
+            name: webSocketAuthorizer
+            identitySource: route.request.querystring.token
+
+  webSocketDisconnect:
+    handler: src/adapters/primary/websocket/disconnect.handler
+    events:
+      - websocket:
+          route: $disconnect
+
+  defaultMessageHandler:
+    handler: src/adapters/primary/websocket/default.handler
+    events:
+      - websocket:
+          route: $default
+
+  get_position_configuration_list:
+    handler: src/adapters/primary/position_configuration/get_position_configuration/index.handler
+    events:
+      - http:
+          path: /position_configuration/list
+          method: get
+          cors: true
+          private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+
+  delete_position_configuration:
+    handler: src/adapters/primary/position_configuration/delete_position_configuration/index.handler
+    events:
+      - http:
+          path: /position_configuration/{position_configuration_id}
+          method: delete
+          cors: true
+          private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+
+  post_position_configuration:
+    handler: src/adapters/primary/position_configuration/create_position_configuration/index.handler
+    events:
+      - http:
+          path: /position_configuration/create
+          method: post
+          cors: true
+          private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+
+  put_position_configuration:
+    handler: src/adapters/primary/position_configuration/update_position_configuration/index.handler
+    events:
+      - http:
+          path: /position_configuration/update
+          method: put
+          cors: true
+          private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+
+  get_message_history:
+    handler: src/adapters/primary/llm/get_message_history/index.handler
+    events:
+      - http:
+          path: /llm/message_history/{thread_id}
+          method: get
+          cors: true
+          private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+
+  position_configuration_complete_phase:
+    handler: src/adapters/primary/position_configuration/complete_phase/index.handler
+    events:
+      - http:
+          path: /position_configuration/complete/phase
+          method: post
+          cors: true
+          private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+
+  position_configuration_next_phase:
+    handler: src/adapters/primary/position_configuration/next_phase/index.handler
+    events:
+      - http:
+          path: /position_configuration/next_phase
+          method: post
+          cors: true
+          private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+
+  position_configuration_create_position:
+    handler: src/adapters/primary/position_configuration/create_position/index.handler
+    events:
+      - http:
+          path: /position_configuration/create/position
+          method: post
+          cors: true
+          private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+
+  process_file_for_assistant:
+    handler: src/adapters/primary/hiring_process/process_file/index.handler
+    timeout: 900
+    memorySize: 1024
+
+  send_file_to_assistant:
+    handler: src/adapters/primary/hiring_process/send_file_to_assistant/index.handler
+    timeout: 30
+    events:
+      - http:
+          path: /hiring_process/send_file_to_assistant
+          method: post
+          cors: true
+          private: true
+
+  check_file_processing_status:
+    handler: src/adapters/primary/hiring_process/check_processing_status/index.handler
+    events:
+      - http:
+          path: /hiring_process/check_status/{process_id}
+          method: get
+          cors: true
+          private: true
+
+  hiring_process_assistant_response:
+    handler: src/adapters/primary/hiring_process/assistant_response/index.handler
+    events:
+      - http:
+          path: /hiring_process/assistant/response
+          method: post
+          cors: true
+          private: true
+    timeout: 60
+
+  hiring_process_assessment_handler:
+    handler: src/adapters/primary/hiring_process/assistant_response_handler/index.handler
+    timeout: 180
+
 stepFunctions:
-  stateMachines: ${file(./src/resources/brightdata/serverless.yml):stateMachines}
+  stateMachines:
+    profileFilterProcess: ${file(./src/resources/brightdata/serverless.yml):stateMachines.profileFilterProcess}
+    assesmentCheckProcess: ${file(./src/resources/app/serverless.yml):stateMachines.assesmentCheckProcess}
 
 plugins:
   - serverless-offline

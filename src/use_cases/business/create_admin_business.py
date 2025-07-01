@@ -1,11 +1,17 @@
+import uuid
+from typing import Dict
+
 import boto3
 
 from src.constants.index import CLIENT_ID, ENV, REGION_NAME
+from src.constants.assistants.index import ASSISTANTS_IDS
+from src.domain.assistant import ASSISTANT_TYPE
 from src.domain.business import BusinessDTO, BusinessEntity
 from src.domain.user import UserDTO, UserEntity
 from src.repositories.document_db.business_repository import BusinessRepository
 from src.repositories.document_db.client import DocumentDBClient
 from src.repositories.document_db.user_repository import UserRepository
+from src.constants.business.configuration import base_position_flows
 
 
 def validate_business_dto(business_dto: BusinessDTO):
@@ -16,6 +22,10 @@ def validate_business_dto(business_dto: BusinessDTO):
 
 
 def create_business_and_user(business_dto: BusinessDTO, user_dto: UserDTO):
+    assistants = create_assistants_for_business()
+    business_dto.assistants = assistants
+    business_dto.position_flows = base_position_flows.copy()
+
     business_repository = BusinessRepository()
     business_entity = BusinessEntity(props=business_dto)
     business_entity = business_repository.create(business_entity)
@@ -77,3 +87,23 @@ def crete_admin_business_use_case(
         except Exception as e:
             document_db_client.abort_transaction()
             raise e
+
+
+def create_assistants_for_business() -> Dict[str, Dict]:
+    assistants = {}
+
+    assistant_types = [
+        ASSISTANT_TYPE.POSITION_ASSISTANT,
+        ASSISTANT_TYPE.TECHNICAL_ASSESSMENT_ASSISTANT,
+        ASSISTANT_TYPE.SOFT_ASSESSMENT_ASSISTANT,
+    ]
+
+    for assistant_type in assistant_types:
+        assistant_id = ASSISTANTS_IDS[assistant_type]
+
+        assistants[assistant_type] = {
+            "assistant_id": assistant_id,
+            "assistant_type": assistant_type,
+        }
+
+    return assistants

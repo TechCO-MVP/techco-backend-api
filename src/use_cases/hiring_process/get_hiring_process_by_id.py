@@ -19,8 +19,11 @@ def get_hiring_process_by_id_use_case(params: dict) -> list[dict]:
         "position_city": position.props.city,
         "position_status": position.props.status,
     }
-    recruiter_id = position.props.recruiter_user_id
-    data_recruiter = get_user_data(recruiter_id, user_repository, "recruiter")
+    recruiter_id = position.props.recruiter_user_id or None
+    if recruiter_id:
+        data_recruiter = get_user_data(recruiter_id, user_repository, "recruiter")
+    else:
+        data_recruiter = {}
 
     owner_id = position.props.owner_position_user_id
     data_owner = get_user_data(owner_id, user_repository, "owner")

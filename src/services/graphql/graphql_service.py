@@ -22,7 +22,7 @@ class GraphQLClient:
             data = response.json()
 
             if "errors" in data:
-                raise Exception(f"GraphQL Error: {data["errors"]}")
+                raise Exception(f"GraphQL Error: {data['errors']}")
 
             return data.get("data", {})
 

@@ -1,0 +1,29 @@
+service: backend-proposal-v2
+
+provider:
+  name: aws
+  architecture: x86_64
+  stage: ${opt:stage, 'dev'}
+  region: us-east-1
+
+stateMachines:
+  assesmentCheckProcess:
+    name: assesmentCheckProcess-${self:provider.stage}
+    definition:
+      Comment: "State machine for assessment check process"
+      StartAt: ProcessFileForAssistant
+      States:
+        ProcessFileForAssistant:
+          Type: Task
+          Resource:
+            Fn::GetAtt:
+              - process_file_for_assistant
+              - Arn
+          Next: ProcessAssessment
+        ProcessAssessment:
+          Type: Task
+          Resource:
+            Fn::GetAtt:
+              - hiring_process_assessment_handler
+              - Arn
+          End: true

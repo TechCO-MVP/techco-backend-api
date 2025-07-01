@@ -32,6 +32,7 @@ def get_position_by_token_use_case(params: dict) -> list[dict]:
     position = position_repository.getById(token_data["id"])
     hiring_params = {
         "business_id": token_data["business_id"],
+        "position_id": token_data["id"],
         "profile.linkedin_num_id": token_data["linkedin_num_id"]
     }
     hiring = hiring_repository.getByLinkedinNumId(hiring_params)
@@ -111,7 +112,7 @@ def build_response(business: BusinessEntity, position: PositionEntity, hiring: H
         "position_responsabilities": position.props.responsabilities,
         "position_skills": [{'name': skill.name, 'required': skill.required} for skill in position.props.skills],
         "position_benefits": position.props.benefits or None,
-        "position_salary_range": position.props.salary_range or None,
+        "position_salary_range": position.props.salary or None,
         "hiring_id": hiring.id,
         "hiring_profile_name": hiring.props.profile.name,
         "hiring_card_id": hiring.props.card_id

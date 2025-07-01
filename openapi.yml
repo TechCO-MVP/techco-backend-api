@@ -387,7 +387,7 @@ paths:
         - name: business_id
           in: query
           required: true
-          description: The ID of the business.
+          description: The ID of the business (principal business).
           schema:
             type: string
         - name: id
@@ -402,6 +402,12 @@ paths:
           description: Flag to indicate if all users should be retrieved.
           schema:
             type: boolean
+        - name: exclude_business_id
+          in: query
+          required: false
+          description: The ID of the business to exclude.
+          schema:
+            type: string
       responses:
         "200":
           description: User found successfully
@@ -556,12 +562,18 @@ paths:
   /position/token:
     get:
       summary: get data position by token JWT
-      description: get DATA vacancies asociated to a business and the hiring process and position.
+      description: get DATA vacancies asociated to a business and the hiring process and position. At least one of token or position_id must be provided.
       parameters:
         - name: token
           in: query
-          required: true
-          description: The token of the especific hiring process asociated to the porfile.
+          required: false
+          description: The token of the especific hiring process asociated to the porfile. Either this or position_id must be provided.
+          schema:
+            type: string
+        - name: position_id
+          in: query
+          required: false
+          description: The id of the especific position. Either this or token must be provided.
           schema:
             type: string
       responses:
@@ -649,6 +661,78 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Exception"
+  /hiring_process/update:
+    put:
+      summary: Update hiring_process general data
+      description: Update hiring_process general data, full_name or role.
+      parameters:
+        - name: Authorizer
+          in: header
+          required: true
+          description: The ID token of the user.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateHiringProcessById"
+      responses:
+        "200":
+          description: Hiring process updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UpdateHiringProcessByIdResponse"
+        "400":
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Exception response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exception"
+  /hiring_process/custom_fields/update:
+    put:
+      summary: Update hiring_process, only custom fields
+      description: Update hiring_process only custom fields in phases.
+      parameters:
+        - name: Authorizer
+          in: header
+          required: true
+          description: The ID token of the user.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateHiringProcessCustomFieldsById"
+      responses:
+        "200":
+          description: Hiring process updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UpdateHiringProcessCustomFieldsByIdResponse"
+        "400":
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Exception response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exception"
   /profile/filter/start:
     post:
       summary: Start profile filter process
@@ -666,6 +750,377 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ProfileFilterStartResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Exception response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exception"
+  /notifiaction/list:
+    get:
+      summary: Get notifications list
+      description: Get notifications list.
+      responses:
+        "200":
+          description: Notification find successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetNotificationListResponse"
+        "400":
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Exception response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exception"
+  /notifiaction/create:
+    post:
+      summary: Create notification
+      description: Create notification as new.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PostNotification"
+      responses:
+        "200":
+          description: Notification created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PostNotificationResponse"
+        "400":
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Exception response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exception"
+  /notifiaction/status:
+    put:
+      summary: Update notification status
+      description: Update notification status to READ.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateNotificationStatus"
+      responses:
+        "200":
+          description: Notification updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UpdateNotificationStatusResponse"
+        "400":
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Exception response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exception"
+  /position_configuration/list:
+    get:
+      summary: Get position configuration list
+      description: Get position configuration list.
+      parameters:
+        - name: id
+          in: query
+          required: false
+          description: The ID of the position_configuration.
+          schema:
+            type: string
+        - name: business_id
+          in: query
+          required: false
+          description: The ID of the business.
+          schema:
+            type: string
+        - name: all
+          in: query
+          required: false
+          description: Flag to indicate if all position configuration should be retrieved.
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: position configuration find successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetPositionConfigurationListResponse"
+        "400":
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Exception response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exception"
+  /position_configuration/create:
+    post:
+      summary: Create position configuration
+      description: Create position configuration as new.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PostPositionConfiguration"
+      responses:
+        "200":
+          description: position configuration created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PostPositionConfigurationResponse"
+        "400":
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Exception response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exception"
+  /position_configuration/update:
+    put:
+      summary: Update position configuration
+      description: Update position configuration as new.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PutPositionConfiguration"
+      responses:
+        "200":
+          description: position configuration updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PutPositionConfigurationResponse"
+        "400":
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Exception response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exception"
+  /llm/message_history/{thread_id}:
+    get:
+      summary: Get history message llm
+      description: Get history message llm.
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          description: The limit of pagunation, default value is 20.
+          schema:
+            type: string
+        - name: message_id
+          in: query
+          required: false
+          description: The ID of the last message for obteain next pagination, begining not send this param or send as a void string ("").
+          schema:
+            type: string
+        - name: thread_id
+          in: path
+          required: true
+          description: is the id of the conversation stared by the llm.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: messages found successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetLlmMessagesHistoryResponse"
+        "400":
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Exception response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exception"
+  /position_configuration/complete/phase:
+    post:
+      summary: Complete and save data phase
+      description: Complete and save data phase.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CompletePhaseRequest"
+      responses:
+        "200":
+          description: phase completed successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CompletePhaseResponse"
+        "400":
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Exception response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exception"
+  /position_configuration/next_phase:
+    post:
+      summary: Next phase
+      description: Next phase.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NextPhaseRequest"
+      responses:
+        "200":
+          description: phase completed successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PositionConfiguration"
+        "400":
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Exception response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exception"
+
+  /position_configuration/create/position:
+    post:
+      summary: Create position based on it's configuration
+      description: Create a new position based on the configuration.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePositionRequest"
+      responses:
+        "200":
+          description: position configuration created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreatePositionResponse"
+        "400":
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Exception response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exception"
+  /position_configuration/{position_configuration_id}:
+    delete:
+      summary: Delete position configuration
+      description: Delete a position configuration.
+      parameters:
+        - name: position_configuration_id
+          in: path
+          required: true
+          description: The ID of the position configuration.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: position configuration deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeletePositionConfigurationResponse"
+        "400":
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Exception response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exception"
+
+  /hiring_process/assistant/response:
+    post:
+      summary: Get response from assistant
+      description: Get response from assistant based on the provided request.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AssistantResponseRequest"
+      responses:
+        "200":
+          description: Assistant response retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AssistantResponse"
         "400":
           description: Bad request
           content:
@@ -788,6 +1243,9 @@ components:
         email:
           type: string
           example: mail.@mail.co
+        full_name:
+          type: string
+          example: fake full name
         company_name:
           type: string
           example: Pepsico
@@ -1027,6 +1485,9 @@ components:
         user_full_name:
           type: string
           example: pepito perez
+        company_position:
+          type: string
+          example: expert recruiter
         user_role:
           type: string
           example: recruiter
@@ -1050,68 +1511,352 @@ components:
       properties:
         message:
           type: string
-          example: Position found successfully.
+          example: Position updated successfully.
         body:
           type: object
           properties:
             data:
-              type: array
-              items:
-                type: object
-                properties:
-                  hiring_processes:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        card_id:
-                          type: string
-                          example: "1234568979"
-                        status:
-                          type: string
-                          example: "STARTED"
-                        id:
-                          type: string
-                          example: "67c930fe1ad8328f2a3184c2"
-                  owner_position_user:
+              type: object
+              properties:
+                id:
+                  type: string
+                  example: "679077da2d6626a2b007f8f9"
+                created_at:
+                  type: string
+                  example: "2025-01-03T01:34:59.063000"
+                updated_at:
+                  type: string
+                  example: "2025-01-03T01:34:59.063000"
+                deleted_at:
+                  type: string
+                  nullable: true
+                  example: null
+                business_id:
+                  type: string
+                  example: "679077da2d6626a2b007f8f9"
+                owner_position_user_id:
+                  type: string
+                  example: "679077da2d6626a2b007f8f9"
+                owner_position_user_name:
+                  type: string
+                  example: "pepito owner position"
+                recruiter_user_id:
+                  type: string
+                  example: "679077da2d6626a2b007f8f9"
+                recruiter_user_name:
+                  type: string
+                  example: "pablo user recruiter"
+                responsible_users:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      user_id:
+                        type: string
+                        example: "679077da2d6626a2b007f8f9"
+                      can_edit:
+                        type: boolean
+                        example: true
+                role:
+                  type: string
+                  example: "developer"
+                hiring_priority:
+                  type: string
+                  example: "high"
+                seniority:
+                  type: string
+                  example: "junior"
+                country:
+                  type: string
+                  example: "CO"
+                city:
+                  type: string
+                  example: "Bogota"
+                description:
+                  type: string
+                  example: "description"
+                responsabilities:
+                  type: array
+                  items:
+                    type: string
+                  example: ["responsability_1", "responsability_2"]
+                skills:
+                  type: array
+                  items:
                     type: object
                     properties:
                       name:
                         type: string
-                        example: "mario zamora"
-                      id:
-                        type: string
-                        example: "6777862efe77308365432a36"
-                  recruiter_user:
+                        example: "django"
+                      required:
+                        type: boolean
+                        example: true
+                benefits:
+                  type: string
+                  example: "plan carrera"
+                salary_range:
+                  type: object
+                  properties:
+                    currency:
+                      type: string
+                      example: "COP"
+                    salary:
+                      type: string
+                      nullable: true
+                      example: "10000000"
+                    salary_range:
+                      type: object
+                      nullable: true
+                      properties:
+                        min:
+                          type: string
+                          example: "9000000"
+                        max:
+                          type: string
+                          example: "12000000"
+                languages:
+                  type: array
+                  items:
                     type: object
                     properties:
                       name:
                         type: string
-                        example: "johan parra"
-                      id:
+                        example: "ingles"
+                      level:
                         type: string
-                        example: "679077da2d6626a2b007f8fa"
-                  responsible_users:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        name:
-                          type: string
-                          example: "johan parra"
-                        id:
-                          type: string
-                          example: "679077da2d6626a2b007f8fa"
-                        can_edit:
-                          type: boolean
-                          example: true
-                  role:
-                    type: string
-                    example: "developer"
-                  hiring_priority:
-                    type: string
-                    enum: ["low", "medium", "high"]
-                    example: "high"
+                        example: high
+                work_mode:
+                  type: string
+                  example: "Remote"
+                status:
+                  type: string
+                  example: "ACTIVE"
+                hiring_processes:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      _id:
+                        type: string
+                        example: "679077da2d6626a2b007f8f9"
+                      created_at:
+                        type: string
+                        example: "2025-01-03T01:34:59.063000"
+                      updated_at:
+                        type: string
+                        example: "2025-01-03T01:34:59.063000"
+                      deleted_at:
+                        type: string
+                        nullable: true
+                        example: null
+                      position_id:
+                        type: string
+                        example: "67c7639f1ad8328f2a3184aa"
+                      business_id:
+                        type: string
+                        example: "67ab6e79c1839d2a5caecefb"
+                      card_id:
+                        type: integer
+                        example: 1234568979
+                      phase_id:
+                        type: integer
+                        example: 123456
+                      status:
+                        type: string
+                        example: "STARTED"
+                      profile:
+                        type: object
+                        properties:
+                          timestamp:
+                            type: string
+                            example: "Mon Mar 03 2025 10:00:00 GMT-0500 (hora estándar de Colombia)"
+                          linkedin_num_id:
+                            type: string
+                            example: "277819915"
+                          name:
+                            type: string
+                            nullable: true
+                            example: null
+                          country_code:
+                            type: string
+                            nullable: true
+                            example: null
+                          position:
+                            type: string
+                            nullable: true
+                            example: null
+                          city:
+                            type: string
+                            nullable: true
+                            example: null
+                          current_company:
+                            type: string
+                            nullable: true
+                            example: null
+                          about:
+                            type: string
+                            nullable: true
+                            example: null
+                          posts:
+                            type: string
+                            nullable: true
+                            example: null
+                          experience:
+                            type: string
+                            nullable: true
+                            example: null
+                          url:
+                            type: string
+                            nullable: true
+                            example: null
+                          people_also_viewed:
+                            type: string
+                            nullable: true
+                            example: null
+                          educations_details:
+                            type: string
+                            nullable: true
+                            example: null
+                          education:
+                            type: string
+                            nullable: true
+                            example: null
+                          recommendations_count:
+                            type: string
+                            nullable: true
+                            example: null
+                          avatar:
+                            type: string
+                            nullable: true
+                            example: null
+                          languages:
+                            type: string
+                            nullable: true
+                            example: null
+                          certifications:
+                            type: string
+                            nullable: true
+                            example: null
+                          recommendations:
+                            type: string
+                            nullable: true
+                            example: null
+                          volunteer_experience:
+                            type: string
+                            nullable: true
+                            example: null
+                          courses:
+                            type: string
+                            nullable: true
+                            example: null
+                          followers:
+                            type: string
+                            nullable: true
+                            example: null
+                          connections:
+                            type: string
+                            nullable: true
+                            example: null
+                          current_company_company_id:
+                            type: string
+                            nullable: true
+                            example: null
+                          current_company_name:
+                            type: string
+                            nullable: true
+                            example: null
+                          publications:
+                            type: string
+                            nullable: true
+                            example: null
+                          patents:
+                            type: string
+                            nullable: true
+                            example: null
+                          projects:
+                            type: string
+                            nullable: true
+                            example: null
+                          organizations:
+                            type: string
+                            nullable: true
+                            example: null
+                          input_url:
+                            type: string
+                            nullable: true
+                            example: null
+                          linkedin_id:
+                            type: string
+                            nullable: true
+                            example: null
+                          activity:
+                            type: string
+                            nullable: true
+                            example: null
+                          banner_image:
+                            type: string
+                            nullable: true
+                            example: null
+                          honors_and_awards:
+                            type: string
+                            nullable: true
+                            example: null
+                          similar_profiles:
+                            type: string
+                            nullable: true
+                            example: null
+                          default_avatar:
+                            type: string
+                            nullable: true
+                            example: null
+                          memorialized_account:
+                            type: string
+                            nullable: true
+                            example: null
+                          profile_evaluation:
+                            type: string
+                            nullable: true
+                            example: null
+                          link_vacancy_form:
+                            type: string
+                            nullable: true
+                            example: null
+                          card_id:
+                            type: string
+                            nullable: true
+                            example: null
+                      phase_history:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            from_phase:
+                              type: object
+                              properties:
+                                phase_id:
+                                  type: integer
+                                  example: 123654
+                                name:
+                                  type: string
+                                  example: "ASÑDLKAS"
+                            to_phase:
+                              type: object
+                              properties:
+                                phase_id:
+                                  type: integer
+                                  example: 123654
+                                name:
+                                  type: string
+                                  example: "ASÑDLKAS"
+                            date:
+                              type: string
+                              format: date-time
+                              example: "2025-03-03T15:00:00"
+                      phases:
+                        type: object
+                        # additionalProperties:
+                        #   type: object
+
     ListPositionValueError:
       type: object
       properties:
@@ -1227,10 +1972,18 @@ components:
                           example: "COP"
                         salary:
                           type: string
+                          nullable: true
                           example: "10000000"
                         salary_range:
-                          type: string
-                          example: "9000000 - 12000000"
+                          type: object
+                          nullable: true
+                          properties:
+                            min:
+                              type: string
+                              example: "9000000"
+                            max:
+                              type: string
+                              example: "12000000"
                     languages:
                       type: array
                       items:
@@ -1325,8 +2078,15 @@ components:
                       type: string
                       example: "10000000"
                     salary_range:
-                      type: string
-                      example: "9000000 - 12000000"
+                      type: object
+                      nullable: true
+                      properties:
+                        min:
+                          type: string
+                          example: "9000000"
+                        max:
+                          type: string
+                          example: "12000000"
                 hiring_id:
                   type: string
                   example: "67c930fe1ad8328f2a3184c2"
@@ -1395,6 +2155,427 @@ components:
         message:
           type: string
           example: Validation error while get Hiring process.
+    UpdateHiringProcessById:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 67c930fe1ad8328f2a3184c2
+        phase_id:
+          type: string
+          example: "2"
+        status:
+          type: string
+          example: STARTED
+        profile:
+          type: object
+          properties:
+            timestamp:
+              type: string
+              example: Mon Mar 03 2025 10:00:00 GMT-0500 (hora estándar de Colombia)
+            linkedin_num_id:
+              type: string
+              example: "277819915"
+            name:
+              type: string
+              example: peipto perez
+            country_code:
+              type: string
+            position:
+              type: string
+            city:
+              type: string
+            current_company:
+              type: string
+            about:
+              type: string
+            posts:
+              type: string
+            experience:
+              type: string
+            url:
+              type: string
+            people_also_viewed:
+              type: string
+            educations_details:
+              type: string
+            education:
+              type: string
+            recommendations_count:
+              type: string
+            avatar:
+              type: string
+            languages:
+              type: string
+            certifications:
+              type: string
+            recommendations:
+              type: string
+            volunteer_experience:
+              type: string
+            courses:
+              type: string
+            followers:
+              type: string
+            connections:
+              type: string
+            current_company_company_id:
+              type: string
+            current_company_name:
+              type: string
+            publications:
+              type: string
+            patents:
+              type: string
+            projects:
+              type: string
+            organizations:
+              type: string
+            input_url:
+              type: string
+            linkedin_id:
+              type: string
+            activity:
+              type: string
+            banner_image:
+              type: string
+            honors_and_awards:
+              type: string
+            similar_profiles:
+              type: string
+            default_avatar:
+              type: string
+            memorialized_account:
+              type: string
+            profile_evaluation:
+              type: string
+            link_vacancy_form:
+              type: string
+            card_id:
+              type: string
+        phases: {}
+        phase_history:
+          type: array
+          items:
+            type: object
+            properties:
+              from_phase:
+                type: object
+                properties:
+                  phase_id:
+                    type: integer
+                    example: 123654
+                  name:
+                    type: string
+                    example: ASÑDLKAS
+              to_phase:
+                type: object
+                properties:
+                  phase_id:
+                    type: integer
+                    example: 987654
+                  name:
+                    type: string
+                    example: ÑKDAFAS
+              date:
+                type: string
+                format: date-time
+                example: "2025-03-03T15:00:00"
+        assistants:
+          type: object
+          example: {}
+      required:
+        - id
+    UpdateHiringProcessByIdResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Hiring process updated successfully.
+        body:
+          type: object
+          properties:
+            data:
+              type: object
+              properties:
+                id:
+                  type: string
+                  example: 67c930fe1ad8328f2a3184c2
+                phase_id:
+                  type: string
+                  example: "2"
+                status:
+                  type: string
+                  example: STARTED
+                profile:
+                  type: object
+                  properties:
+                    timestamp:
+                      type: string
+                      example: Mon Mar 03 2025 10:00:00 GMT-0500 (hora estándar de Colombia)
+                    linkedin_num_id:
+                      type: string
+                      example: "277819915"
+                    name:
+                      type: string
+                      example: peipto perez
+                    country_code:
+                      type: string
+                    position:
+                      type: string
+                    city:
+                      type: string
+                    current_company:
+                      type: string
+                    about:
+                      type: string
+                    posts:
+                      type: string
+                    experience:
+                      type: string
+                    url:
+                      type: string
+                    people_also_viewed:
+                      type: string
+                    educations_details:
+                      type: string
+                    education:
+                      type: string
+                    recommendations_count:
+                      type: string
+                    avatar:
+                      type: string
+                    languages:
+                      type: string
+                    certifications:
+                      type: string
+                    recommendations:
+                      type: string
+                    volunteer_experience:
+                      type: string
+                    courses:
+                      type: string
+                    followers:
+                      type: string
+                    connections:
+                      type: string
+                    current_company_company_id:
+                      type: string
+                    current_company_name:
+                      type: string
+                    publications:
+                      type: string
+                    patents:
+                      type: string
+                    projects:
+                      type: string
+                    organizations:
+                      type: string
+                    input_url:
+                      type: string
+                    linkedin_id:
+                      type: string
+                    activity:
+                      type: string
+                    banner_image:
+                      type: string
+                    honors_and_awards:
+                      type: string
+                    similar_profiles:
+                      type: string
+                    default_avatar:
+                      type: string
+                    memorialized_account:
+                      type: string
+                    profile_evaluation:
+                      type: string
+                    link_vacancy_form:
+                      type: string
+                    card_id:
+                      type: string
+                phases: {}
+                phase_history:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      from_phase:
+                        type: object
+                        properties:
+                          phase_id:
+                            type: integer
+                            example: 123654
+                          name:
+                            type: string
+                            example: ASÑDLKAS
+                      to_phase:
+                        type: object
+                        properties:
+                          phase_id:
+                            type: integer
+                            example: 987654
+                          name:
+                            type: string
+                            example: ÑKDAFAS
+                      date:
+                        type: string
+                        format: date-time
+                        example: "2025-03-03T15:00:00"
+                assistants:
+                  type: object
+                  example: {}
+    UpdateHiringProcessCustomFieldsById:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 67c930fe1ad8328f2a3184c2
+        phases:
+          type: object
+          example:
+            { "123456778": { "phase_id": "123456778", "custom_fields": {} } }
+      required:
+        - id
+        - phases
+    UpdateHiringProcessCustomFieldsByIdResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Hiring process updated successfully.
+        body:
+          type: object
+          properties:
+            data:
+              type: object
+              properties:
+                id:
+                  type: string
+                  example: 67c930fe1ad8328f2a3184c2
+                phase_id:
+                  type: string
+                  example: "2"
+                status:
+                  type: string
+                  example: STARTED
+                profile:
+                  type: object
+                  properties:
+                    timestamp:
+                      type: string
+                      example: Mon Mar 03 2025 10:00:00 GMT-0500 (hora estándar de Colombia)
+                    linkedin_num_id:
+                      type: string
+                      example: "277819915"
+                    name:
+                      type: string
+                      example: peipto perez
+                    country_code:
+                      type: string
+                    position:
+                      type: string
+                    city:
+                      type: string
+                    current_company:
+                      type: string
+                    about:
+                      type: string
+                    posts:
+                      type: string
+                    experience:
+                      type: string
+                    url:
+                      type: string
+                    people_also_viewed:
+                      type: string
+                    educations_details:
+                      type: string
+                    education:
+                      type: string
+                    recommendations_count:
+                      type: string
+                    avatar:
+                      type: string
+                    languages:
+                      type: string
+                    certifications:
+                      type: string
+                    recommendations:
+                      type: string
+                    volunteer_experience:
+                      type: string
+                    courses:
+                      type: string
+                    followers:
+                      type: string
+                    connections:
+                      type: string
+                    current_company_company_id:
+                      type: string
+                    current_company_name:
+                      type: string
+                    publications:
+                      type: string
+                    patents:
+                      type: string
+                    projects:
+                      type: string
+                    organizations:
+                      type: string
+                    input_url:
+                      type: string
+                    linkedin_id:
+                      type: string
+                    activity:
+                      type: string
+                    banner_image:
+                      type: string
+                    honors_and_awards:
+                      type: string
+                    similar_profiles:
+                      type: string
+                    default_avatar:
+                      type: string
+                    memorialized_account:
+                      type: string
+                    profile_evaluation:
+                      type: string
+                    link_vacancy_form:
+                      type: string
+                    card_id:
+                      type: string
+                phases: {}
+                phase_history:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      from_phase:
+                        type: object
+                        properties:
+                          phase_id:
+                            type: integer
+                            example: 123654
+                          name:
+                            type: string
+                            example: ASÑDLKAS
+                      to_phase:
+                        type: object
+                        properties:
+                          phase_id:
+                            type: integer
+                            example: 987654
+                          name:
+                            type: string
+                            example: ÑKDAFAS
+                      date:
+                        type: string
+                        format: date-time
+                        example: "2025-03-03T15:00:00"
+                assistants:
+                  type: object
+                  example: {}
+
     ProfileFilterStart:
       type: object
       properties:
@@ -1460,3 +2641,796 @@ components:
               example: id_123456kjhsad_3124987_sdak
             process_filters:
               $ref: "#/components/schemas/ProfileFilterStart"
+    GetNotificationListResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Notification found successfully.
+        body:
+          type: object
+          properties:
+            data:
+              type: object
+              properties:
+                _id:
+                  type: string
+                  example: id_123456kjhsad_3124987_sdak
+                created_at:
+                  type: string
+                  example: 2025-03-28T18:00:00.000Z
+                updated_at:
+                  type: string
+                  example: 2025-03-28T18:00:00.000Z
+                deleted_at:
+                  type: string
+                  nullable: true
+                  example: null
+                user_id:
+                  type: string
+                  example: id_123456kjhsad_3124987_sdak
+                business_id:
+                  type: string
+                  example: id_123456kjhsad_3124987_sdak
+                message:
+                  type: string
+                  example: "pepito cambio de fase"
+                notification_type:
+                  type: string
+                  example: "PHASE_CHANGE"
+                  enum:
+                    - PHASE_CHANGE
+                    - TAGGED_IN_COMMENT
+                    - PROFILE_FILTER_PROCESS
+                status:
+                  type: string
+                  example: "READ"
+                process:
+                  type: string
+                  nullable: true
+                  example: null
+                hiring_process_id:
+                  type: string
+                  example: id_123456kjhsad_3124987_sdak
+                read_at:
+                  type: string
+                  nullable: true
+                  example: null
+                phase_id:
+                  type: string
+                  example: id_123456kjhsad_3124987_sdak
+                card_id:
+                  type: string
+                  example: id_123456kjhsad_3124987_sdak
+                profile_name:
+                  type: string
+                  example: "pepito perez"
+                pipe_id:
+                  type: string
+                  example: id_123456kjhsad_3124987_sdak
+                position_name:
+                  type: string
+                  example: "developer"
+    PostNotification:
+      type: object
+      properties:
+        user_id:
+          type: string
+          example: "6777862efe77308365432a36"
+        business_id:
+          type: string
+          example: "6791faad993cf24a7b7f37b2"
+        message:
+          type: string
+          example: "mensaje de prueba post notification"
+        notification_type:
+          type: string
+          example: "TAGGED_IN_COMMENT"
+        hiring_process_id:
+          type: string
+          example: "67c930fe1ad8328f2a3184c2"
+        phase_id:
+          type: string
+          example: "1"
+      required:
+        - user_id
+        - business_id
+        - message
+        - notification_type
+        - hiring_process_id
+        - phase_id
+    PostNotificationResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Notification created successfully.
+    UpdateNotificationStatus:
+      type: object
+      properties:
+        notification_id:
+          type: array
+          items:
+            type: string
+          example: [id_123456kjhsad_3124987_sdak, id_123456kjhsad_3124987_sdak]
+        status:
+          type: string
+          example: READ
+          enum:
+            - READ
+            - REVIEWED
+      required:
+        - notifiaction_id
+        - status
+    UpdateNotificationStatusResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Notification updated successfully.
+    GetPositionConfigurationListResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: position configuration found successfully.
+        body:
+          type: object
+          properties:
+            data:
+              type: object
+              properties:
+                _id:
+                  type: string
+                  example: id_123456kjhsad_3124987_sdak
+                created_at:
+                  type: string
+                  example: 2025-03-28T18:00:00.000Z
+                updated_at:
+                  type: string
+                  example: 2025-03-28T18:00:00.000Z
+                deleted_at:
+                  type: string
+                  nullable: true
+                  example: null
+                user_id:
+                  type: string
+                  example: id_123456kjhsad_3124987_sdak
+                thread_id:
+                  type: string
+                  example: id_123456kjhsad_3124987_sdak
+                status:
+                  type: string
+                  example: "COMPLETED"
+                  enum:
+                    - COMPLETED
+                    - IN_PROGRESS
+                    - DRAFT
+                type:
+                  type: string
+                  example: "AI_TEMPLATE"
+                  enum:
+                    - AI_TEMPLATE
+                    - CUSTOM
+                    - OTHER_POSITION_AS_TEMPLATE
+                phases:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: phase_1
+                      thread_id:
+                        type: string
+                        example: "id_123456"
+                      status:
+                        type: string
+                        example: "COMPLETED"
+                        enum:
+                          - COMPLETED
+                          - IN_PROGRESS
+                          - DRAFT
+                      type:
+                        type: string
+                        example: "DESCRIPTION"
+                        enum:
+                          - DESCRIPTION
+                          - READY_TO_PUBLISH
+                          - FINAL_INTERVIEW
+                          - TECHNICAL_TEST
+                          - SOFT_SKILLS
+                      data:
+                        type: object
+                        example: {}
+    PostPositionConfiguration:
+      type: object
+      properties:
+        business_id:
+          type: string
+          example: "6777862efe77308365432a36"
+        flow_type:
+          type: string
+          example: "MEDIUM_PROFILE_FLOW"
+          enum:
+            - HIGH_PROFILE_FLOW
+            - MEDIUM_PROFILE_FLOW
+            - LOW_PROFILE_FLOW
+      required:
+        - business_id
+        - flow_type
+    PostPositionConfigurationResponse:
+      type: object
+      properties:
+        thread_id:
+          type: string
+          example: "6777862efe77308365432a36"
+        status:
+          type: string
+          example: "COMPLETED"
+          enum:
+            - COMPLETED
+            - IN_PROGRESS
+            - DRAFT
+        type:
+          type: string
+          example: "AI_TEMPLATE"
+          enum:
+            - AI_TEMPLATE
+            - CUSTOM
+            - OTHER_POSITION_AS_TEMPLATE>
+        phases:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                example: phase_1
+              thread_id:
+                type: string
+                example: "id_123456"
+              status:
+                type: string
+                example: "COMPLETED"
+                enum:
+                  - COMPLETED
+                  - IN_PROGRESS
+                  - DRAFT
+              type:
+                type: string
+                example: "DESCRIPTION"
+                enum:
+                  - DESCRIPTION
+                  - READY_TO_PUBLISH
+                  - FINAL_INTERVIEW
+                  - TECHNICAL_TEST
+                  - SOFT_SKILLS
+              data:
+                type: object
+                example: {}
+    PutPositionConfiguration:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: "6777862efe77308365432a36"
+        created_at:
+          type: string
+          example: "2025-04-14T00:14:46.388345"
+        updated_at:
+          type: string
+          example: "2025-04-14T00:14:46.388345"
+          nullable: true
+        deleted_at:
+          type: string
+          example: "2025-04-14T00:14:46.388345"
+          nullable: true
+        user_id:
+          type: string
+          example: "6777862efe77308365432a36"
+        business_id:
+          type: string
+          example: "6777862efe77308365432a36"
+        thread_id:
+          type: string
+          example: "6777862efe77308365432a36"
+        status:
+          type: string
+          example: "COMPLETED"
+          enum:
+            - COMPLETED
+            - IN_PROGRESS
+            - DRAFT
+        type:
+          type: string
+          example: "AI_TEMPLATE"
+          enum:
+            - AI_TEMPLATE
+            - CUSTOM
+            - OTHER_POSITION_AS_TEMPLATE>
+        phases:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                example: phase_1
+              thread_id:
+                type: string
+                example: "id_123456"
+              status:
+                type: string
+                example: "COMPLETED"
+                enum:
+                  - COMPLETED
+                  - IN_PROGRESS
+                  - DRAFT
+              type:
+                type: string
+                example: "DESCRIPTION"
+                enum:
+                  - DESCRIPTION
+                  - READY_TO_PUBLISH
+                  - FINAL_INTERVIEW
+                  - TECHNICAL_TEST
+                  - SOFT_SKILLS
+              data:
+                type: object
+                example: {}
+            required:
+              - name
+              - thread_id
+              - status
+              - data
+              - type
+      required:
+        - _id
+        - created_at
+        - updated_at
+        - deleted_at
+        - user_id
+        - business_id
+        - thread_id
+        - status
+        - phases
+        - type
+    PutPositionConfigurationResponse:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: "6777862efe77308365432a36"
+        created_at:
+          type: string
+          example: "2025-04-14T00:14:46.388345"
+        updated_at:
+          type: string
+          example: "2025-04-14T00:14:46.388345"
+          nullable: true
+        deleted_at:
+          type: string
+          example: "2025-04-14T00:14:46.388345"
+          nullable: true
+        user_id:
+          type: string
+          example: "6777862efe77308365432a36"
+        business_id:
+          type: string
+          example: "6777862efe77308365432a36"
+        thread_id:
+          type: string
+          example: "6777862efe77308365432a36"
+        status:
+          type: string
+          example: "COMPLETED"
+          enum:
+            - COMPLETED
+            - IN_PROGRESS
+            - DRAFT
+        type:
+          type: string
+          example: "AI_TEMPLATE"
+          enum:
+            - AI_TEMPLATE
+            - CUSTOM
+            - OTHER_POSITION_AS_TEMPLATE>
+        phases:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                example: phase_1
+              thread_id:
+                type: string
+                example: "id_123456"
+              status:
+                type: string
+                example: "COMPLETED"
+                enum:
+                  - COMPLETED
+                  - IN_PROGRESS
+                  - DRAFT
+              type:
+                type: string
+                example: "DESCRIPTION"
+                enum:
+                  - DESCRIPTION
+                  - READY_TO_PUBLISH
+                  - FINAL_INTERVIEW
+                  - TECHNICAL_TEST
+                  - SOFT_SKILLS
+              data:
+                type: object
+                example: {}
+    GetLlmMessagesHistoryResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: messages found successfully.
+        body:
+          type: object
+          properties:
+            data:
+              type: object
+              properties:
+                object:
+                  type: string
+                  example: "list"
+                data:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: "6777862efe77308365432a36"
+                      object:
+                        type: string
+                        example: "message"
+                      created:
+                        type: integer
+                        example: 1677859200
+                      assistand_id:
+                        type: string
+                        example: "6777862efe77308365432a36"
+                      thread_id:
+                        type: string
+                        example: "6777862efe77308365432a36"
+                      run_id:
+                        type: string
+                        example: "6777862efe77308365432a36"
+                      role:
+                        type: string
+                        example: "assistant"
+                      content:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            type:
+                              type: string
+                              example: "text"
+                            text:
+                              type: string
+                              example: "Hello, how are you?"
+                      attachments:
+                        type: array
+                        items:
+                          type: object
+                      metadata:
+                        type: object
+                first_id:
+                  type: string
+                  example: "6777862efe77308365432a36"
+                last_id:
+                  type: string
+                  example: "6777862efe77308365432a36"
+                has_more:
+                  type: boolean
+                  example: true
+    CompletePhaseRequest:
+      type: object
+      properties:
+        position_configuration_id:
+          type: string
+        data:
+          type: object
+      required:
+        - position_configuration_id
+        - data
+    CompletePhaseResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Phase completed successfully"
+        body:
+          type: object
+          properties:
+            data:
+              type: object
+              properties:
+                _id:
+                  type: string
+                  example: "6777862efe77308365432a36"
+                created_at:
+                  type: string
+                  example: "2025-04-14T00:14:46.388345"
+                updated_at:
+                  type: string
+                  example: "2025-04-14T00:14:46.388345"
+                deleted_at:
+                  type: string
+                  example: "2025-04-14T00:14:46.388345"
+                user_id:
+                  type: string
+                  example: "6777862efe77308365432a36"
+                business_id:
+                  type: string
+                  example: "6777862efe77308365432a36"
+                current_phase:
+                  type: string
+                  example: "SOFT_SKILLS"
+                status:
+                  type: string
+                  example: "COMPLETED"
+                type:
+                  type: string
+                  example: "AI_TEMPLATE"
+                phases:
+                  type: array
+                  items: {}
+    NextPhaseRequest:
+      type: object
+      properties:
+        position_configuration_id:
+          type: string
+        configuration_type:
+          type: string
+          example: "AI_TEMPLATE"
+      required:
+        - position_configuration_id
+        - configuration_type
+    PositionConfiguration:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Phase completed successfully"
+        body:
+          type: object
+          properties:
+            data:
+              type: object
+              properties:
+                _id:
+                  type: string
+                  example: "6777862efe77308365432a36"
+                created_at:
+                  type: string
+                  example: "2025-04-14T00:14:46.388345"
+                updated_at:
+                  type: string
+                  example: "2025-04-14T00:14:46.388345"
+                deleted_at:
+                  type: string
+                  example: "2025-04-14T00:14:46.388345"
+                user_id:
+                  type: string
+                  example: "6777862efe77308365432a36"
+                business_id:
+                  type: string
+                  example: "6777862efe77308365432a36"
+                current_phase:
+                  type: string
+                  example: "SOFT_SKILLS"
+                status:
+                  type: string
+                  example: "COMPLETED"
+                type:
+                  type: string
+                  example: "AI_TEMPLATE"
+                phases:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: "SOFT_SKILLS"
+                      thread_id:
+                        type: string
+                        example: "id_123456"
+                      status:
+                        type: string
+                        example: "COMPLETED"
+                        enum:
+                          - COMPLETED
+                          - IN_PROGRESS
+                          - DRAFT
+                      type:
+                        type: string
+                        example: "DESCRIPTION"
+                        enum:
+                          - DESCRIPTION
+                          - READY_TO_PUBLISH
+                          - FINAL_INTERVIEW
+                          - TECHNICAL_TEST
+                          - SOFT_SKILLS
+                      data:
+                        type: object
+                        example: {}
+    CreatePositionRequest:
+      type: object
+      properties:
+        position_configuration_id:
+          type: string
+        configuration_type:
+          type: string
+          example: "AI_TEMPLATE"
+      required:
+        - position_configuration_id
+        - configuration_type
+    Position:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Position created successfully"
+        body:
+          type: object
+          properties:
+            data:
+              type: object
+              properties:
+                _id:
+                  type: string
+                  example: "6777862efe77308365432a36"
+                created_at:
+                  type: string
+                  example: "2025-04-14T00:14:46.388345"
+                updated_at:
+                  type: string
+                  example: "2025-04-14T00:14:46.388345"
+                deleted_at:
+                  type: string
+                  example: "2025-04-14T00:14:46.388345"
+                position_configuration_id:
+                  type: string
+                  example: "6777862efe77308365432a36"
+                business_id:
+                  type: string
+                  example: "6777862efe77308365432a36"
+                owner_position_user_id:
+                  type: string
+                  example: "6777862efe77308365432a36"
+                recruiter_user_id:
+                  type: string
+                  example: "6777862efe77308365432a36"
+                responsible_users:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      user_id:
+                        type: string
+                        example: "6777862efe77308365432a36"
+                      can_edit:
+                        type: boolean
+                        example: true
+                role:
+                  type: string
+                  example: "6777862efe77308365432a36"
+                seniority:
+                  type: string
+                  example: "6777862efe77308365432a36"
+                country_code:
+                  type: string
+                  enum:
+                    - CO
+                    - MX
+                    - PE
+                city:
+                  type: string
+                  example: "Bogotá"
+                description:
+                  type: string
+                  example: "description"
+                responsabilities:
+                  type: array
+                  items:
+                    type: string
+                  example: [responsability_1, responsability_2]
+                skills:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: "django"
+                      required:
+                        type: boolean
+                        example: true
+                languages:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: "español"
+                      level:
+                        type: string
+                        example: "B2"
+                hiring_priority:
+                  type: string
+                  enum:
+                    - HIGH
+                    - MEDIUM
+                    - LOW
+                work_mode:
+                  type: string
+                  enum:
+                    - REMOTE
+                    - HYBRID
+                    - ON_SITE
+                status:
+                  type: string
+                  enum:
+                    - CANCELED
+                    - ACTIVE
+                    - FINISHED
+                    - INACTIVE
+                    - DRAFT
+    CreatePositionResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Position created successfully"
+        body:
+          type: object
+          properties:
+            data:
+              type: "#/components/schemas/Position"
+    DeletePositionConfigurationResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Position configuration deleted successfully"
+        body:
+          type: object
+          properties:
+            data:
+              type: boolean
+              example: null
+    AssistantResponseRequest:
+      type: object
+      properties:
+        hiring_process_id:
+          type: string
+          example: "6777862efe77308365432a36"
+        run_id:
+          type: string
+          example: "6777862efe77308365432a36"
+        thread_id:
+          type: string
+          example: "6777862efe77308365432a36"
+        assistan_type:
+          type: string
+          enum:
+            - position_assistant
+            - technical_assessment_assistant
+            - soft_assessment_assistant
+      required:
+        - hiring_process_id
+        - run_id
+        - thread_id
+        - assistan_type

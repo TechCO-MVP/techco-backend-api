@@ -3,7 +3,7 @@ from aws_lambda_powertools import Logger
 
 from src.models.pipefy.webhook import CardMoveEvent
 from src.use_cases.hiring_process.update_phase import update_phase
-
+from pydantic import ValidationError
 logger = Logger("CardMoveEvent")
 
 
@@ -23,5 +23,7 @@ def lambda_handler(event, context):
             card_move_dto = CardMoveEvent(**data)
             update_phase(card_move_dto)
 
+        except ValidationError as e:
+            logger.error(f"Pydantic validation error: {e.json()}")
         except Exception as e:
             logger.error(f"Error processing record: {e}")

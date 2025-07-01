@@ -81,10 +81,12 @@ class PositionDBAdapter(IRepository[PositionEntity]):
         position["updated_at"] = datetime.now().isoformat()
 
         collection = self._client[self._collection_name]
-        collection.update_one(
+        result = collection.update_one(
             {"_id": ObjectId(id)}, {"$set": position}, session=self._session
         )
 
+        logger.info(f"Entity updated with id: {id}")
+        logger.info(result)
         return entity
 
     def delete(self, id: str):
@@ -92,3 +94,16 @@ class PositionDBAdapter(IRepository[PositionEntity]):
         collection.update_one(
             {"_id": ObjectId(id)}, {"$set": {"deleted_at": datetime.now()}}, session=self._session
         )
+
+    def getByPositionConfigirationId(self, id: str) -> PositionEntity | None:
+        """Get a position entity by its position configuration id."""
+        logger.info(f"Getting position entity with position configuration id: {id}")
+
+        collection = self._client[self._collection_name]
+        result = collection.find_one({"position_configuration_id": id})
+
+        if result is None:
+            return None
+
+        result["_id"] = str(result["_id"])
+        return from_dto_to_entity(PositionEntity, result)

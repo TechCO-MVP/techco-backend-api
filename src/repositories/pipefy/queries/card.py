@@ -22,3 +22,21 @@ query getCard($id: ID!) {
     }
 }
 """
+
+
+UPDATE_CARD_FIELD = """
+mutation updateCardField($input: UpdateCardFieldInput!) {
+    updateCardField(input: $input) {
+        card {
+            id
+            fields {
+                field {
+                    id
+                    label
+                }
+                value
+            }
+        }
+    }
+}
+"""

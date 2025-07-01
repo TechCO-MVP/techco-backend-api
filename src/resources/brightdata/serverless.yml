@@ -118,6 +118,10 @@ stateMachines:
           Catch:
             - ErrorEquals: ["States.ALL"]
               Next: Fail
+          Next: WaitBeforeGetData
+        WaitBeforeGetData:
+          Type: Wait
+          Seconds: 600
           Next: GetSnapshotData
         GetSnapshotData:
           Type: Task
@@ -139,8 +143,18 @@ stateMachines:
             Fn::GetAtt:
               - query_and_build_openai_data
               - Arn
-          Next: ChooseProfileTypeFlow
-        ChooseProfileTypeFlow:
+          Catch:
+            - ErrorEquals: ["States.ALL"]
+              Next: Fail
+          Next: AddLinkPostionForm
+        AddLinkPostionForm:
+          Type: Task
+          Resource:
+            Fn::GetAtt:
+              - add_link_vacancy_form
+              - Arn
+          Next: ChooseCreationFlow
+        ChooseCreationFlow:
           Type: Choice
           Choices:
             - Variable: "$.type"
@@ -148,13 +162,20 @@ stateMachines:
               Next: CreatePipeConfigurationForOpenPosition
             - Variable: "$.type"
               StringEquals: "profiles_url_search"
-              Next: NotifyCompletion
+              Next: CreateCards
           Default: Fail
         CreatePipeConfigurationForOpenPosition:
           Type: Task
           Resource:
             Fn::GetAtt:
               - create_pipe_configuration_open_position
+              - Arn
+          Next: NotifyCompletion
+        CreateCards:
+          Type: Task
+          Resource:
+            Fn::GetAtt:
+              - create_cards_for_profiles
               - Arn
           Next: NotifyCompletion
         NotifyCompletion:
@@ -165,6 +186,13 @@ stateMachines:
               - Arn
           End: true
         Fail:
+          Type: Choice
+          Choices:
+            - Variable: "$.Cause"
+              StringMatches: "*'type': 'profiles_search'*"
+              Next: CreatePipeConfigurationForOpenPosition
+          Default: NotifyFailure
+        NotifyFailure:
           Type: Task
           Resource:
             Fn::GetAtt:

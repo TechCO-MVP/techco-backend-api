@@ -10,6 +10,8 @@ jobs:
     permissions:
       id-token: write
       contents: read
+    env:
+      TECHCO_DOMAIN: ${{ secrets.TECHCO_DOMAIN_PROD }}
     steps:
       - name: Checkout the code
         uses: actions/checkout@v3
@@ -17,20 +19,26 @@ jobs:
       - name: Set up python environment
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Install poetry
         run: |
-          curl -sSL https://install.python-poetry.org | python3 -
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
+          curl -sSL https://install.python-poetry.org | POETRY_VERSION=1.8.2 python3 -
+            echo "$HOME/.local/bin" >> $GITHUB_PATH
 
       - name: Install dependencies
         run: |
           poetry config virtualenvs.create true
+          poetry lock
           poetry install --no-root
 
       - name: Install serverless
-        run: npm install -g serverless@3.39.0 serverless-offline
+        run: |
+          npm install -g serverless@3.40.0 \
+            serverless-offline \
+            serverless-python-requirements \
+            serverless-step-functions \
+            serverless-pseudo-parameters
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -38,6 +46,9 @@ jobs:
           audience: sts.amazonaws.com
           role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           aws-region: us-east-1
+
+      - name: Run poetry export
+        run: poetry export -f requirements.txt --without-hashes -o requirements.txt
 
       - name: Run build
         run: poetry run sls package

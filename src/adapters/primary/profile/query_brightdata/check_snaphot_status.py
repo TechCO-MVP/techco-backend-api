@@ -4,7 +4,10 @@ from aws_lambda_powertools.utilities.typing import LambdaContext
 
 from src.domain.base_entity import from_dto_to_entity
 from src.domain.profile import ProfileFilterProcessEntity
-from src.use_cases.profile.validate_status_profile_query import validate_status_profile_query_use_case
+from src.use_cases.profile.validate_status_profile_query import (
+    validate_status_profile_query_use_case,
+)
+from src.utils.errors import normalize_exception
 
 logger = Logger()
 
@@ -28,7 +31,7 @@ def lambda_handler(event, context: LambdaContext) -> dict:
             "seniority": "Senior",
             "country_code": "USA",
             "city": "San Francisco",
-            "description": "Experienced software engineer with expertise in Python and cloud technologies.",
+            "description": "Experienced software engineer with expertise in Python and cloud.",
             "responsabilities": [
             "Design and develop scalable and maintainable software solutions.",
             "Collaborate with cross-functional teams to deliver high-quality products.",
@@ -74,11 +77,12 @@ def lambda_handler(event, context: LambdaContext) -> dict:
         validate_status_profile_query_use_case(profile_process_entity)
 
         return profile_process_entity.to_dto(flat=True)
-
-
     except Exception as e:
+        profile_process_entity = from_dto_to_entity(ProfileFilterProcessEntity, event)
+
+        normalized_exception = normalize_exception(e)
         process_dto = profile_process_entity.to_dto(flat=True)
-        e.args[0]["event"] = process_dto
-        e.args[0]["process_id"] = process_dto.get("_id")
-        logger.error(e)
-        raise e
+        normalized_exception.args[0]["event"] = process_dto
+        normalized_exception.args[0]["process_id"] = process_dto.get("_id")
+        logger.error(normalized_exception)
+        raise normalized_exception

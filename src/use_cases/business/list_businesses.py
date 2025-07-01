@@ -24,5 +24,8 @@ def list_businesses_use_case(email: str) -> List[BusinessEntity]:
         raise EntityNotFound("Business", parent_business_id)
 
     businesses = business_repository.getAll({"parent_business_id": parent_business_id})
+    business_in_user_roles = [role.business_id for role in user_entity.props.roles]
+    all_businesses = [parent_business] + businesses
+    businesses_for_user = [business for business in all_businesses if business.id in business_in_user_roles]
 
-    return [parent_business] + businesses
+    return businesses_for_user

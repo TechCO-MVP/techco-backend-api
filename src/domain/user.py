@@ -15,10 +15,10 @@ class UserStatus(str, Enum):
 
 
 class UserDTO(BaseModel):
-    full_name: Optional[str] = Field(None, pattern=r"^[a-zA-Z0-9 \s]+$")
+    full_name: Optional[str] = Field(None, pattern=r"^[a-zA-ZÀ-ÿ\u00f1\u00d1\s]+$")
     email: EmailStr
-    company_position: str = Field(..., pattern=r"^[a-zA-Z0-9 \s]+$")
-    role: Optional[str] = Field("", pattern=r"^[a-zA-Z0-9 \s]*$")
+    company_position: str = Field(..., pattern=r"^[a-zA-ZÀ-ÿ\u00f1\u00d1\s]+$")
+    role: Optional[str] = Field("", pattern=r"^[a-zA-ZÀ-ÿ\u00f1\u00d1\s]*$")
     business_id: str = Field(default="", alias="business_id")
     status: Optional[UserStatus] = UserStatus.PENDING
     roles: List[BusinessRole] = Field(..., alias="roles", min_length=1)
@@ -39,6 +39,7 @@ class UserEntity(BaseEntity[UserDTO]):
 
 class GetUserQueryParams(BaseModel):
     business_id: str
+    exclude_business_id: Optional[str] = None
     id: Optional[str] = None
     all: Optional[bool] = None
 

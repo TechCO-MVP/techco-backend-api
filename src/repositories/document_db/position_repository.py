@@ -7,7 +7,7 @@ from src.repositories.repository import IRepository
 
 class PositionRepository(IRepository[PositionEntity]):
 
-    _adapter: IRepository[PositionEntity]
+    _adapter: PositionDBAdapter
 
     def __init__(self):
         super().__init__()
@@ -27,3 +27,6 @@ class PositionRepository(IRepository[PositionEntity]):
 
     def delete(self, id: str):
         return self._adapter.delete(id)
+
+    def getByPositionConfigirationId(self, id: str):
+        return self._adapter.getByPositionConfigirationId(id)
