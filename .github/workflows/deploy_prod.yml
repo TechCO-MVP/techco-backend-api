@@ -51,7 +51,7 @@ jobs:
         run: poetry export -f requirements.txt --without-hashes -o requirements.txt
 
       - name: Run build
-        run: poetry run sls package
+        run: poetry run sls package --stage prod
 
       - name: Deploy
         run: poetry run sls deploy --stage prod
