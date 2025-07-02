@@ -201,7 +201,7 @@ resources:
     serverlessApiGatewayCloudWatchRole:
       Type: AWS::IAM::Role
       Properties:
-        RoleName: serverlessApiGatewayCloudWatchRole
+        RoleName: serverlessApiGatewayCloudWatchRole-${self:provider.stage}
         AssumeRolePolicyDocument:
           Version: "2012-10-17"
           Statement:
