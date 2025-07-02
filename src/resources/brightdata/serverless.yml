@@ -182,7 +182,7 @@ stateMachines:
           Type: Task
           Resource:
             Fn::GetAtt:
-              - notify_completion_profile_filter_process
+              - notify_complete_profile_filter_process
               - Arn
           End: true
         Fail:
