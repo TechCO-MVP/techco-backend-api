@@ -1,17 +1,16 @@
-import uuid
 from typing import Dict
 
 import boto3
 
-from src.constants.index import CLIENT_ID, ENV, REGION_NAME
 from src.constants.assistants.index import ASSISTANTS_IDS
+from src.constants.business.configuration import base_position_flows
+from src.constants.index import CLIENT_ID, ENV, REGION_NAME
 from src.domain.assistant import ASSISTANT_TYPE
 from src.domain.business import BusinessDTO, BusinessEntity
 from src.domain.user import UserDTO, UserEntity
 from src.repositories.document_db.business_repository import BusinessRepository
 from src.repositories.document_db.client import DocumentDBClient
 from src.repositories.document_db.user_repository import UserRepository
-from src.constants.business.configuration import base_position_flows
 
 
 def validate_business_dto(business_dto: BusinessDTO):
@@ -33,6 +32,7 @@ def create_business_and_user(business_dto: BusinessDTO, user_dto: UserDTO):
     user_repository = UserRepository()
     user_dto.business_id = str(business_entity.id)
     user_dto.roles[0].business_id = str(business_entity.id)
+    user_dto.terms_and_conditions = True
     user_entity = UserEntity(props=user_dto)
 
     user_entity = user_repository.create(user_entity)

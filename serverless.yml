@@ -610,7 +610,7 @@ functions:
   add_link_vacancy_form:
     handler: src/adapters/primary/profile/filter/add_link_vacancy_form.lambda_handler
 
-  notify_completion_profile_filter_process:
+  notify_complete_profile_filter_process:
     handler: src/adapters/primary/profile/filter/notify_completion.lambda_handler
 
   notify_failure_profile_filter_process:
