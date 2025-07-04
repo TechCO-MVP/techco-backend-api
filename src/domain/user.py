@@ -22,6 +22,7 @@ class UserDTO(BaseModel):
     business_id: str = Field(default="", alias="business_id")
     status: Optional[UserStatus] = UserStatus.PENDING
     roles: List[BusinessRole] = Field(..., alias="roles", min_length=1)
+    terms_and_conditions: bool = Field(False, alias="terms_and_conditions")
 
     @field_validator("business_id", mode="before")
     def validate_and_convert_business_id(cls, v):

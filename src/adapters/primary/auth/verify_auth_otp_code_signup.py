@@ -35,6 +35,7 @@ def verify_auth_otp_code_signup():
             business_id="",
             status=UserStatus.ENABLED,
             roles=[business_role],
+            terms_and_conditions=True,
         )
 
         business_dto = BusinessDTO(
