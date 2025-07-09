@@ -448,6 +448,19 @@ functions:
               querystrings:
                 business_id: true
 
+  get_position_list_by_business_id:
+    handler: src/adapters/primary/position/get_position_by_business/index.handler
+    events:
+      - http:
+          path: /position/list/{business_id}
+          method: get
+          cors: true
+          private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+
   get_position_by_token:
     handler: src/adapters/primary/position/get_position_token/index.handler
     events:
