@@ -87,7 +87,11 @@ def cluster_profiles(
     }
     for evaluation in profile_clustering_response.evaluations:
         cluster = clusters[evaluation.group]
-        profile = profiles[evaluation.id]
+        profile = (
+            profiles[evaluation.linkedin_num_id]
+            if evaluation.linkedin_num_id in profiles
+            else profiles[evaluation.id]
+        )
         profile.profile_evaluation = evaluation
         cluster.append(profile)
     return clusters
