@@ -154,6 +154,7 @@ def create_position(
         benefits=data.get("benefits", []),
         salary=salary,
         position_flow=position_flow,
+        education=data.get("education", []),
     )
     return position_dto
 
