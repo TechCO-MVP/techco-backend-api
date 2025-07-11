@@ -39,7 +39,7 @@ jobs:
             serverless-python-requirements \
             serverless-step-functions \
             serverless-pseudo-parameters \
-            serverless-warmup-plugin
+            serverless-plugin-warmup
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
