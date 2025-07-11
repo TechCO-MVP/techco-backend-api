@@ -11,7 +11,8 @@ class PROFILE_GROUP(str, Enum):
 
 
 class ProfileEvaluation(BaseModel):
-    id: str
+    id: str = Field("", description="ID del perfil")
+    linkedin_num_id: str = Field("", description="ID del perfil de LinkedIn")
     group: PROFILE_GROUP
     score: float = Field(..., description="Puntaje de la evaluación", min=0, max=10)
     description: str = Field(..., description="Análisis de por qué hace match con la vacante.")
