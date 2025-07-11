@@ -38,7 +38,8 @@ jobs:
             serverless-offline \
             serverless-python-requirements \
             serverless-step-functions \
-            serverless-pseudo-parameters
+            serverless-pseudo-parameters \
+            serverless-warmup-plugin
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4

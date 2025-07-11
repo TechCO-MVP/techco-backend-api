@@ -149,6 +149,11 @@ custom:
     dockerizePip: true
     filename: requirements.txt
     invalidateCaches: true
+  warmup:
+    default:
+      enabled: true
+      events:
+        - schedule: rate(5 minutes)
 
 resources:
   Resources:
@@ -853,3 +858,4 @@ plugins:
   - serverless-python-requirements
   - serverless-step-functions
   - serverless-pseudo-parameters
+  - serverless-plugin-warmup
