@@ -719,7 +719,7 @@ functions:
             authorizerId:
               Ref: ApiGatewayAuthorizer
 
-  get_position_configuration_list_by_business_id:
+  get_position_config_by_business_id:
     handler: src/adapters/primary/position_configuration/get_position_configuration_by_business_id/index.handler
     events:
       - http:
