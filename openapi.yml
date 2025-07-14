@@ -921,6 +921,36 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Exception"
+  /position_configuration/list/{business_id}:
+    get:
+      summary: Get position configuration list by business id
+      description: Get position configuration list by business id.
+      parameters:
+        - name: business_id
+          in: path
+          required: true
+          description: The ID of the business.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: position configuration find successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetPositionConfigurationListResponse"
+        "400":
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Exception response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exception"
   /position_configuration/create:
     post:
       summary: Create position configuration

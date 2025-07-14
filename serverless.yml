@@ -719,6 +719,19 @@ functions:
             authorizerId:
               Ref: ApiGatewayAuthorizer
 
+  get_position_configuration_list_by_business_id:
+    handler: src/adapters/primary/position_configuration/get_position_configuration_by_business_id/index.handler
+    events:
+      - http:
+          path: /position_configuration/list/{business_id}
+          method: get
+          cors: true
+          private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+
   delete_position_configuration:
     handler: src/adapters/primary/position_configuration/delete_position_configuration/index.handler
     events:
