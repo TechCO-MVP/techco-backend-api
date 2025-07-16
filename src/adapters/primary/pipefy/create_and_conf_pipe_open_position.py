@@ -2,8 +2,8 @@ import traceback
 
 from aws_lambda_powertools import Logger
 
-from src.use_cases.profile.pipefy.create_pipe_configuration_open_position import (
-    create_pipe_configuration_open_position,
+from src.use_cases.profile.pipefy.create_and_conf_pipe_open_position import (
+    create_and_config_pipe_open_position,
 )
 
 logger = Logger()
@@ -28,7 +28,7 @@ def lambda_handler(event: dict, _):
         if not business_id:
             raise Exception("The business_id is required")
 
-        event = create_pipe_configuration_open_position(process_id, position_id, business_id)
+        event = create_and_config_pipe_open_position(process_id, position_id, business_id)
 
         return event
     except Exception as e:
