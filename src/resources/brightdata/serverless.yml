@@ -79,7 +79,7 @@ stateMachines:
     name: ProfileFilterProcess-${self:provider.stage}
     definition:
       Comment: "A simple AWS Step Functions state machine that filters profiles"
-      StartAt: ChooseStartingState
+      StartAt: CreatePipeAndConfOpenPosition
       States:
         CreatePipeAndConfOpenPosition:
           Type: Task
