@@ -81,6 +81,13 @@ stateMachines:
       Comment: "A simple AWS Step Functions state machine that filters profiles"
       StartAt: ChooseStartingState
       States:
+        CreatePipeAndConfOpenPosition:
+          Type: Task
+          Resource:
+            Fn::GetAtt:
+              - create_and_conf_pipe_open_position
+              - Arn
+          Next: ChooseStartingState
         ChooseStartingState:
           Type: Choice
           Choices:
@@ -164,7 +171,7 @@ stateMachines:
               StringEquals: "profiles_url_search"
               Next: CreateCards
           Default: Fail
-        CreatePipeConfigurationForOpenPosition:
+        CreateCardsForOpenPosition:
           Type: Task
           Resource:
             Fn::GetAtt:
