@@ -166,7 +166,7 @@ stateMachines:
           Choices:
             - Variable: "$.type"
               StringEquals: "profiles_search"
-              Next: CreatePipeConfigurationForOpenPosition
+              Next: CreateCardsForOpenPosition
             - Variable: "$.type"
               StringEquals: "profiles_url_search"
               Next: CreateCards
@@ -197,7 +197,7 @@ stateMachines:
           Choices:
             - Variable: "$.Cause"
               StringMatches: "*'type': 'profiles_search'*"
-              Next: CreatePipeConfigurationForOpenPosition
+              Next: CreateCardsForOpenPosition
           Default: NotifyFailure
         NotifyFailure:
           Type: Task
