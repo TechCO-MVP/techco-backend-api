@@ -644,6 +644,10 @@ functions:
     handler: src/adapters/primary/pipefy/create_pipe_configuration_for_open_position.lambda_handler
     timeout: 120
 
+  create_and_conf_pipe_open_position:
+    handler: src/adapters/primary/pipefy/create_and_conf_pipe_open_position.lambda_handler
+    timeout: 120
+
   create_cards_for_profiles:
     handler: src/adapters/primary/pipefy/create_cards_for_profiles.lambda_handler
 
