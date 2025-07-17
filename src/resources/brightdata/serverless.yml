@@ -79,25 +79,25 @@ stateMachines:
     name: ProfileFilterProcess-${self:provider.stage}
     definition:
       Comment: "A simple AWS Step Functions state machine that filters profiles"
-      StartAt: CreatePipeAndConfOpenPosition
+      StartAt: ChooseStartingState
       States:
+        ChooseStartingState:
+          Type: Choice
+          Choices:
+            - Variable: "$.type"
+              StringEquals: "profiles_search"
+              Next: CreatePipeAndConfOpenPosition
+            - Variable: "$.type"
+              StringEquals: "profiles_url_search"
+              Next: FilterProfilesURL
+          Default: Fail
         CreatePipeAndConfOpenPosition:
           Type: Task
           Resource:
             Fn::GetAtt:
               - create_and_conf_pipe_open_position
               - Arn
-          Next: ChooseStartingState
-        ChooseStartingState:
-          Type: Choice
-          Choices:
-            - Variable: "$.type"
-              StringEquals: "profiles_search"
-              Next: FilterProfiles
-            - Variable: "$.type"
-              StringEquals: "profiles_url_search"
-              Next: FilterProfilesURL
-          Default: Fail
+          Next: FilterProfiles
         FilterProfiles:
           Type: Task
           Resource:
