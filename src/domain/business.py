@@ -1,11 +1,12 @@
 from enum import Enum
-from typing import Dict, Optional
+from typing import Dict, Optional, List
 
-from pydantic import BaseModel
+from pydantic import BaseModel, model_validator
 
 from src.domain.assistant import Assistant
 from src.domain.base_entity import BaseEntity
 from src.domain.position_configuration import FLOW_TYPE
+from src.domain.defaults.business import DEFAULT_EVALUATION_WEIGHTS
 
 
 class BUSINESS_SIZE(str, Enum):
@@ -47,6 +48,40 @@ class PositionFlow(BaseModel):
     flow_type: FLOW_TYPE
     pipe_id: int
     groups: list[Group] = []
+
+
+class CRITERION_TYPE(str, Enum):
+    TALENT_DNA = "TALENT_DNA"
+    CHALLENGES_AND_BEHAVIORS_RESULT = "CHALLENGES_AND_BEHAVIORS_RESULT"
+    FIRST_INTERVIEW = "FIRST_INTERVIEW"
+    BUSINESS_CASE_RESULT = "BUSINESS_CASE_RESULT"
+    FINAL_INTERVIEW = "FINAL_INTERVIEW"
+
+
+class EvaluationCriterion(BaseModel):
+    name: str
+    criterion_type: CRITERION_TYPE
+    weight: float
+
+
+class BusinessConfigurationDTO(BaseModel):
+    evaluation_weights: List[EvaluationCriterion] = [
+        EvaluationCriterion(**weight) for weight in DEFAULT_EVALUATION_WEIGHTS
+    ]
+
+    @model_validator(mode="before")
+    def validate_and_convert_fields(cls, values):
+        if "evaluation_weights" in values:
+            if isinstance(values["evaluation_weights"], list):
+                values["evaluation_weights"] = [
+                    EvaluationCriterion(**weight) for weight in values["evaluation_weights"]
+                ]
+                total_weight = sum(ec.weight for ec in values["evaluation_weights"])
+            if abs(total_weight - 100) > 1e-6:
+                raise ValueError("Sum of all weights must be 100%")
+            else:
+                raise ValueError("evaluation_weights must be a list of EvaluationCriterion objects")
+        return values
 
 
 class BusinessDTO(BaseModel):
