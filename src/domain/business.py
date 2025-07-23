@@ -6,7 +6,7 @@ from pydantic import BaseModel, model_validator
 from src.domain.assistant import Assistant
 from src.domain.base_entity import BaseEntity
 from src.domain.position_configuration import FLOW_TYPE
-from src.domain.defaults.business import DEFAULT_EVALUATION_WEIGHTS
+from src.domain.defaults.business import DEFAULT_EVALUATION_WEIGHTS, DEFAULT_BUSINESS_CONFIGURATION
 
 
 class BUSINESS_SIZE(str, Enum):
@@ -77,8 +77,8 @@ class BusinessConfigurationDTO(BaseModel):
                     EvaluationCriterion(**weight) for weight in values["evaluation_weights"]
                 ]
                 total_weight = sum(ec.weight for ec in values["evaluation_weights"])
-            if abs(total_weight - 100) > 1e-6:
-                raise ValueError("Sum of all weights must be 100%")
+                if abs(total_weight - 100) > 1e-6:
+                    raise ValueError("Sum of all weights must be 100%")
             else:
                 raise ValueError("evaluation_weights must be a list of EvaluationCriterion objects")
         return values
@@ -98,6 +98,7 @@ class BusinessDTO(BaseModel):
     parent_business_id: Optional[str] = None
     assistants: Dict[str, Assistant] = {}
     position_flows: Optional[Dict[FLOW_TYPE, PositionFlow]] = {}
+    business_configuration: Optional[BusinessConfigurationDTO] = DEFAULT_BUSINESS_CONFIGURATION
 
 
 class BusinessEntity(BaseEntity[BusinessDTO]):
