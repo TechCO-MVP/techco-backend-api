@@ -122,6 +122,7 @@ def create_position(
         currency=data.get("salary", {}).get("currency", None),
         salary=data.get("salary", {}).get("salary", None),
         salary_range=data.get("salary", {}).get("salary_range", None),
+        disclosed=data.get("salary", {}).get("disclosed", True),
     )
 
     if salary.salary is None and salary.salary_range is None:

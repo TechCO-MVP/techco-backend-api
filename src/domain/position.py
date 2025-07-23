@@ -49,6 +49,7 @@ class Salary(BaseModel):
     currency: Optional[str] = None
     salary: Optional[str] = None
     salary_range: Optional[Range] = None
+    disclosed: Optional[bool] = True
 
 
 class PositionStakeholders(BaseModel):
