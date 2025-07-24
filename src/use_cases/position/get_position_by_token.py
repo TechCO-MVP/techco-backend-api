@@ -24,12 +24,11 @@ def get_position_by_token_use_case(params: dict) -> list[dict]:
     """get position by token use case."""
     
     business_repository = BusinessRepository()
-    position_repository = PositionRepository()
     hiring_repository = HiringProcessRepository()
 
     token_data = decode_vacancy_token(params["token"])
     business = business_repository.getById(token_data["business_id"])
-    position = position_repository.getById(token_data["id"])
+    position = fetch_position(token_data["id"])
     hiring_params = {
         "business_id": token_data["business_id"],
         "position_id": token_data["id"],
@@ -84,6 +83,20 @@ def decode_vacancy_token(token: str) -> Dict[str, Any]:
     except Exception as e:
         raise InvalidTokenException(f"Error decoding token: {str(e)}")
 
+def fetch_position(position_id: str) -> PositionEntity:
+    """Fetch the position from the repository."""
+    position_repository = PositionRepository()
+    position = position_repository.getById(position_id)
+    salary = position.props.salary
+    
+    if salary and not salary.disclosed:
+        if salary.salary:
+            salary.salary = "****"
+        if salary.salary_range:
+            position.props.salary.salary_range.min = "****"
+            position.props.salary.salary_range.max = "****"
+
+    return position
 
 def validate_data(business: BusinessEntity, position: PositionEntity, hiring: HiringProcessEntity) -> None:
     """Validate the data fetched from the repositories."""
