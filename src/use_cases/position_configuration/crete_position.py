@@ -156,6 +156,7 @@ def create_position(
         salary=salary,
         position_flow=position_flow,
         education=data.get("education", []),
+        business_configuration=business.props.business_configuration,
     )
     return position_dto
 
