@@ -93,7 +93,7 @@ class PositionDTO(BaseModel):
     assistants: Dict[str, Assistant] = {}
     position_flow: Optional[PositionFlow] = None
     assessments: Optional[List[Assessments]] = Field(default_factory=list)
-    business_configuration: Optional[BusinessConfigurationDTO]
+    business_configuration: Optional[BusinessConfigurationDTO] = None
 
     @model_validator(mode="before")
     def validate_and_convert_fields(cls, values):
