@@ -19,8 +19,8 @@ WebSocketConnections:
           ProjectionType: KEYS_ONLY
     TableName: ${self:provider.stage}-websocket-connections
     TimeToLiveSpecification:
-        AttributeName: "expires_at"
-        Enabled: true
+      AttributeName: "expires_at"
+      Enabled: true
 
 WebSocketConnectionsPublic:
   Type: AWS::DynamoDB::Table
@@ -43,20 +43,20 @@ WebSocketConnectionsPublic:
           ProjectionType: KEYS_ONLY
     TableName: ${self:provider.stage}-websocket-connections-public
     TimeToLiveSpecification:
-        AttributeName: "expires_at"
-        Enabled: true
+      AttributeName: "expires_at"
+      Enabled: true
 
 FileProcessingStatus:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        TableName: ${self:provider.stage}-file-processing-status
-        BillingMode: PAY_PER_REQUEST
-        AttributeDefinitions:
-          - AttributeName: process_id
-            AttributeType: S
-        KeySchema:
-          - AttributeName: process_id
-            KeyType: HASH
-        TimeToLiveSpecification:
-          AttributeName: expires_at
-          Enabled: true
+  Type: AWS::DynamoDB::Table
+  Properties:
+    TableName: ${self:provider.stage}-file-processing-status
+    BillingMode: PAY_PER_REQUEST
+    AttributeDefinitions:
+      - AttributeName: process_id
+        AttributeType: S
+    KeySchema:
+      - AttributeName: process_id
+        KeyType: HASH
+    TimeToLiveSpecification:
+      AttributeName: expires_at
+      Enabled: true
