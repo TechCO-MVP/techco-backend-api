@@ -86,11 +86,18 @@ stateMachines:
           Choices:
             - Variable: "$.type"
               StringEquals: "profiles_search"
-              Next: FilterProfiles
+              Next: CreatePipeAndConfOpenPosition
             - Variable: "$.type"
               StringEquals: "profiles_url_search"
               Next: FilterProfilesURL
           Default: Fail
+        CreatePipeAndConfOpenPosition:
+          Type: Task
+          Resource:
+            Fn::GetAtt:
+              - create_and_conf_pipe_open_position
+              - Arn
+          Next: FilterProfiles
         FilterProfiles:
           Type: Task
           Resource:
@@ -159,12 +166,12 @@ stateMachines:
           Choices:
             - Variable: "$.type"
               StringEquals: "profiles_search"
-              Next: CreatePipeConfigurationForOpenPosition
+              Next: CreateCardsForOpenPosition
             - Variable: "$.type"
               StringEquals: "profiles_url_search"
               Next: CreateCards
           Default: Fail
-        CreatePipeConfigurationForOpenPosition:
+        CreateCardsForOpenPosition:
           Type: Task
           Resource:
             Fn::GetAtt:
@@ -190,7 +197,7 @@ stateMachines:
           Choices:
             - Variable: "$.Cause"
               StringMatches: "*'type': 'profiles_search'*"
-              Next: CreatePipeConfigurationForOpenPosition
+              Next: CreateCardsForOpenPosition
           Default: NotifyFailure
         NotifyFailure:
           Type: Task

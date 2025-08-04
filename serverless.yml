@@ -149,6 +149,11 @@ custom:
     dockerizePip: true
     filename: requirements.txt
     invalidateCaches: true
+  warmup:
+    default:
+      enabled: true
+      events:
+        - schedule: rate(5 minutes)
 
 resources:
   Resources:
@@ -448,6 +453,19 @@ functions:
               querystrings:
                 business_id: true
 
+  get_position_list_by_business_id:
+    handler: src/adapters/primary/position/get_position_by_business/index.handler
+    events:
+      - http:
+          path: /position/list/{business_id}
+          method: get
+          cors: true
+          private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+
   get_position_by_token:
     handler: src/adapters/primary/position/get_position_token/index.handler
     events:
@@ -626,6 +644,10 @@ functions:
     handler: src/adapters/primary/pipefy/create_pipe_configuration_for_open_position.lambda_handler
     timeout: 120
 
+  create_and_conf_pipe_open_position:
+    handler: src/adapters/primary/pipefy/create_and_conf_pipe_open_position.lambda_handler
+    timeout: 120
+
   create_cards_for_profiles:
     handler: src/adapters/primary/pipefy/create_cards_for_profiles.lambda_handler
 
@@ -693,6 +715,19 @@ functions:
     events:
       - http:
           path: /position_configuration/list
+          method: get
+          cors: true
+          private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+
+  get_position_config_by_business_id:
+    handler: src/adapters/primary/position_configuration/get_position_configuration_by_business_id/index.handler
+    events:
+      - http:
+          path: /position_configuration/list/{business_id}
           method: get
           cors: true
           private: true
@@ -840,3 +875,4 @@ plugins:
   - serverless-python-requirements
   - serverless-step-functions
   - serverless-pseudo-parameters
+  - serverless-plugin-warmup

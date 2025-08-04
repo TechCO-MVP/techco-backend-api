@@ -122,6 +122,7 @@ def create_position(
         currency=data.get("salary", {}).get("currency", None),
         salary=data.get("salary", {}).get("salary", None),
         salary_range=data.get("salary", {}).get("salary_range", None),
+        disclosed=data.get("salary", {}).get("disclosed", True),
     )
 
     if salary.salary is None and salary.salary_range is None:
@@ -154,6 +155,8 @@ def create_position(
         benefits=data.get("benefits", []),
         salary=salary,
         position_flow=position_flow,
+        education=data.get("education", []),
+        business_configuration=business.props.business_configuration,
     )
     return position_dto
 

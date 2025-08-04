@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field, ValidationError, model_validator
 
 from src.domain.base_entity import BaseEntity
 from src.domain.assistant import Assistant
-from src.domain.business import PositionFlow
+from src.domain.business import PositionFlow, BusinessConfigurationDTO
 from src.domain.position_configuration import FLOW_TYPE, PHASE_TYPE
 
 
@@ -49,6 +49,7 @@ class Salary(BaseModel):
     currency: Optional[str] = None
     salary: Optional[str] = None
     salary_range: Optional[Range] = None
+    disclosed: Optional[bool] = True
 
 
 class PositionStakeholders(BaseModel):
@@ -92,6 +93,7 @@ class PositionDTO(BaseModel):
     assistants: Dict[str, Assistant] = {}
     position_flow: Optional[PositionFlow] = None
     assessments: Optional[List[Assessments]] = Field(default_factory=list)
+    business_configuration: Optional[BusinessConfigurationDTO] = None
 
     @model_validator(mode="before")
     def validate_and_convert_fields(cls, values):

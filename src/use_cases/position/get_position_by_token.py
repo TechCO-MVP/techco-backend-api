@@ -24,12 +24,11 @@ def get_position_by_token_use_case(params: dict) -> list[dict]:
     """get position by token use case."""
     
     business_repository = BusinessRepository()
-    position_repository = PositionRepository()
     hiring_repository = HiringProcessRepository()
 
     token_data = decode_vacancy_token(params["token"])
     business = business_repository.getById(token_data["business_id"])
-    position = position_repository.getById(token_data["id"])
+    position = fetch_position(token_data["id"])
     hiring_params = {
         "business_id": token_data["business_id"],
         "position_id": token_data["id"],
@@ -84,6 +83,20 @@ def decode_vacancy_token(token: str) -> Dict[str, Any]:
     except Exception as e:
         raise InvalidTokenException(f"Error decoding token: {str(e)}")
 
+def fetch_position(position_id: str) -> PositionEntity:
+    """Fetch the position from the repository."""
+    position_repository = PositionRepository()
+    position = position_repository.getById(position_id)
+    salary = position.props.salary
+    
+    if salary and not salary.disclosed:
+        if salary.salary:
+            salary.salary = "****"
+        if salary.salary_range:
+            position.props.salary.salary_range.min = "****"
+            position.props.salary.salary_range.max = "****"
+
+    return position
 
 def validate_data(business: BusinessEntity, position: PositionEntity, hiring: HiringProcessEntity) -> None:
     """Validate the data fetched from the repositories."""
@@ -103,17 +116,8 @@ def build_response(business: BusinessEntity, position: PositionEntity, hiring: H
         "business_id": business.id,
         "business_logo": business.props.logo,
         "business_description": business.props.description,
-        "position_id": position.id,
-        "position_role": position.props.role,
-        "position_country": position.props.country_code,
-        "position_city": position.props.city,
-        "position_work_mode": position.props.work_mode,
-        "position_description": position.props.description,
-        "position_responsabilities": position.props.responsabilities,
-        "position_skills": [{'name': skill.name, 'required': skill.required} for skill in position.props.skills],
-        "position_benefits": position.props.benefits or None,
-        "position_salary_range": position.props.salary or None,
         "hiring_id": hiring.id,
         "hiring_profile_name": hiring.props.profile.name,
-        "hiring_card_id": hiring.props.card_id
+        "hiring_card_id": hiring.props.card_id,
+        "position_entity": position.to_dto(flat=True),
     }

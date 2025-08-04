@@ -559,6 +559,42 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Exception"
+  /position/list/{business_id}:
+    get:
+      summary: List positions by business id
+      description: get vacancies data asociated to a business.
+      parameters:
+        - name: business_id
+          in: path
+          required: true
+          description: The ID of the business.
+          schema:
+            type: string
+        - name: Authorizer
+          in: header
+          required: true
+          description: The ID token of the user.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Position found successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListPositionResponse"
+        "400":
+          description: Value error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListPositionValueError"
+        "500":
+          description: Exception response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exception"
   /position/token:
     get:
       summary: get data position by token JWT
@@ -866,6 +902,36 @@ paths:
           description: Flag to indicate if all position configuration should be retrieved.
           schema:
             type: boolean
+      responses:
+        "200":
+          description: position configuration find successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetPositionConfigurationListResponse"
+        "400":
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Exception response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exception"
+  /position_configuration/list/{business_id}:
+    get:
+      summary: Get position configuration list by business id
+      description: Get position configuration list by business id.
+      parameters:
+        - name: business_id
+          in: path
+          required: true
+          description: The ID of the business.
+          schema:
+            type: string
       responses:
         "200":
           description: position configuration find successfully

@@ -9,8 +9,7 @@ from typing import Dict, Any
 def get_position_by_id_for_vacancy_public_page(params: dict) -> list[dict]:
     """get position by id for vacancy public page."""
     
-    position_repository = PositionRepository()
-    position: PositionEntity = position_repository.getById(params["position_id"])
+    position: PositionEntity = fetch_position(params["position_id"])
 
     business_repository = BusinessRepository()
     business = business_repository.getById(position.props.business_id)
@@ -19,6 +18,20 @@ def get_position_by_id_for_vacancy_public_page(params: dict) -> list[dict]:
 
     return response
 
+def fetch_position(position_id: str) -> PositionEntity:
+    """Fetch the position from the repository."""
+    position_repository = PositionRepository()
+    position = position_repository.getById(position_id)
+    salary = position.props.salary
+    
+    if salary and not salary.disclosed:
+        if salary.salary:
+            salary.salary = "****"
+        if salary.salary_range:
+            position.props.salary.salary_range.min = "****"
+            position.props.salary.salary_range.max = "****"
+
+    return position
 
 def build_response(business: BusinessEntity, position: PositionEntity) -> Dict[str, Any]:
     """Build the response data for the position."""   
@@ -28,18 +41,5 @@ def build_response(business: BusinessEntity, position: PositionEntity) -> Dict[s
         "business_id": business.id,
         "business_logo": business.props.logo,
         "business_description": business.props.description,
-        "position_id": position.id,
-        "position_role": position.props.role,
-        "position_country": position.props.country_code,
-        "position_city": position.props.city,
-        "position_work_mode": position.props.work_mode,
-        "position_description": position.props.description,
-        "position_responsabilities": position.props.responsabilities,
-        "position_skills": [{'name': skill.name, 'required': skill.required} for skill in position.props.skills],
-        "position_benefits": position.props.benefits or None,
-        "position_salary_range": position.props.salary or None,
-        "position_assessments": position.props.assessments or [],
-        "position_flow": position.props.position_flow or None,
-        "position_seniority": position.props.seniority or None,
-        "position_education": position.props.education or None,
+        "position_entity": position.to_dto(flat=True),
     }
