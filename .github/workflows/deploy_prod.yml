@@ -12,6 +12,7 @@ jobs:
       contents: read
     env:
       TECHCO_DOMAIN: ${{ secrets.TECHCO_DOMAIN_PROD }}
+      API_ID: ${{ secrets.API_ID_PROD }}
     steps:
       - name: Checkout the code
         uses: actions/checkout@v3
