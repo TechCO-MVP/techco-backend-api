@@ -70,6 +70,9 @@ def create_pipe_configuration_open_position(
     pipe_id = profile_filter_process.props.pipe_id
     profiles = profile_filter_process.props.profiles
 
+    for profile in profiles:
+        profile.source = profile_filter_process.props.type.value
+
     updated_profiles = create_cards_for_profiles(profiles, pipe_id, position_id, business_id)
 
     # update profile

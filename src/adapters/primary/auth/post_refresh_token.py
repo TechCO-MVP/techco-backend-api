@@ -13,6 +13,7 @@ cognito_client = boto3.client("cognito-idp", region_name=REGION_NAME)
 logger = Logger()
 app = APIGatewayRestResolver()
 
+
 @app.post("/auth/refresh_tokens")
 def refresh_tokens():
     """
@@ -22,13 +23,11 @@ def refresh_tokens():
     refresh_token = json_body["refresh_token"]
     status_code = 200
     body = {}
-    
+
     try:
         response = cognito_client.initiate_auth(
             AuthFlow="REFRESH_TOKEN_AUTH",
-            AuthParameters={
-                "REFRESH_TOKEN": refresh_token
-            },
+            AuthParameters={"REFRESH_TOKEN": refresh_token},
             ClientId=CLIENT_ID,
         )
 
@@ -38,14 +37,14 @@ def refresh_tokens():
                 "id_token": response["AuthenticationResult"]["IdToken"],
                 "access_token": response["AuthenticationResult"]["AccessToken"],
                 "expires_in": response["AuthenticationResult"]["ExpiresIn"],
-            }
+            },
         }
 
     except ClientError as e:
         error_message = e.response["Error"]["Message"]
         status_code = 500
         body = {"message": f"Failed to refresh tokens: {error_message}"}
-    
+
     finally:
         return Response(status_code, body=body, content_type=content_types.APPLICATION_JSON)
 
