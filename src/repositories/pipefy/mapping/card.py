@@ -158,7 +158,7 @@ CARD_START_FORM_MAPPING = {
             {
                 "field_id": "305713420_334105217_jobvacancy",
                 "field_value": lambda data: (
-                    getattr(data.position_info, "_id", "") if data.position_info else ""
+                    getattr(data.position_info, "role", "") if data.position_info else ""
                 ),
             },
             {
