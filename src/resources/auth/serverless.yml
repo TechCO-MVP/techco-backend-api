@@ -40,6 +40,9 @@ CognitoPasswordlessUserPoolClient:
       - COGNITO
     AccessTokenValidity: 1440
     IdTokenValidity: 1440
+    TokenValidityUnits:
+      AccessToken: minutes
+      IdToken: minutes
 
 
 ApiGatewayAuthorizer:
