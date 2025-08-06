@@ -38,6 +38,8 @@ CognitoPasswordlessUserPoolClient:
       - CUSTOM_AUTH_FLOW_ONLY
     SupportedIdentityProviders:
       - COGNITO
+    AccessTokenValidity: 1440
+    IdTokenValidity: 1440
 
 
 ApiGatewayAuthorizer:
@@ -50,4 +52,6 @@ ApiGatewayAuthorizer:
       Ref: ApiGatewayRestApi
     Type: COGNITO_USER_POOLS
     ProviderARNs:
-      - !GetAtt CognitoUserPool.Arn
+      - Fn::GetAtt:
+          - CognitoUserPool
+          - Arn
