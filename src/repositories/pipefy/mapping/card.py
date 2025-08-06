@@ -149,6 +149,24 @@ CARD_START_FORM_MAPPING = {
                     else "A través de la URL de la vacante"
                 ),
             },
+            {
+                "field_id": "305713420_334105217_recruiteremail",
+                "field_value": lambda data: (
+                    getattr(data.position_info, "recruiter_email", "") if data.position_info else ""
+                ),
+            },
+            {
+                "field_id": "305713420_334105217_jobvacancy",
+                "field_value": lambda data: (
+                    getattr(data.position_info, "_id", "") if data.position_info else ""
+                ),
+            },
+            {
+                "field_id": "305713420_334105217_owneremail",
+                "field_value": lambda data: (
+                    getattr(data.position_info, "owner_email", "") if data.position_info else ""
+                ),
+            },
         ]
     }
 }

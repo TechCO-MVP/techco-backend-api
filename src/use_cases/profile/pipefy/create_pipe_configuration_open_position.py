@@ -13,6 +13,7 @@ from src.domain.profile_brightdata import ProfileBrightDataDTO
 from src.errors.entity_not_found import EntityNotFound
 from src.repositories.document_db.position_repository import PositionRepository
 from src.repositories.document_db.profile_filter_process import ProfileFilterProcessRepository
+from src.repositories.document_db.user_repository import UserRepository
 from src.repositories.pipefy.card_repository import CardRepository
 from src.repositories.pipefy.mapping.index import map_profile_bright_data_fields
 from src.services.graphql.graphql_service import get_client
@@ -33,14 +34,45 @@ def create_hiring_proces_for_profile(
     create_hiring_process_use_case(hiring_process_dto)
 
 
+def get_position_info(position_id: str) -> dict:
+    position_repository = PositionRepository()
+    position = position_repository.getById(position_id)
+    if position is None:
+        raise EntityNotFound("Position not found")
+
+    recruiter_email = None
+    owner_email = None
+
+    user_repository = UserRepository()
+    user_entity = user_repository.getById(position.props.recruiter_user_id)
+    if user_entity:
+        recruiter_email = user_entity.props.email
+
+    user_entity = user_repository.getById(position.props.owner_position_user_id)
+    if user_entity:
+        owner_email = user_entity.props.email
+
+    position_info = {
+        **position.to_dto(flat=True),
+        "recruiter_email": recruiter_email,
+        "owner_email": owner_email,
+    }
+
+    return position_info
+
+
 def create_cards_for_profiles(
     profiles: List[ProfileBrightDataDTO], pipe_id: str, position_id: str, business_id: str
 ) -> List[ProfileBrightDataDTO]:
+    position_info = get_position_info(position_id)
+
     graphql_client = get_client()
     card_repository = CardRepository(graphql_client)
     updated_profiles = []
 
     for profile in profiles:
+        profile.position_info = position_info
+
         fields_attributes = map_profile_bright_data_fields(profile, DEFAULT_PIPE_TEMPLATE_ID)
         response = card_repository.create_card(pipe_id, profile.name, fields_attributes)
         card_id = response["createCard"]["card"]["id"]
