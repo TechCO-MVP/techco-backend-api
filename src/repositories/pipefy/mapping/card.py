@@ -24,6 +24,24 @@ def get_current_position(data: ProfileBrightDataDTO) -> ExperienceProfile:
     return current_experience
 
 
+def get_position_info(data: ProfileBrightDataDTO) -> Any:
+    if not data.position_info:
+        return None
+
+    position_info = {
+        "recruiter_email": getattr(data.position_info, "recruiter_email", ""),
+        "owner_email": getattr(data.position_info, "owner_email", ""),
+        "role": getattr(data.position_info, "role", ""),
+    }
+
+    return position_info
+
+
+def get_prop_from_position_info(data: ProfileBrightDataDTO, prop: str) -> Any:
+    position_info = get_position_info(data)
+    return getattr(position_info, prop, None) if position_info else None
+
+
 def get_prop_from_current_position(data: ProfileBrightDataDTO, prop: str) -> Any:
     current_experience = get_current_position(data)
     return getattr(current_experience, prop) if current_experience else ""
@@ -148,6 +166,18 @@ CARD_START_FORM_MAPPING = {
                     if data.source == PROCESS_TYPE.PROFILES_SEARCH.value
                     else "A través de la URL de la vacante"
                 ),
+            },
+            {
+                "field_id": "305713420_334105217_recruiteremail",
+                "field_value": lambda data: get_prop_from_position_info(data, "recruiter_email"),
+            },
+            {
+                "field_id": "305713420_334105217_jobvacancy",
+                "field_value": lambda data: get_prop_from_position_info(data, "role"),
+            },
+            {
+                "field_id": "305713420_334105217_owneremail",
+                "field_value": lambda data: get_prop_from_position_info(data, "owner_email"),
             },
         ]
     }

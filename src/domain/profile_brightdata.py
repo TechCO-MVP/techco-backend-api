@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Any
 from pydantic import BaseModel, Field
 from datetime import datetime
 
@@ -158,3 +158,4 @@ class ProfileBrightDataDTO(BaseModel):
     card_id: Optional[int] = None
     email: Optional[str] = None
     source: Optional[str] = None
+    position_info: Optional[Any] = None
