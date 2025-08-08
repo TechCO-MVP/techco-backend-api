@@ -39,7 +39,7 @@ def get_position_info(data: ProfileBrightDataDTO) -> Any:
 
 def get_prop_from_position_info(data: ProfileBrightDataDTO, prop: str) -> Any:
     position_info = get_position_info(data)
-    return getattr(position_info, prop) if position_info else ""
+    return getattr(position_info, prop, None) if position_info else None
 
 
 def get_prop_from_current_position(data: ProfileBrightDataDTO, prop: str) -> Any:
