@@ -13,6 +13,7 @@ jobs:
     env:
       TECHCO_DOMAIN: ${{ secrets.TECHCO_DOMAIN_DEV }}
       API_ID: ${{ secrets.API_ID_DEV }}
+      API_URL: ${{ vars.API_URL_DEV }}
     steps:
       - name: Checkout the code
         uses: actions/checkout@v3
