@@ -20,13 +20,13 @@ def assistant_response_handler_use_case(
     hiring_process_entity = hiring_repository.getById(hiring_process_id)
 
     current_phase = hiring_process_entity.props.phase_id
-    current_phase_data = hiring_process_entity.props.phases.get(current_phase)
+    current_phase_data = hiring_process_entity.props.phases.get(current_phase, None)
 
     if current_phase_data is None:
         hiring_process_entity.props.phases[current_phase] = {}
 
     current_phase_data = {
-        **current_phase_data.model_dump(),
+        **(current_phase_data.model_dump() if current_phase_data else {}),
         "custom_fields": {"assistant_response": response},
     }
     hiring_process_entity.props.phases[current_phase] = current_phase_data
