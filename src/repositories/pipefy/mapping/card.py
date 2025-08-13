@@ -24,14 +24,16 @@ def get_current_position(data: ProfileBrightDataDTO) -> ExperienceProfile:
     return current_experience
 
 
-def get_position_info(data: ProfileBrightDataDTO) -> Any:
+def get_position_info(data: ProfileBrightDataDTO) -> dict | None:
     if not data.position_info:
         return None
 
     position_info = {
-        "recruiter_email": getattr(data.position_info, "recruiter_email", ""),
-        "owner_email": getattr(data.position_info, "owner_email", ""),
-        "role": getattr(data.position_info, "role", ""),
+        "recruiter_email": (
+            data.position_info.get("recruiter_email", "") if data.position_info else ""
+        ),
+        "owner_email": data.position_info.get("owner_email", "") if data.position_info else "",
+        "role": data.position_info.get("role", "") if data.position_info else "",
     }
 
     return position_info
@@ -39,7 +41,7 @@ def get_position_info(data: ProfileBrightDataDTO) -> Any:
 
 def get_prop_from_position_info(data: ProfileBrightDataDTO, prop: str) -> Any:
     position_info = get_position_info(data)
-    return getattr(position_info, prop, None) if position_info else None
+    return position_info.get(prop, None) if position_info else None
 
 
 def get_prop_from_current_position(data: ProfileBrightDataDTO, prop: str) -> Any:
