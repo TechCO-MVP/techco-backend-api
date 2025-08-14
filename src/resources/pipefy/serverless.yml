@@ -67,6 +67,17 @@ PipefyCardMoveQueue:
         Value: ${self:provider.stage}
       - Key: Name
         Value: ${self:provider.stage}-pipefy-card-move-queue
+    AccessPolicy:
+      Version: "2012-10-17"
+      Statement:
+        - Effect: Allow
+          Principal:
+            Service: events.amazonaws.com
+          Action: "sqs:SendMessage"
+          Resource: !GetAtt PipefyCardMoveQueue.Arn
+          Condition:
+            ArnEquals:
+              "aws:SourceArn": !Ref PipefyCardMoveRule
 
 PipefyFieldUpdateQueue:
   Type: AWS::SQS::Queue
@@ -83,6 +94,17 @@ PipefyFieldUpdateQueue:
         Value: ${self:provider.stage}
       - Key: Name
         Value: ${self:provider.stage}-pipefy-field-update-queue
+    AccessPolicy:
+      Version: "2012-10-17"
+      Statement:
+        - Effect: Allow
+          Principal:
+            Service: events.amazonaws.com
+          Action: "sqs:SendMessage"
+          Resource: !GetAtt PipefyFieldUpdateQueue.Arn
+          Condition:
+            ArnEquals:
+              "aws:SourceArn": !Ref PipefyFieldUpdateRule
 
 EventBridgeToSQSRole:
   Type: AWS::IAM::Role
