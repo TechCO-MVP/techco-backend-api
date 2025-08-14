@@ -38,23 +38,23 @@ def update_phase(card_move_dto: CardMoveEvent):
     hiring_process.props.phase_history.append(create_hiring_process_phase_history(card_move_dto))
 
     hiring_process_repository.update(hiring_process.id, hiring_process)
-    
+
     build_message_to_websocket(hiring_process)
 
     logger.info(f"Phase updated for card {card_move_dto.card.id}")
 
+
 def build_message_to_websocket(hiring_process: HiringProcessEntity):
-    """ Build message to send to WebSocket connection
-    """
+    """Build message to send to WebSocket connection"""
     position_repository = PositionRepository()
     position = position_repository.getById(hiring_process.props.position_id)
     user_to_notify = [position.props.owner_position_user_id]
     if position.props.recruiter_user_id:
         user_to_notify.append(position.props.recruiter_user_id)
-    
+
     responsible_users = [user.user_id for user in position.props.responsible_users]
     user_to_notify.extend(responsible_users)
-    
+
     for user in set(user_to_notify):
         notification = NotificationDTO(
             user_id=user,
@@ -64,7 +64,7 @@ def build_message_to_websocket(hiring_process: HiringProcessEntity):
             status=NotificationStatus.NEW,
             hiring_process_id=hiring_process.id,
             phase_id=hiring_process.props.phase_id,
-            position_id=hiring_process.props.position_id
+            position_id=hiring_process.props.position_id,
         )
-        
+
         send_notification_by_websocket(notification)
