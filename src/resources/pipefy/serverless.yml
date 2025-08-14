@@ -74,10 +74,12 @@ PipefyCardMoveQueue:
           Principal:
             Service: events.amazonaws.com
           Action: "sqs:SendMessage"
-          Resource: !GetAtt PipefyCardMoveQueue.Arn
+          Resource:
+            Fn::Sub: "arn:aws:sqs:${AWS::Region}:${AWS::AccountId}:${self:provider.stage}-pipefy-card-move-queue.fifo"
           Condition:
             ArnEquals:
-              "aws:SourceArn": !Ref PipefyCardMoveRule
+              "aws:SourceArn":
+                Fn::Sub: "arn:aws:events:${AWS::Region}:${AWS::AccountId}:rule/${self:provider.stage}-pipefy-card-move-rule"
 
 PipefyFieldUpdateQueue:
   Type: AWS::SQS::Queue
@@ -101,10 +103,12 @@ PipefyFieldUpdateQueue:
           Principal:
             Service: events.amazonaws.com
           Action: "sqs:SendMessage"
-          Resource: !GetAtt PipefyFieldUpdateQueue.Arn
+          Resource:
+            Fn::Sub: "arn:aws:sqs:${AWS::Region}:${AWS::AccountId}:${self:provider.stage}-pipefy-field-update-queue.fifo"
           Condition:
             ArnEquals:
-              "aws:SourceArn": !Ref PipefyFieldUpdateRule
+              "aws:SourceArn":
+                Fn::Sub: "arn:aws:events:${AWS::Region}:${AWS::AccountId}:rule/${self:provider.stage}-pipefy-field-update-rule"
 
 EventBridgeToSQSRole:
   Type: AWS::IAM::Role
