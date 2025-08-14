@@ -67,7 +67,13 @@ PipefyCardMoveQueue:
         Value: ${self:provider.stage}
       - Key: Name
         Value: ${self:provider.stage}-pipefy-card-move-queue
-    AccessPolicy:
+
+PipefyCardMoveQueuePolicy:
+  Type: AWS::SQS::QueuePolicy
+  Properties:
+    Queues:
+      - !Ref PipefyCardMoveQueue
+    PolicyDocument:
       Version: "2012-10-17"
       Statement:
         - Effect: Allow
@@ -75,11 +81,11 @@ PipefyCardMoveQueue:
             Service: events.amazonaws.com
           Action: "sqs:SendMessage"
           Resource:
-            Fn::Sub: "arn:aws:sqs:${AWS::Region}:${AWS::AccountId}:${self:provider.stage}-pipefy-card-move-queue.fifo"
+            Fn::Sub: "arn:aws:sqs:${self:provider.region}:${AWS::AccountId}:${self:provider.stage}-pipefy-card-move-queue.fifo"
           Condition:
             ArnEquals:
               "aws:SourceArn":
-                Fn::Sub: "arn:aws:events:${AWS::Region}:${AWS::AccountId}:rule/${self:provider.stage}-pipefy-card-move-rule"
+                Fn::Sub: "arn:aws:events:${self:provider.region}:${AWS::AccountId}:rule/${self:provider.stage}-pipefy-card-move-rule"
 
 PipefyFieldUpdateQueue:
   Type: AWS::SQS::Queue
@@ -96,7 +102,13 @@ PipefyFieldUpdateQueue:
         Value: ${self:provider.stage}
       - Key: Name
         Value: ${self:provider.stage}-pipefy-field-update-queue
-    AccessPolicy:
+
+PipefyFieldUpdateQueuePolicy:
+  Type: AWS::SQS::QueuePolicy
+  Properties:
+    Queues:
+      - !Ref PipefyFieldUpdateQueue
+    PolicyDocument:
       Version: "2012-10-17"
       Statement:
         - Effect: Allow
@@ -104,11 +116,11 @@ PipefyFieldUpdateQueue:
             Service: events.amazonaws.com
           Action: "sqs:SendMessage"
           Resource:
-            Fn::Sub: "arn:aws:sqs:${AWS::Region}:${AWS::AccountId}:${self:provider.stage}-pipefy-field-update-queue.fifo"
+            Fn::Sub: "arn:aws:sqs:${self:provider.region}:${AWS::AccountId}:${self:provider.stage}-pipefy-field-update-queue.fifo"
           Condition:
             ArnEquals:
               "aws:SourceArn":
-                Fn::Sub: "arn:aws:events:${AWS::Region}:${AWS::AccountId}:rule/${self:provider.stage}-pipefy-field-update-rule"
+                Fn::Sub: "arn:aws:events:${self:provider.region}:${AWS::AccountId}:rule/${self:provider.stage}-pipefy-field-update-rule"
 
 EventBridgeToSQSRole:
   Type: AWS::IAM::Role
