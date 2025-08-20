@@ -6,7 +6,7 @@ from pydantic import BaseModel, model_validator
 from src.domain.assistant import Assistant
 from src.domain.base_entity import BaseEntity
 from src.domain.position_configuration import FLOW_TYPE
-from src.domain.defaults.business import DEFAULT_EVALUATION_WEIGHTS, DEFAULT_BUSINESS_CONFIGURATION
+from src.domain.defaults.business import EVALUATION_WEIGHTS, DEFAULT_BUSINESS_CONFIGURATION
 
 
 class BUSINESS_SIZE(str, Enum):
@@ -65,22 +65,40 @@ class EvaluationCriterion(BaseModel):
 
 
 class BusinessConfigurationDTO(BaseModel):
-    evaluation_weights: List[EvaluationCriterion] = [
-        EvaluationCriterion(**weight) for weight in DEFAULT_EVALUATION_WEIGHTS
-    ]
+    evaluation_weights: Optional[Dict[FLOW_TYPE, List[EvaluationCriterion]]] = EVALUATION_WEIGHTS
 
     @model_validator(mode="before")
     def validate_and_convert_fields(cls, values):
-        if "evaluation_weights" in values:
-            if isinstance(values["evaluation_weights"], list):
-                values["evaluation_weights"] = [
-                    EvaluationCriterion(**weight) for weight in values["evaluation_weights"]
+        evaluation_weights = values.get("evaluation_weights")
+        if evaluation_weights is not None:
+            if not isinstance(evaluation_weights, dict):
+                if isinstance(evaluation_weights, list):
+                    evaluation_weights = EVALUATION_WEIGHTS
+                else:
+                    raise ValueError(
+                        (
+                            "evaluation_weights must be a dict mapping FLOW_TYPE to list of "
+                            "EvaluationCriterion objects"
+                        )
+                    )
+
+            for flow_type, criteria_list in evaluation_weights.items():
+                if not isinstance(criteria_list, list):
+                    raise ValueError(
+                        (
+                            f"evaluation_weights[{flow_type}] must be a list of "
+                            "EvaluationCriterion objects"
+                        )
+                    )
+
+                criteria_objs = [
+                    EvaluationCriterion(**c) if isinstance(c, dict) else c for c in criteria_list
                 ]
-                total_weight = sum(ec.weight for ec in values["evaluation_weights"])
+                total_weight = sum(ec.weight for ec in criteria_objs)
                 if abs(total_weight - 100) > 1e-6:
-                    raise ValueError("Sum of all weights must be 100%")
-            else:
-                raise ValueError("evaluation_weights must be a list of EvaluationCriterion objects")
+                    raise ValueError(f"Sum of all weights for flow_type '{flow_type}' must be 100%")
+                evaluation_weights[flow_type] = criteria_objs
+            values["evaluation_weights"] = evaluation_weights
         return values
 
 
