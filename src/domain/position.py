@@ -8,6 +8,7 @@ from src.domain.base_entity import BaseEntity
 from src.domain.assistant import Assistant
 from src.domain.business import PositionFlow, BusinessConfigurationDTO
 from src.domain.position_configuration import FLOW_TYPE, PHASE_TYPE
+from src.domain.defaults.business import DEFAULT_BUSINESS_CONFIGURATION
 
 
 class POSITION_STATUS(str, Enum):
@@ -93,7 +94,7 @@ class PositionDTO(BaseModel):
     assistants: Dict[str, Assistant] = {}
     position_flow: Optional[PositionFlow] = None
     assessments: Optional[List[Assessments]] = Field(default_factory=list)
-    business_configuration: Optional[BusinessConfigurationDTO] = None
+    business_configuration: Optional[BusinessConfigurationDTO] = DEFAULT_BUSINESS_CONFIGURATION
 
     @model_validator(mode="before")
     def validate_and_convert_fields(cls, values):
