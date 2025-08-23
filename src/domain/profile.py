@@ -20,6 +20,7 @@ class PROCESS_STATUS(str, Enum):
 class PROCESS_TYPE(str, Enum):
     PROFILES_SEARCH = "profiles_search"
     PROFILES_URL_SEARCH = "profiles_url_search"
+    PROFILES_CV_SEARCH = "profiles_cv_search"
 
 
 class URLProfile(BaseModel):
@@ -46,6 +47,7 @@ class ProfileFilterProcessQueryDTO(BaseModel):
     position_id: str = Field(default="", alias="position_id")
     snapshot_id: Optional[str] = ""
     url_profiles: Optional[List[URLProfile]] = []
+    cv_file_key: Optional[str] = ""
 
 
 class ProfileFilterProcessDTO(BaseModel):
@@ -76,6 +78,12 @@ class ProfileFilterProcessDTO(BaseModel):
             return v
 
         raise ValueError("Invalid business_id format. Must be a string or ObjectId.")
+
+
+class ProfileFilterProcessCVDTO(BaseModel):
+    position_id: str = Field(default="", alias="position_id")
+    business_id: str = Field(default="", alias="business_id")
+    file: str = Field(default="", alias="file")
 
 
 class ProfileFilterProcessEntity(BaseEntity[ProfileFilterProcessDTO]):

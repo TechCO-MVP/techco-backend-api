@@ -6,6 +6,7 @@ from src.domain.hiring_process import HiringProcessEntity, UpdateHiringProcessCu
 
 logger = Logger()
 
+
 def put_hiring_process_custom_fields_by_id_use_case(body: dict) -> tuple:
     """put hiring process custom fileds by id use case."""
     UpdateHiringProcessCustomFieldsDTO(**body)
@@ -29,7 +30,7 @@ def updat_hiring_data(hiring: HiringProcessEntity, body: dict) -> tuple:
     hiring_dto = hiring.to_dto(flat=True)
     current_phases = hiring_dto["phases"]
     changes_made = False
-    
+
     for phase_id, fields in body.get("phases", {}).items():
         if phase_id not in current_phases:
             logger.info(f"Phase ID '{phase_id}' not found in current phases.")
@@ -48,7 +49,12 @@ def updat_hiring_data(hiring: HiringProcessEntity, body: dict) -> tuple:
         current_custom_fields = current_phases[phase_id].get("custom_fields", {})
 
         if current_custom_fields != fields.get("custom_fields", {}):
-            logger.info(f"Custom fields for phase '{phase_id}' updated from '{current_custom_fields}' to '{fields['custom_fields']}'")
+            logger.info(
+                (
+                    f"Custom fields for phase '{phase_id}' updated from '{current_custom_fields}' "
+                    f"to '{fields['custom_fields']}'"
+                )
+            )
             hiring_dto["phases"][phase_id]["custom_fields"] = fields.get("custom_fields")
             changes_made = True
 
