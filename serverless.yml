@@ -494,6 +494,19 @@ functions:
             authorizerId:
               Ref: ApiGatewayAuthorizer
 
+  update_position:
+    handler: src/adapters/primary/position/update_position/index.handler
+    events:
+      - http:
+          path: /position/update
+          method: put
+          cors: true
+          private: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
+
   get_notification_list:
     handler: src/adapters/primary/notifications/get_notification/index.handler
     events:
