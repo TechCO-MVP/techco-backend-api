@@ -24,11 +24,11 @@ S3PublicData:
     CorsConfiguration:
       CorsRules:
         - AllowedHeaders:
-            - '*'
+            - "*"
           AllowedMethods:
             - GET
           AllowedOrigins:
-            - '*'
+            - "*"
           MaxAge: 3000
     Tags:
       - Key: Environment
@@ -41,17 +41,17 @@ S3PublicDataPolicy:
   Properties:
     Bucket: !Ref S3PublicData
     PolicyDocument:
-      Version: '2012-10-17'
+      Version: "2012-10-17"
       Statement:
         - Sid: PublicReadGetObject
           Effect: Allow
-          Principal: '*'
-          Action: 's3:GetObject'
-          Resource: !Join 
-            - ''
-            - - 'arn:aws:s3:::'
+          Principal: "*"
+          Action: "s3:GetObject"
+          Resource: !Join
+            - ""
+            - - "arn:aws:s3:::"
               - !Ref S3PublicData
-              - '/*'
+              - "/*"
 
 S3AssessmentsFiles:
   Type: AWS::S3::Bucket
@@ -73,14 +73,14 @@ S3AssessmentsFiles:
     CorsConfiguration:
       CorsRules:
         - AllowedHeaders:
-            - '*'
+            - "*"
           AllowedMethods:
             - GET
             - PUT
             - POST
             - DELETE
           AllowedOrigins:
-            - '*'
+            - "*"
           MaxAge: 3000
     Tags:
       - Key: Environment
@@ -93,19 +93,74 @@ S3AssessmentsFilesPolicy:
   Properties:
     Bucket: !Ref S3AssessmentsFiles
     PolicyDocument:
-      Version: '2012-10-17'
+      Version: "2012-10-17"
       Statement:
         - Sid: AllowReadWriteAccess
           Effect: Allow
           Principal:
             Service: lambda.amazonaws.com
           Action:
-            - 's3:GetObject'
-            - 's3:PutObject'
-            - 's3:DeleteObject'
-          Resource: !Join 
-            - ''
-            - - 'arn:aws:s3:::'
+            - "s3:GetObject"
+            - "s3:PutObject"
+            - "s3:DeleteObject"
+          Resource: !Join
+            - ""
+            - - "arn:aws:s3:::"
               - !Ref S3AssessmentsFiles
-              - '/*'
-              
+              - "/*"
+
+S3ProfileFilterCVFiles:
+  Type: AWS::S3::Bucket
+  Properties:
+    BucketName: ${self:provider.stage}-profile-filter-cv-files-${self:provider.region}
+    OwnershipControls:
+      Rules:
+        - ObjectOwnership: BucketOwnerPreferred
+    PublicAccessBlockConfiguration:
+      BlockPublicAcls: true
+      BlockPublicPolicy: true
+      IgnorePublicAcls: true
+      RestrictPublicBuckets: true
+    LifecycleConfiguration:
+      Rules:
+        - Id: DeleteOldFiles
+          Status: Enabled
+          ExpirationInDays: 7
+    CorsConfiguration:
+      CorsRules:
+        - AllowedHeaders:
+            - "*"
+          AllowedMethods:
+            - GET
+            - PUT
+            - POST
+            - DELETE
+          AllowedOrigins:
+            - "*"
+          MaxAge: 3000
+    Tags:
+      - Key: Environment
+        Value: ${self:provider.stage}
+      - Key: Name
+        Value: ${self:provider.stage}-profile-filter-cv-files
+
+S3ProfileFilterCVFilesPolicy:
+  Type: AWS::S3::BucketPolicy
+  Properties:
+    Bucket: !Ref S3ProfileFilterCVFiles
+    PolicyDocument:
+      Version: "2012-10-17"
+      Statement:
+        - Sid: AllowReadWriteAccess
+          Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action:
+            - "s3:GetObject"
+            - "s3:PutObject"
+            - "s3:DeleteObject"
+          Resource: !Join
+            - ""
+            - - "arn:aws:s3:::"
+              - !Ref S3ProfileFilterCVFiles
+              - "/*"

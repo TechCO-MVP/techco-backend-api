@@ -28,6 +28,14 @@ class S3StorageRepository(IStorageRepository[dict]):
         except Exception as e:
             raise RuntimeError(f"Failed to put object {key} in bucket {self.bucket_name}: {e}")
 
+    def put_raw(self, key: str, value: bytes, content_type: str):
+        try:
+            self.s3_client.put_object(
+                Bucket=self.bucket_name, Key=key, Body=value, ContentType=content_type
+            )
+        except Exception as e:
+            raise RuntimeError(f"Failed to put object {key} in bucket {self.bucket_name}: {e}")
+
     def delete(self, key: str):
         try:
             self.s3_client.delete_object(Bucket=self.bucket_name, Key=key)

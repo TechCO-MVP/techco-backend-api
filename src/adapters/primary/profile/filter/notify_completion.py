@@ -20,7 +20,7 @@ def lambda_handler(event: dict, _):
         process_id: str = event.get("_id", None)
         if not process_id:
             raise Exception("The id is required")
-        
+
         send_message_to_websocket_by_position_id(event)
 
         return event
@@ -32,27 +32,33 @@ def lambda_handler(event: dict, _):
             "errorDetails": f"{e}",
         }
 
+
 def send_message_to_websocket_by_position_id(event):
-    """ Build message to send to WebSocket connection by prosition_id
-    """
+    """Build message to send to WebSocket connection by prosition_id"""
     position_repository = PositionRepository()
-    position = position_repository.getById(event["position_id"])    
+    position = position_repository.getById(event["position_id"])
     user_to_notify = [position.props.owner_position_user_id]
     recruiter_user_id = position.props.recruiter_user_id
 
     if recruiter_user_id:
         user_to_notify.append(recruiter_user_id)
-    
+
     responsible_users = [user.user_id for user in position.props.responsible_users]
     user_to_notify.extend(responsible_users)
 
     if event["type"] == PROCESS_TYPE.PROFILES_SEARCH.value:
-        notification_message = f"¡Listo tu tablero de seguimiento! Ya puedes hacer seguimiento a la vacante {event['process_filters']['role']} desde tu nuevo tablero."
+        notification_message = (
+            f"¡Listo tu tablero de seguimiento! Ya puedes hacer seguimiento a la vacante "
+            f"{event['process_filters']['role']} desde tu nuevo tablero."
+        )
         phase_type = PHASE_CLASSIFICATION.CALL_TO_ACTION.value
     else:
-        notification_message = f"Tu vacante {event['process_filters']['role']} está llamando la atención. ¡Se ha postulado un nuevo candidato."
+        notification_message = (
+            f"Tu vacante {event['process_filters']['role']} está llamando la atención. "
+            "¡Se ha postulado un nuevo candidato."
+        )
         phase_type = PHASE_CLASSIFICATION.INFORMATIVE.value
-    
+
     for user in set(user_to_notify):
         notification = NotificationDTO(
             user_id=user,
@@ -63,5 +69,5 @@ def send_message_to_websocket_by_position_id(event):
             position_id=position.id,
             phase_type=phase_type,
         )
-        
+
         send_notification_by_websocket(notification)

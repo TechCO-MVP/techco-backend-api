@@ -63,7 +63,9 @@ def start_filter_profile_use_case(
 
 
 def create_profile_filter_process_entity(
-    profile_filter_process_query_dto: ProfileFilterProcessQueryDTO, user_id: str, process_type: str
+    profile_filter_process_query_dto: ProfileFilterProcessQueryDTO,
+    user_id: str,
+    process_type: str,
 ) -> ProfileFilterProcessEntity:
     profile_filter_process_dto = ProfileFilterProcessDTO(
         status=PROCESS_STATUS.IN_PROGRESS,

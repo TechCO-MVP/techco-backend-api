@@ -41,6 +41,7 @@ provider:
     S3_DEPURATED_PROFILE_DATA_IA_BUCKET_NAME: !Ref S3DepuratedProfileDataIA
     S3_REFINED_PROFILE_DATA_IA_BUCKET_NAME: !Ref S3RefinedProfileDataIA
     S3_ASSESSMENTS_FILES_BUCKET_NAME: !Ref S3AssessmentsFiles
+    S3_PROFILE_FILTER_CV_FILES_BUCKET_NAME: !Ref S3ProfileFilterCVFiles
     OPEN_AI_API_KEY_SECRET_NAME: openai_api_key_dev
     OPEN_AI_ASSISTANT_ID: asst_XKxSpnp03caySq26J2e80VPJ
     SQS_USER_NOTIFICATIONS_NAME: !Ref SQSUserNotificatons
@@ -97,6 +98,8 @@ provider:
             - !Sub "arn:aws:s3:::${self:provider.stage}-depurated-profile-data-infrequent-access/*"
             - !Sub "arn:aws:s3:::${self:provider.stage}-refined-profile-data-infrequent-access"
             - !Sub "arn:aws:s3:::${self:provider.stage}-refined-profile-data-infrequent-access/*"
+            - !Sub "arn:aws:s3:::${self:provider.stage}-profile-filter-cv-files"
+            - !Sub "arn:aws:s3:::${self:provider.stage}-profile-filter-cv-files/*"
         - Effect: Allow
           Action:
             - sqs:SendMessage
@@ -232,6 +235,8 @@ resources:
     S3PublicDataPolicy: ${file(./src/resources/s3/serverless.yml):S3PublicDataPolicy}
     S3AssessmentsFiles: ${file(./src/resources/s3/serverless.yml):S3AssessmentsFiles}
     S3AssessmentsFilesPolicy: ${file(./src/resources/s3/serverless.yml):S3AssessmentsFilesPolicy}
+    S3ProfileFilterCVFiles: ${file(./src/resources/s3/serverless.yml):S3ProfileFilterCVFiles}
+    S3ProfileFilterCVFilesPolicy: ${file(./src/resources/s3/serverless.yml):S3ProfileFilterCVFilesPolicy}
 
 functions:
   define_auth_challenge:
@@ -878,6 +883,15 @@ functions:
   hiring_process_assessment_handler:
     handler: src/adapters/primary/hiring_process/assistant_response_handler/index.handler
     timeout: 180
+
+  start_profile_filter_process_cv:
+    handler: src/adapters/primary/profile/filter/start_cv_process.handler
+    events:
+      - http:
+          path: /profile/filter/start/cv
+          method: post
+          cors: true
+          private: true
 
 stepFunctions:
   stateMachines:
