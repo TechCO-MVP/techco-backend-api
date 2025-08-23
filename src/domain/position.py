@@ -165,5 +165,26 @@ class UpdatePositionStatusDTO(BaseModel):
             raise ValueError(f"Invalid parameters: {e}")
 
 
+class UpdatePositionDTO(BaseModel):
+    _id: str = Field(..., alias="id")
+    owner_position_user_id: str
+    recruiter_user_id: Optional[str] = None
+    responsible_users: List[PositionStakeholders] = Field(default_factory=list)
+    role: str
+    seniority: str
+    country_code: COUNTRY_CODE
+    city: str
+    description: str
+    responsabilities: List[str] = Field(..., min_length=1)
+    education: Optional[List[str]] = Field(default_factory=list)
+    skills: List[Skill] = Field(..., min_length=1)
+    languages: Optional[List[Languages]] = Field(default_factory=list)
+    hiring_priority: LEVEL
+    work_mode: WORK_MODE
+    benefits: Optional[List[str]] = Field(default_factory=list)
+    salary: Optional[Salary] = Field(default=None)
+    business_configuration: Optional[BusinessConfigurationDTO] = DEFAULT_BUSINESS_CONFIGURATION
+
+
 class PositionEntity(BaseEntity[PositionDTO]):
     pass

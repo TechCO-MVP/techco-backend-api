@@ -17,7 +17,7 @@ def put_position_status():
 
         body = app.current_event.json_body
         update_status_dto = UpdatePositionStatusDTO(**body)
-        
+
         response = put_position_status_use_case(update_status_dto)
 
         return Response(
