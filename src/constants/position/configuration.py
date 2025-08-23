@@ -202,11 +202,11 @@ position_configuration = {
                 type=PHASE_TYPE.DESCRIPTION,
             ),
             Phase(
-                name="Technical Test",
+                name="Soft Skills",
                 thread_id="",
                 status=STATUS.DRAFT,
                 data={},
-                type=PHASE_TYPE.TECHNICAL_TEST,
+                type=PHASE_TYPE.SOFT_SKILLS,
             ),
             Phase(
                 name="Ready to Publish",
@@ -225,11 +225,11 @@ position_configuration = {
                 type=PHASE_TYPE.DESCRIPTION,
             ),
             Phase(
-                name="Soft Skills",
+                name="Technical Test",
                 thread_id="",
                 status=STATUS.DRAFT,
                 data={},
-                type=PHASE_TYPE.SOFT_SKILLS,
+                type=PHASE_TYPE.TECHNICAL_TEST,
             ),
             Phase(
                 name="Ready to Publish",
