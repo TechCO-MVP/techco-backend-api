@@ -893,6 +893,10 @@ functions:
           cors: true
           private: true
 
+  process_cv_profile_filter:
+    handler: src/adapters/primary/profile/filter/process_cv_profile.handler
+    timeout: 300
+
 stepFunctions:
   stateMachines:
     profileFilterProcess: ${file(./src/resources/brightdata/serverless.yml):stateMachines.profileFilterProcess}
