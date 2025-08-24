@@ -166,7 +166,7 @@ class UpdatePositionStatusDTO(BaseModel):
 
 
 class UpdatePositionDTO(BaseModel):
-    _id: str = Field(..., alias="id")
+    id: str = Field(..., alias="id")
     owner_position_user_id: str
     recruiter_user_id: Optional[str] = None
     responsible_users: List[PositionStakeholders] = Field(default_factory=list)

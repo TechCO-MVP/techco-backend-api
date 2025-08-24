@@ -20,8 +20,9 @@ def save_cv_profile_filter_use_case(body: dict, content_type: str, headers: dict
         raise ValueError("position_id, business_id and file are required")
 
     file_id = str(uuid.uuid4())
+    file_type = data.get("file_type", "application/pdf").split("/")[-1]
     s3_repository = S3StorageRepository(bucket_name=S3_PROFILE_FILTER_CV_FILES_BUCKET_NAME)
-    file_key = f"{business_id}/{position_id}/csv/{file_id}.${content_type.split('/')[-1]}"
+    file_key = f"{business_id}/{position_id}/csv/{file_id}.{file_type}"
     s3_repository.put_raw(file_key, data.get("file"), data.get("file_type"))
     return file_key, position_id, business_id
 
