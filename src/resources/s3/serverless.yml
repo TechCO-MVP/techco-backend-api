@@ -112,7 +112,7 @@ S3AssessmentsFilesPolicy:
 S3ProfileFilterCVFiles:
   Type: AWS::S3::Bucket
   Properties:
-    BucketName: ${self:provider.stage}-profile-filter-cv-files-${self:provider.region}
+    BucketName: ${self:provider.stage}-profile-filter-cv-files
     OwnershipControls:
       Rules:
         - ObjectOwnership: BucketOwnerPreferred

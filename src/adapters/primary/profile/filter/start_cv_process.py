@@ -97,4 +97,8 @@ def handler(event: dict, context: LambdaContext) -> dict:
         }
     }
     """
+    if event.get("source") == "serverless-plugin-warmup":
+        logger.info("Warmup event detected. Exiting.")
+        return {"status": "Warmup event"}
+
     return app.resolve(event, context)
