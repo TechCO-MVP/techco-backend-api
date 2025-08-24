@@ -90,6 +90,9 @@ stateMachines:
             - Variable: "$.type"
               StringEquals: "profiles_url_search"
               Next: FilterProfilesURL
+            - Variable: "$.type"
+              StringEquals: "profiles_cv_search"
+              Next: ProcessCVProfile
           Default: Fail
         CreatePipeAndConfOpenPosition:
           Type: Task
@@ -112,6 +115,13 @@ stateMachines:
               - url_profiles_query_brightdata
               - Arn
           Next: CheckSnapshotStatus
+        ProcessCVProfile:
+          Type: Task
+          Resource:
+            Fn::GetAtt:
+              - process_cv_profile_filter
+              - Arn
+          End: true
         CheckSnapshotStatus:
           Type: Task
           Resource:

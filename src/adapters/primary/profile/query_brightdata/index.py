@@ -12,7 +12,7 @@ logger = Logger()
 @logger.inject_lambda_context
 def lambda_handler(event, context: LambdaContext) -> dict:
     """
-    Lambda handler to send reuqest to scraping profile filter process
+    Lambda handler to send request to scraping profile filter process
     {
         "_id": "67aa9fe5e45a8924426e2ffa",
         "created_at": "2025-02-11T00:55:01.488274",
