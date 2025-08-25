@@ -1,6 +1,6 @@
 import re
 from enum import Enum
-from typing import List, Optional
+from typing import List, Optional, Any
 
 from bson import ObjectId
 from pydantic import BaseModel, Field, field_validator
@@ -8,6 +8,32 @@ from pydantic import BaseModel, Field, field_validator
 from src.domain.base_entity import BaseEntity
 from src.domain.profile_brightdata import ProfileBrightDataDTO
 from src.domain.position import Skill
+from src.domain.profile_evaluation import ProfileEvaluation
+
+
+class Experience(BaseModel):
+    title: Optional[str] = None
+    company: Optional[str] = None
+    duration: Optional[str] = None
+    start_date: Optional[str] = None
+    end_date: Optional[str] = None
+
+
+class ProfileInfo(BaseModel):
+    avatar: Optional[str] = None
+    name: Optional[str] = None
+    country_code: Optional[str] = None
+    city: Optional[str] = None
+    position: Optional[str] = None
+    about: Optional[str] = None
+    linkedin_url: Optional[str] = None
+    profile_evaluation: Optional[ProfileEvaluation] = None
+    experience: Optional[List[Experience]] = None
+    link_vacancy_form: Optional[str] = None
+    card_id: Optional[str] = None
+    email: Optional[str] = None
+    source: Optional[str] = None
+    position_info: Optional[Any] = None
 
 
 class PROCESS_STATUS(str, Enum):
@@ -59,7 +85,7 @@ class ProfileFilterProcessDTO(BaseModel):
     position_id: str = Field(default="", alias="position_id")
     business_id: str = Field(default="", alias="business_id")
     process_filters: ProfileFilterProcessQueryDTO
-    profiles: Optional[List[ProfileBrightDataDTO]] = []
+    profiles: Optional[List[ProfileBrightDataDTO | ProfileInfo]] = []
 
     @field_validator("position_id", mode="before")
     def validate_and_convert_position_id(cls, v):

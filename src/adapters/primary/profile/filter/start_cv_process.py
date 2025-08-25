@@ -7,7 +7,7 @@ from pydantic import ValidationError
 
 from src.use_cases.profile.save_cv_profile_filter import (
     save_cv_profile_filter_use_case,
-    start_filter_profile_csv_use_case,
+    start_filter_profile_cv_use_case,
 )
 
 logger = Logger()
@@ -36,7 +36,7 @@ def start_cv_process():
             body, content_type, headers
         )
 
-        result = start_filter_profile_csv_use_case(position_id, business_id, file_key)
+        result = start_filter_profile_cv_use_case(position_id, business_id, file_key)
 
         return Response(
             status_code=200,

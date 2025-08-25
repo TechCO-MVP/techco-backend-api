@@ -22,7 +22,7 @@ def save_cv_profile_filter_use_case(body: dict, content_type: str, headers: dict
     file_id = str(uuid.uuid4())
     file_type = data.get("file_type", "application/pdf").split("/")[-1]
     s3_repository = S3StorageRepository(bucket_name=S3_PROFILE_FILTER_CV_FILES_BUCKET_NAME)
-    file_key = f"{business_id}/{position_id}/csv/{file_id}.{file_type}"
+    file_key = f"{business_id}/{position_id}/cv/{file_id}.{file_type}"
     s3_repository.put_raw(file_key, data.get("file"), data.get("file_type"))
     return file_key, position_id, business_id
 
@@ -54,7 +54,7 @@ def extract_body_data(body: dict, content_type: str, headers: dict) -> dict:
     return data
 
 
-def start_filter_profile_csv_use_case(position_id: str, business_id: str, file_key: str):
+def start_filter_profile_cv_use_case(position_id: str, business_id: str, file_key: str):
     """Start filter profile CSV use case."""
     position_repository = PositionRepository()
     position = position_repository.getById(position_id)

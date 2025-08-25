@@ -8,7 +8,7 @@ from src.constants.index import (
 from src.domain.hiring_process import HiringProcessDTO
 from src.domain.position import POSITION_STATUS
 from src.domain.position_configuration import FLOW_TYPE
-from src.domain.profile import PROCESS_STATUS
+from src.domain.profile import PROCESS_STATUS, ProfileInfo
 from src.domain.profile_brightdata import ProfileBrightDataDTO
 from src.errors.entity_not_found import EntityNotFound
 from src.repositories.document_db.position_repository import PositionRepository
@@ -62,7 +62,10 @@ def get_position_info(position_id: str) -> dict:
 
 
 def create_cards_for_profiles(
-    profiles: List[ProfileBrightDataDTO], pipe_id: str, position_id: str, business_id: str
+    profiles: List[ProfileBrightDataDTO | ProfileInfo],
+    pipe_id: str,
+    position_id: str,
+    business_id: str,
 ) -> List[ProfileBrightDataDTO]:
     position_info = get_position_info(position_id)
 
