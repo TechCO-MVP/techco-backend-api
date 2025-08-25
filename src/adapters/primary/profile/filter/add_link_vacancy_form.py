@@ -35,26 +35,10 @@ def lambda_handler(event, context: LambdaContext) -> dict:
             "Participate in code reviews and provide constructive feedback."
             ],
             "skills": [
-            {
-                "name": "Python",
-                "required": true
-            },
-            {
-                "name": "AWS",
-                "required": true
-            },
-            {
-                "name": "Docker",
-                "required": true
-            },
-            {
-                "name": "Kubernetes",
-                "required": false
-            },
-            {
-                "name": "Agile Methodologies",
-                "required": false
-            }
+                {
+                    "name": "Python",
+                    "required": true
+                },
             ],
             "business_id": "xxx",
             "position_id": "yyy",

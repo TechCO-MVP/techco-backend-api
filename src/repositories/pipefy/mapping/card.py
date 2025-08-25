@@ -4,10 +4,13 @@ from typing import Any
 from src.constants.index import DEFAULT_PIPE_TEMPLATE_ID
 from src.domain.profile_evaluation import PROFILE_GROUP
 from src.domain.profile_brightdata import ProfileBrightDataDTO, ExperienceProfile
+from src.domain.profile import ProfileInfo
 from src.domain.profile import PROCESS_TYPE
 
+END_DATE_PRESENT_VALUES = ["Present", "Presente"]
 
-def get_role_alignment(data: ProfileBrightDataDTO) -> str:
+
+def get_role_alignment(data: ProfileBrightDataDTO | ProfileInfo) -> str:
     alignments = {
         PROFILE_GROUP.HIGH.value: "Alta",
         PROFILE_GROUP.MID_HIGH.value: "Media - Alta",
@@ -17,14 +20,16 @@ def get_role_alignment(data: ProfileBrightDataDTO) -> str:
     return alignments.get(data.profile_evaluation.group)
 
 
-def get_current_position(data: ProfileBrightDataDTO) -> ExperienceProfile:
+def get_current_position(data: ProfileBrightDataDTO | ProfileInfo) -> ExperienceProfile:
     experience = data.experience or []
-    current_experience = next((exp for exp in experience if exp.end_date == "Present"), None)
+    current_experience = next(
+        (exp for exp in experience if exp.end_date in END_DATE_PRESENT_VALUES), None
+    )
 
     return current_experience
 
 
-def get_position_info(data: ProfileBrightDataDTO) -> dict | None:
+def get_position_info(data: ProfileBrightDataDTO | ProfileInfo) -> dict | None:
     if not data.position_info:
         return None
 
@@ -39,25 +44,25 @@ def get_position_info(data: ProfileBrightDataDTO) -> dict | None:
     return position_info
 
 
-def get_prop_from_position_info(data: ProfileBrightDataDTO, prop: str) -> Any:
+def get_prop_from_position_info(data: ProfileBrightDataDTO | ProfileInfo, prop: str) -> Any:
     position_info = get_position_info(data)
     return position_info.get(prop, None) if position_info else None
 
 
-def get_prop_from_current_position(data: ProfileBrightDataDTO, prop: str) -> Any:
+def get_prop_from_current_position(data: ProfileBrightDataDTO | ProfileInfo, prop: str) -> Any:
     current_experience = get_current_position(data)
     return getattr(current_experience, prop) if current_experience else ""
 
 
-def is_currently_employed(data: ProfileBrightDataDTO) -> str:
+def is_currently_employed(data: ProfileBrightDataDTO | ProfileInfo) -> str:
     current_experience = get_current_position(data)
     is_currently_employed = (
-        current_experience.end_date == "Present" if current_experience else False
+        current_experience.end_date in END_DATE_PRESENT_VALUES if current_experience else False
     )
     return "True" if is_currently_employed else "False"
 
 
-def get_experience_end_date(data: ProfileBrightDataDTO) -> str:
+def get_experience_end_date(data: ProfileBrightDataDTO | ProfileInfo) -> str:
     current_experience = get_current_position(data)
     if not current_experience:
         return None
@@ -67,7 +72,7 @@ def get_experience_end_date(data: ProfileBrightDataDTO) -> str:
     return end_date
 
 
-def get_country_code(data: ProfileBrightDataDTO) -> str:
+def get_country_code(data: ProfileBrightDataDTO | ProfileInfo) -> str:
     ALLOWED_COUNTRY_CODES = ["CO", "PE", "MX"]
     if data.country_code not in ALLOWED_COUNTRY_CODES:
         return None

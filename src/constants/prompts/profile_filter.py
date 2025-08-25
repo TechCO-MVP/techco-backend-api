@@ -140,4 +140,14 @@ Los detalles de la vacante a evaluar, son los siguientes:
             content="Evalua todos los perfiles contenidos dentro de los documentos adjuntos.",
         ),
     ],
+    "profile_filter_cv": [
+        OpenAIMessage(
+            role="user",
+            require_placeholders=True,
+            content="""\
+Los detalles de la vacante a evaluar, son los siguientes:
+{position}
+            """,
+        ),
+    ],
 }
