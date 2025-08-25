@@ -27,6 +27,7 @@ class ProfileInfo(BaseModel):
     position: Optional[str] = None
     about: Optional[str] = None
     linkedin_url: Optional[str] = None
+    url: Optional[str] = None
     profile_evaluation: Optional[ProfileEvaluation] = None
     experience: Optional[List[Experience]] = None
     link_vacancy_form: Optional[str] = None

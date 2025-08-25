@@ -87,6 +87,7 @@ def build_profile_info(
             position=position,
             about=evaluation.candidate.about,
             linkedin_url=evaluation.candidate.url_linkedin,
+            url=evaluation.candidate.url_linkedin,
             profile_evaluation=evaluation,
             experience=experience,
             email=evaluation.candidate.email,
