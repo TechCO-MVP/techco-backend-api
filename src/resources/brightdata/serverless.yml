@@ -121,7 +121,7 @@ stateMachines:
             Fn::GetAtt:
               - process_cv_profile_filter
               - Arn
-          End: true
+          Next: AddLinkPositionForm
         CheckSnapshotStatus:
           Type: Task
           Resource:
@@ -163,8 +163,8 @@ stateMachines:
           Catch:
             - ErrorEquals: ["States.ALL"]
               Next: Fail
-          Next: AddLinkPostionForm
-        AddLinkPostionForm:
+          Next: AddLinkPositionForm
+        AddLinkPositionForm:
           Type: Task
           Resource:
             Fn::GetAtt:
@@ -179,6 +179,9 @@ stateMachines:
               Next: CreateCardsForOpenPosition
             - Variable: "$.type"
               StringEquals: "profiles_url_search"
+              Next: CreateCards
+            - Variable: "$.type"
+              StringEquals: "profiles_cv_search"
               Next: CreateCards
           Default: Fail
         CreateCardsForOpenPosition:
