@@ -5,7 +5,7 @@ import re
 import unicodedata
 
 from src.domain.profile_brightdata import ProfileBrightDataDTO
-from src.domain.profile import ProfileFilterProcessEntity
+from src.domain.profile import ProfileFilterProcessEntity, ProfileInfo
 from src.adapters.secondary.documentdb.profile_filter_process_db_adapter import (
     ProfileFilterProcessDocumentDBAdapter,
 )
@@ -31,19 +31,19 @@ def add_links_form(event: ProfileFilterProcessEntity) -> ProfileFilterProcessEnt
         business_entity = business_repository.getById(event.props.business_id)
         business_name = friendly_string(business_entity.props.name)
         domain = os.getenv("TECHCO_DOMAIN")
-        profile.link_vacancy_form = (
-            f"{domain}/{business_name}/{vancancy_name}?token={token}"
-        )
+        profile.link_vacancy_form = f"{domain}/{business_name}/{vancancy_name}?token={token}"
     return event
 
 
-def encript_data(profile: ProfileBrightDataDTO, event: ProfileFilterProcessEntity) -> str:
+def encript_data(
+    profile: ProfileBrightDataDTO | ProfileInfo, event: ProfileFilterProcessEntity
+) -> str:
     """encript data with JWT"""
 
     payload = {
         "id": event.props.position_id,
         "business_id": event.props.business_id,
-        "linkedin_num_id": profile.linkedin_num_id,
+        "linkedin_num_id": getattr(profile, "linkedin_num_id", None),
         "created_at": datetime.datetime.now().isoformat(),
         "exp": datetime.datetime.now() + datetime.timedelta(days=15),
     }
